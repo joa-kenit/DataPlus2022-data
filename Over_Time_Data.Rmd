@@ -14,16 +14,54 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+Load Useful Packages
+
+```{r packages}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+Downloaded Data Here
+```{r data}
+Durham_Data_Modified <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/main/durham_data_modified.csv")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Working With Data
+
+```{r}
+glimpse(Durham_Data_Modified)
+Durham_Data_Modified %>% count(Station.Name)
+```
+
+
+```{r Plots}
+EL1.9EC <- Durham_Data_Modified %>% filter(Station.Name == "EL1.9EC")
+``` 
+
+Frequency
+
+```{r Count}
+Frequ_Table <- count(Durham_Data_Modified, Parameter)
+Sorted_Freq_Params <- arrange(Frequ_Table, desc(n))
+```
+
+
+#Exploratory Data Analysis
+
+```{r Station.Name Bar}
+Durham_Data_Modified %>%
+ggplot(data = Durham_Data_Modified, mapping = aes(x = Station.Name)) + geom_bar()
+```
+
+
+```{r Data/Time Bar}
+Durham_Data_Modified %>% 
+ggplot(Durham_Data_Modified, aes(Date.Time)) + geom_bar()
+```
+
+```{r Group_by_Year}
+
+```
+
