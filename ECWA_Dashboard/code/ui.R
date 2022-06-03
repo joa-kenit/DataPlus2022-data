@@ -83,9 +83,11 @@ shinyUI(fluidPage(
         
         tabItem(tabName = "overview",
                 tags$h1("Overview of Data"),
-                tealLine
+                tealLine,
         
-                #Insert text and simplified arcGIS embedding
+                tags$div(
+                  HTML('<iframe src="https://dukeuniv.maps.arcgis.com/apps/instant/minimalist/index.html?appid=0ccb2a3586e640dbbeabab10fa218c62" width="95%" height="600" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe>')
+                )
                 
         ),
         
