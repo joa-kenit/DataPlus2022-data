@@ -3,3 +3,7 @@ body {
   background-color: #222d32;
 }
 
+input[type=checkbox]:checked ~ div {
+  background-color: #50bcf2;
+}
+
