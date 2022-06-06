@@ -78,7 +78,7 @@ shinyUI(fluidPage(
                 tealLine,
                 
                 #Insert text for home page and Ellerbe creek image
-                
+                includeMarkdown("www/probando.md")
         ),
         
         tabItem(tabName = "overview",
