@@ -80,13 +80,16 @@ EL8.5SEC <- joined_sp %>% filter(Station.Name == "EL8.5SEC")
 EL8.5SEC_F <- arrange(count((EL8.5SEC), Parameter), desc(n))
 ```
 
-
+#All Date.Time data changed to POSIXlt form. 
 ```{r Active Sites}
 active_sites <- Durham_Data_Modified %>% 
   filter((Station.Name == "EL1.9EC") | (Station.Name == "EL5.5GC") |
            (Station.Name == "EL5.6EC") | (Station.Name == "EL7.1EC") | 
            (Station.Name == "EL7.1SEC") | (Station.Name == "EL8.1GC") | 
-           (Station.Name == "EL8.5SEC") | (Station.Name == "EL8.6SECUT"))  
+           (Station.Name == "EL8.5SEC") | (Station.Name == "EL8.6SECUT")) 
+
+active_sites$Date.Time <- strptime(active_sites$Date.Time, 
+                              format = "%m/%d/%y %H:%M")
 ```
 
 
@@ -95,7 +98,6 @@ active_sites <- Durham_Data_Modified %>%
 ```{r Station.Name Bar}
 Durham_Data_Modified %>%
 ggplot(data = Durham_Data_Modified, mapping = aes(x = Station.Name)) + geom_bar()
-```
 
 
 
