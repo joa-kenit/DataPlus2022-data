@@ -43,10 +43,11 @@ shinyUI(fluidPage(
           "<br>"
         )),
         menuItem("Home", tabName = "home", icon = icon("home")),
+        menuItem("Background", tabName = "background", icon = icon("leaf")),
         menuItem("Data", icon = icon("list"),
                  menuItem("Overview", tabName = "overview", icon = icon("map")),
-                 menuSubItem("Explore Relations", tabName = "relations", icon = icon("bar-chart")),
-                 menuSubItem("Explore Trends", tabName = "trends", icon = icon("line-chart")),
+                 menuSubItem("Explore Relations", tabName = "relations", icon = icon("chart-bar")),
+                 menuSubItem("Explore Trends", tabName = "trends", icon = icon("chart-line")),
                  menuSubItem("Download", tabName = "download", icon = icon("download"))
         ),
         menuItem("Team", tabName = "team", icon = icon("users"))
@@ -66,25 +67,45 @@ shinyUI(fluidPage(
         
         tabItem(tabName = "home",
                 tags$h1("Ellerbe Creek Watershed Data", style = "text-align:center;"),
-                tags$hr(style="width:20%;text-align:center;height:3px;border-width:0;background-color:#08d8b2")
+                tags$hr(style="width:20%;text-align:center;height:3px;border-width:0;background-color:#08d8b2"),
                 
                 #Insert text for home page and Ellerbe creek image
-          
+                includeMarkdown("www/home.md")
+        ),
+        
+        tabItem(tabName = "background",
+                tags$h1("Pollutant Information"),
+                tealLine,
+                
+                #Insert text for home page and Ellerbe creek image
+                includeMarkdown("www/probando.md")
         ),
         
         tabItem(tabName = "overview",
                 tags$h1("Overview of Data"),
-                tealLine
+                tealLine,
         
-                #Insert text and simplified arcGIS embedding
+                tags$div(
+                  HTML('<iframe src="https://dukeuniv.maps.arcgis.com/apps/instant/minimalist/index.html?appid=0ccb2a3586e640dbbeabab10fa218c62" width="95%" height="600" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe>')
+                )
                 
         ),
         
         tabItem(tabName = "relations",
                 tags$h1("Compare Data"),
-                tealLine
+                tealLine,
           
-                #Insert variable comparison tool from Jonny's team's data
+                tabBox(id = "tabset1", width="90%", height = "700px",
+                       tabPanel("Summary of correlations", 
+                                img(src='correlationTable.PNG', align = "left")
+                                ),
+                       tabPanel("Explore correlations", 
+                                radioButtons("radio", label = h3("Radio buttons"),
+                                             choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3), 
+                                             selected = 1),
+                                fluidRow(column(3, verbatimTextOutput("value")))
+                                )
+                )
         ),
         
         tabItem(tabName = "trends",

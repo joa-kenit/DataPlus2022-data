@@ -7,5 +7,7 @@ library(shiny)
 
 
 shinyServer(function(input, output) {
+  #Explore relations tab
+  output$value <- renderPrint({ input$radio })
 
 })
