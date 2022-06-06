@@ -67,10 +67,10 @@ shinyUI(fluidPage(
         
         tabItem(tabName = "home",
                 tags$h1("Ellerbe Creek Watershed Data", style = "text-align:center;"),
-                tags$hr(style="width:20%;text-align:center;height:3px;border-width:0;background-color:#08d8b2")
+                tags$hr(style="width:20%;text-align:center;height:3px;border-width:0;background-color:#08d8b2"),
                 
                 #Insert text for home page and Ellerbe creek image
-          
+                includeMarkdown("www/home.md")
         ),
         
         tabItem(tabName = "background",
