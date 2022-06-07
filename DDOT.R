@@ -28,17 +28,18 @@ library(lubridate)
 # #}
 # 
 # fig_OT
-
 EL8.1GC <- active_sites %>% 
   filter(Station.Name == "EL8.1GC") %>%
   filter(Parameter == "Zinc") %>% 
   arrange(mdy_hm(Date.Time))
 
 
+#Attempt to Make Graph Including All Sites
+SitesList <- unique(active_sites_zinc$Station.Name)
 
-fig <- plot_ly(x = (as.Date(EL8.1GC$Date.Time)), 
-               y = EL8.1GC$Value, type = 'scatter', mode = 'lines + markers'
-               , name = 'Zinc Over Time')%>% 
+active_sites_zinc <- active_sites %>% filter(Parameter == "Zinc")
+
+fig <- plot_ly()%>% 
   layout(title = 'Zinc OVer Time',
          plot_bgcolor='#e5ecf6',  
          xaxis = list(  
@@ -52,6 +53,19 @@ fig <- plot_ly(x = (as.Date(EL8.1GC$Date.Time)),
            zerolinewidth = 2,  
            gridcolor = 'ffff'),
          showlegend = TRUE, width = 1100)
+
+
+for(s in SitesList) {
+  #reset asz to original just zinc a.s (a.s is the constant)
+  active_sites_zinc <- active_sites %>% filter(Parameter == "Zinc")
+  
+  active_sites_zinc <- active_sites_zinc %>% filter(Station.Name == s) %>%
+    arrange(mdy_hm(Date.Time))
+  #filter for station name and then sort by date
+  fig <- fig %>% add_trace(
+    x = (as.Date(active_sites_zinc$Date.Time)), 
+    y = active_sites_zinc$Value, type = 'scatter', mode = 'lines + markers'
+    , name = 'Zinc Over Time')
+}
+
 fig
-
-
