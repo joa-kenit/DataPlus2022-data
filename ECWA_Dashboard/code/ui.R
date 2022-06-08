@@ -6,6 +6,9 @@
 
 library(shinydashboard)
 library(shinycssloaders)
+library(shiny)
+library(leaflet)
+
 
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
 
@@ -118,19 +121,25 @@ shinyUI(fluidPage(
       
         tabItem(tabName = "download",
                 tags$h1("Download Data"),
-                tealLine
+                tealLine,
           
                 #Insert mechanism to download data
+                titlePanel("Explore"),
           
+                selectInput("dataset", "Pick a dataset", ls("package:datasets")), 
+          helpText("Click on the download button to download dataset observations:"),
+          div(style="display:inline-block",downloadButton('downloadData0','Site Summary Table', class = "btn-block"), style="float:right"),
+          downloadButton('downloadData1', 'Variable Table', class = "btn-block")
+         
         ), 
         
         
         tabItem(tabName = "team", 
                 tags$h1("Team"),
-                tealLine
+                tealLine,
                 
                 #Insert head shots and short bios
-              
+  
       ))
     
     ) # end dashboardBody
