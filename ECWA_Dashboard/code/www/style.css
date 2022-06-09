@@ -3,7 +3,26 @@ body {
   background-color: #222d32;
 }
 
-input[type=checkbox]:checked ~ div {
+/*input[type=checkbox]:checked ~ div {
   background-color: #50bcf2;
+}
+*/
+input[type=checkbox] + label {
+  color: #ccc;
+  font-style: italic;
+} 
+input[type=checkbox]:checked + label {
+  color: #f00;
+  font-style: normal;
+} 
+
+#text1{color: white;
+font-size: 20px;
+}
+#text2{color: white;
+font-size: 20px;
+}
+#text3{color: white;
+font-size: 20px;
 }
 
