@@ -6,8 +6,25 @@
 
 library(shinydashboard)
 library(shinycssloaders)
+library(sortable)
+library(plotly)
 
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
+con <- read.csv('www/ECWAWaterQuality2021Context.csv')
+Contaminant = con$Feature[con$Type == "Contaminant"]
+Infrastructure = con$Feature[con$Type == "Infrastructure"]
+Demographics = con$Feature[con$Type == "Demographics"]
+max_1_item_opts <- sortable_options(
+  group = list(
+    name = "my_shared_group",
+    put = htmlwidgets::JS("
+      function(to) {
+        // only allow a 'put' if there is less than 1 child already
+        return to.el.children.length < 1;
+      }
+    ")
+  )
+)
 
 ###########
 # LOAD UI #
@@ -94,17 +111,63 @@ shinyUI(fluidPage(
         tabItem(tabName = "relations",
                 tags$h1("Compare Data"),
                 tealLine,
-          
-                tabBox(id = "tabset1", width="90%", height = "700px",
-                       tabPanel("Summary of correlations", 
-                                img(src='correlationTable.PNG', align = "left")
-                                ),
+                
+                tabBox(id = "tabset1", width="940px", height = "1400px",
+                       tabPanel("Summary of correlations",  
+                                column(12, align="center",plotOutput("corTable"))),
+                       
                        tabPanel("Explore correlations", 
-                                radioButtons("radio", label = h3("Radio buttons"),
-                                             choices = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3), 
-                                             selected = 1),
-                                fluidRow(column(3, verbatimTextOutput("value")))
-                                )
+                                fluidRow(column(width = 9, plotlyOutput("value2")),column(width=3, 
+                                                                                          box(width = 12, background = 'navy',
+                                                                                              textOutput(outputId="text1"),
+                                                                                              textOutput(outputId="text2"),
+                                                                                              textOutput(outputId="text3")))),
+                                fluidRow(
+                                  column(width = 3,
+                                         rank_list(
+                                           text = "Contaminants",
+                                           labels = Contaminant,
+                                           input_id = "main_list1",
+                                           options = sortable_options(group = "my_shared_group")
+                                         )),
+                                  column(width = 3,
+                                         rank_list(
+                                           text = "Infrastructure & Environment",
+                                           labels = Infrastructure,
+                                           input_id = "main_list2",
+                                           options = sortable_options(group = "my_shared_group")
+                                         ),
+                                         rank_list(
+                                           text = "Demographics",
+                                           labels = Demographics,
+                                           input_id = "main_list3",
+                                           options = sortable_options(group = "my_shared_group")
+                                         )),
+                                  column(width = 6,
+                                         rank_list(
+                                           text = "X axis",
+                                           labels = c(),
+                                           input_id = "list_1",
+                                           options = max_1_item_opts
+                                         ),
+                                         rank_list(
+                                           text = "Y axis",
+                                           labels = c(),
+                                           input_id = "list_2",
+                                           options = max_1_item_opts
+                                         ),
+                                         rank_list(
+                                           text = "Z axis (optional)",
+                                           labels = c(),
+                                           input_id = "list_3",
+                                           options = max_1_item_opts
+                                           
+                                         )))
+                                #fluidRow(textOutput(outputId="text"))
+                                #,textOutput(outputId="text")))
+                                
+                                
+                       )
                 )
         ),
         
@@ -118,19 +181,25 @@ shinyUI(fluidPage(
       
         tabItem(tabName = "download",
                 tags$h1("Download Data"),
-                tealLine
+                tealLine,
           
                 #Insert mechanism to download data
+                titlePanel("Explore"),
           
+                selectInput("dataset", "Pick a dataset", ls("package:datasets")), 
+          helpText("Click on the download button to download dataset observations:"),
+          div(style="display:inline-block",downloadButton('downloadData0','Site Summary Table', class = "btn-block"), style="float:right"),
+          downloadButton('downloadData1', 'Variable Table', class = "btn-block")
+         
         ), 
         
         
         tabItem(tabName = "team", 
                 tags$h1("Team"),
-                tealLine
+                tealLine,
                 
                 #Insert head shots and short bios
-              
+  
       ))
     
     ) # end dashboardBody
