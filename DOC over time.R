@@ -5,15 +5,15 @@ res <-read.csv("https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/ma
 listOfSites <- unique (res$SITE)
 
 #creating the labels of the plot
-fig <- plot_ly()%>%layout(title = 'DOC Over Time', plot_bgcolor = "#e5ecf6", xaxis = list(title = 'Date'),
+fig2 <- plot_ly()%>%layout(title = 'DOC Over Time', plot_bgcolor = "#e5ecf6", xaxis = list(title = 'Date'),
                           yaxis = list(title = 'Dissolved Organic Carbon (mg/L)'), legend = list(title=list(text='<b> Site </b>')))
 
 for (site in listOfSites){
   if(site>0){
     ##ask about this
     filteredRes = res[res$SITE == site,2:10] 
-    fig <- fig %>% add_trace(x = filteredRes$DATE, y = filteredRes$DOC..mg.L., type = 'scatter', mode = 'lines+markers', name = site)
+    fig2 <- fig2 %>% add_trace(x = filteredRes$DATE, y = filteredRes$DOC..mg.L., type = 'scatter', mode = 'lines+markers', name = site)
   }
 }
-fig
+fig2
 

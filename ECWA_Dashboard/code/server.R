@@ -107,5 +107,45 @@ shinyServer(function(input, output) {
       write.csv(data, file)
     }
   )
+  ################
+  #Data Over Time#
+  ################
+  output$Plot <- renderPlotly({
+    
+    fig3 <- plot_ly()%>% 
+      layout(title = paste(input$Param, 'Levels Over Time'),
+             plot_bgcolor='#e5ecf6',  
+             xaxis = list(  
+               title = 'Date',
+               zerolinecolor = '#ffff',  
+               zerolinewidth = 2,  
+               gridcolor = 'ffff'),  
+             yaxis = list(  
+               #need specific type of unit here
+               title = paste("Unit"),
+               zerolinecolor = '#ffff',  
+               zerolinewidth = 2,  
+               gridcolor = 'ffff'),
+             showlegend = TRUE, width = 1100)
+    
+    for(s in input$Site) {
+      #reset asz to original just zinc a.s (a.s is the constant)
+      #active_sitesReal sorted first for date
+      active_sites_param <- active_sitesReal %>% filter(Parameter == input$Param) %>% 
+        filter(Station.Name == s)
+      
+      # active_sites_zinc <- active_sites_zinc %>% filter(Station.Name == s) %>%
+      #   order((Date.Time))
+      #filter for station name and then sort by date
+      fig3 <- fig3 %>% add_trace(
+        x = (as.Date(active_sites_param$Date.Time)), 
+        y = active_sites_param$Value, name = s, type = 'scatter', mode = 'lines + markers')
+    }
+    fig3
+    
+    #end of renderplotly
+  }
+  )
+  #End of Data Over Time
 }
 )

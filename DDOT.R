@@ -4,7 +4,7 @@ library(lubridate)
 
 #Attempt to Make Graph Including All Sites
 
-active_sites_zinc <- active_sitesReal %>% filter(Parameter == "Zinc")
+active_sites_zinc <- active_sitesReal %>% filter(Parameter == "Total Phosphorus")
 SitesList <- unique(active_sitesReal$Station.Name)
 
 
@@ -26,8 +26,9 @@ fig3 <- plot_ly()%>%
 for(s in SitesList) {
   #reset asz to original just zinc a.s (a.s is the constant)
   #active_sitesReal sorted first for date
-  active_sites_zinc <- active_sitesReal %>% filter(Parameter == "Zinc") %>% 
+  active_sites_zinc <- active_sitesReal %>% filter(Parameter == "Total Phosphorus") %>% 
       filter(Station.Name == s)
+  print("Ran")
 
   # active_sites_zinc <- active_sites_zinc %>% filter(Station.Name == s) %>%
   #   order((Date.Time))

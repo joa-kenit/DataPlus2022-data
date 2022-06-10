@@ -173,9 +173,13 @@ shinyUI(fluidPage(
         
         tabItem(tabName = "trends",
                 tags$h1("Look at Data Over Time"),
-                tealLine
-              
-                #Insert trend tool from Durham city data 
+                tealLine,
+              #Insert trend tool from Durham city data 
+              titlePanel("Time Graphs"),
+              selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE),
+              selectInput("Param", "Select Parameter", Params),
+              #outPut for Plot
+              plotlyOutput("Plot")
           
         ),
       
