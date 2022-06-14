@@ -112,6 +112,9 @@ shinyServer(function(input, output) {
   ################
   output$Plot <- renderPlotly({
     
+    units_label <- units_set %>% filter(Parameter == input$Param)
+    units_label <- units_label$Unit
+    
     fig3 <- plot_ly()%>% 
       layout(title = paste(input$Param, 'Levels Over Time'),
              plot_bgcolor='#e5ecf6',  
@@ -122,7 +125,7 @@ shinyServer(function(input, output) {
                gridcolor = 'ffff'),  
              yaxis = list(  
                #need specific type of unit here
-               title = paste("Unit"),
+               title = paste(units_label),
                zerolinecolor = '#ffff',  
                zerolinewidth = 2,  
                gridcolor = 'ffff'),
