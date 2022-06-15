@@ -4,27 +4,10 @@
 # ui.R file                                #
 ############################################
 
-library(shinydashboard)
-library(shinycssloaders)
-library(sortable)
-library(plotly)
+
 
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
-con <- read.csv('www/ECWAWaterQuality2021Context.csv')
-Contaminant = con$Feature[con$Type == "Contaminant"]
-Infrastructure = con$Feature[con$Type == "Infrastructure"]
-Demographics = con$Feature[con$Type == "Demographics"]
-max_1_item_opts <- sortable_options(
-  group = list(
-    name = "my_shared_group",
-    put = htmlwidgets::JS("
-      function(to) {
-        // only allow a 'put' if there is less than 1 child already
-        return to.el.children.length < 1;
-      }
-    ")
-  )
-)
+
 
 ###########
 # LOAD UI #
@@ -81,7 +64,6 @@ shinyUI(fluidPage(
                                  }'))),
       
       tabItems(
-        
         tabItem(tabName = "home",
                 tags$h1("Ellerbe Creek Watershed Data", style = "text-align:center;"),
                 tags$hr(style="width:20%;text-align:center;height:3px;border-width:0;background-color:#08d8b2"),
@@ -95,13 +77,15 @@ shinyUI(fluidPage(
                 tealLine,
                 
                 #Insert text for home page and Ellerbe creek image
-                includeMarkdown("www/probando.md")
+                fluidRow( column(width=1),column(width = 10,
+                includeMarkdown("www/probando.md")),
+                column(width = 1))
         ),
         
         tabItem(tabName = "overview",
                 tags$h1("Overview of Data"),
                 tealLine,
-        
+                
                 tags$div(
                   HTML('<iframe src="https://dukeuniv.maps.arcgis.com/apps/instant/minimalist/index.html?appid=0ccb2a3586e640dbbeabab10fa218c62" width="95%" height="600" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe>')
                 )
@@ -119,7 +103,9 @@ shinyUI(fluidPage(
                        tabPanel("Explore correlations", 
                                 fluidRow(column(width = 9, plotlyOutput("value2")),column(width=3, 
                                                                                           box(width = 12, background = 'navy',
-                                                                                              textOutput(outputId="text1"),
+                                                                                              textOutput(outputId="text1"), 
+                                                                                              # dropdownButton("0 indicates no linear correlation. 1 indicates high linear correlation. 0-0.25 is often considered low correlation. 0.5-1 is often considered high correlation.", 
+                                                                                              #                status = 'success', icon = icon('question'),style="color: navy"),
                                                                                               textOutput(outputId="text2"),
                                                                                               textOutput(outputId="text3")))),
                                 fluidRow(
@@ -174,26 +160,37 @@ shinyUI(fluidPage(
         tabItem(tabName = "trends",
                 tags$h1("Look at Data Over Time"),
                 tealLine,
-              #Insert trend tool from Durham city data 
-              titlePanel("Time Graphs"),
-              selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE),
-              selectInput("Param", "Select Parameter", Params),
-              #outPut for Plot
-              plotlyOutput("Plot")
-          
-        ),
+                tabBox(id = "tabset1", width="940px", height = "940px",
+                       tabPanel("Trends by parameter",
+                              column(12, align="center",
+                              #Insert trend tool from Durham city data 
+                              titlePanel("Time Graphs"),
+                              selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
+                              selectInput("Param", "Select Parameter", Parameter),
+                              #outPut for Plot
+                              plotlyOutput("Plot"))),
+                       tabPanel("Overall water quality trends",
+                                leafletOutput("WQImap"),
+                                sliderInput("wqiDate", "Magnitudes", min(wqiData$Date), max(wqiData$Date),
+                                            value = max(wqiData$Date),
+                                            step = 30,
+                                            timeFormat = "%b %y",
+                                            width = "100%",
+                                            animate = animationOptions(interval = 100, loop = FALSE)
+                                ),
+                                plotlyOutput("wqiLinePlot")
+                                ),
+        )),
       
         tabItem(tabName = "download",
                 tags$h1("Download Data"),
                 tealLine,
-          
-                #Insert mechanism to download data
-                titlePanel("Explore"),
-          
-                selectInput("dataset", "Pick a dataset", ls("package:datasets")), 
-          helpText("Click on the download button to download dataset observations:"),
-          div(style="display:inline-block",downloadButton('downloadData0','Site Summary Table', class = "btn-block"), style="float:right"),
-          downloadButton('downloadData1', 'Variable Table', class = "btn-block")
+                p("Click on the download button of any dataset you would like to explore further:",style="text-align: center"),
+                br(),
+                downloadButton('downloadData0','SiteLocations&Descriptions', class = "btn-block"),
+                downloadButton('downloadData1', 'DataBySubbasin', class = "btn-block"),
+                #style="display: block; margin: 0 auto; width: 230px;color: black;"  width: 20%;
+                tags$head(tags$style(".btn-block{background-color:#202A44;color: white;width: 30%;margin-left: 35%;margin-right: 30%;height:50px;font-size: 20px;}"))  
          
         ), 
         
@@ -201,10 +198,37 @@ shinyUI(fluidPage(
         tabItem(tabName = "team", 
                 tags$h1("Team"),
                 tealLine,
+                fluidRow(
+                  tags$head(tags$style(".headShot{border: solid 2px #202A44;  width: 100% !important;height: auto !important;}")),
+                  column(width=1),
+                  column(width=3, align="center",
+                         br(),br(),br(),
+                         img(src='JackPhoto.PNG',class = "headShot"),
+                         box(width = "100%", background = "navy",
+                         h1("Jack Tsenane"),
+                         tags$hr(style = "width: 30%;height: 2px;"),
+                         p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio. Bio bio bio bio bio bio."))),
+                  column(width=3, align="center",
+                         br(),br(),br(),
+                         img(src='JoannaPhoto.PNG',height = "400",class = "headShot"),
+                         box(width = "100%", background = "navy",
+                         h1("Joanna Huertas"),
+                         tags$hr(style = "width: 30%;height: 2px;"),
+                         p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio. Bio bio bio bio bio bio."))),
+                  column(width=3, align="center",
+                         br(),br(),br(),
+                         img(src='RyanPhoto.PNG',height = "400",class = "headShot"),
+                         box(width = "100%", background = "navy",
+                         h1("Ryan Yu"),
+                         tags$hr(style = "width: 30%;height: 2px;"),
+                         p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio. Bio bio bio bio bio bio."))),
+                  column(width=1)
+                )
+
                 
                 #Insert head shots and short bios
   
-      ))
+      ))#end of tabs
     
     ) # end dashboardBody
   

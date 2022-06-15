@@ -3,36 +3,21 @@
 # by Jack Tsenane, Ryan Yu, Joanna Huertas #
 # server.R file                            #
 ############################################
-library(shiny)
-library(sortable)
-library(plotly)
-library('plot3D')
-library(ggcorrplot)
-
-jonnyData <- na.omit(read.csv('www/ECWAWaterQuality2021.csv'))
-con <- read.csv('www/ECWAWaterQuality2021Context.csv')
-emptyFig <- plot_ly()
-jonnyData1<-jonnyData[,!(names(jonnyData) %in% c("SubBasin","Type","Longitude","Latitude"))]
-corr <- cor(jonnyData1)
-p.mat <- cor_pmat(jonnyData1)
-options(repr.plot.width = 14, repr.plot.height = 14)
-corr.plot <- ggcorrplot(corr, hc.order = TRUE, type = "upper", outline.col = "white",colors = c("navy", "white", "#08d8b2"), p.mat = p.mat)
-
-
-shinyServer(function(input, output) {
+source("./global.R")
+shinyServer(function(input, output, session) {
   #######################
-  #Explore relations tab#
+  #Explore relations tab########################################################
   #######################
-  fit <- reactive({if(length(input$list_1) + length(input$list_2)  == 2){
-    lm(jonnyData[, input$list_2] ~ jonnyData[, input$list_1])}
+  fit <- reactive({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){
+    lm(jonnyData[, input$list_3] ~ jonnyData[, input$list_2] + jonnyData[, input$list_1])}
     else if((length(input$list_1) + length(input$list_2))  == 2){
-      lm(input$list_3 ~ input$list_2 + input$list_1)
-    }}) 
+      lm(jonnyData[, input$list_2] ~ jonnyData[, input$list_1])}
+    }) 
   
-  output$corTable <- renderPlot(corr.plot, width = 850, height = 850)
+  output$corTable <- renderPlot(corr.plot, width = 850, height = 800)
   
-  output$value2 <- renderPlotly({ if( (length(input$list_3) == 1) & ((length(input$list_1) + length(input$list_2))  == 2)){
-    xVar = jonnyData[, input$list_1] # road
+  output$value2 <- renderPlotly({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){
+    xVar = jonnyData[, input$list_1] #road
     yVar = jonnyData[, input$list_2] #pipe
     zVar = jonnyData[, input$list_3] #Cl
     fig3D <- plot_ly(x = xVar, y = yVar, z = zVar)
@@ -72,21 +57,25 @@ shinyServer(function(input, output) {
       emptyFig
     }})
   
+  observe({
   output$text1 <- renderText({paste("R squared:", signif(summary(fit())$r.squared,2))})
-  output$text2 <- renderText({paste("P value: ", signif(summary(fit())$coefficients[2,4], 2))})
-  output$fitText <- reactive({if( (length(input$list_3) == 1) & ((length(input$list_1) + length(input$list_2))  == 2)){
-    print("Running")
-    paste(input$list_3,"=",fit()[[1]][[3]],'x',input$list_2,'+',fit()[[1]][[2]],'x',input$list_1,"+",fit()[[1]][[1]])
+  output$text2 <- renderText({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){""}
+                              else if((length(input$list_1) + length(input$list_2))  == 2){paste("P value: ", signif(summary(fit())$coefficients[2,4], 2))}
+                              else{""}})
+  
+  fitText <- reactive({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){
+    paste(input$list_3,"=",signif(fit()[[1]][[3]],2),'x',input$list_2,'+',signif(fit()[[1]][[2]],2),'x',input$list_1,"+",signif(fit()[[1]][[1]],2))
   }
-    else if((length(input$list_1) + length(input$list_2))  == 2){paste(input$list_2,"=",fit()[[1]][[2]],'x',input$list_1,"+",fit()[[1]][[1]])}
-    else{"line"}
+    else if((length(input$list_1) + length(input$list_2))  == 2){paste(input$list_2,"=",signif(fit()[[1]][[2]],2),'x',input$list_1,"+",signif(fit()[[1]][[1]],2))}
+    else{""}
     
   })
   output$text3 <- renderText({fitText()})
+  })
 
 
   ############
-  #Downloader#
+  #Downloader###################################################################
   ############
   data <- read.csv(file = 'www/merged_data.csv')
   output$downloadData0 <- downloadHandler(
@@ -108,10 +97,9 @@ shinyServer(function(input, output) {
     }
   )
   ################
-  #Data Over Time#
+  #Data Over Time###############################################################
   ################
   output$Plot <- renderPlotly({
-    
     units_label <- units_set %>% filter(Parameter == input$Param)
     units_label <- units_label$Unit
     
@@ -141,14 +129,40 @@ shinyServer(function(input, output) {
       #   order((Date.Time))
       #filter for station name and then sort by date
       fig3 <- fig3 %>% add_trace(
-        x = (as.Date(active_sites_param$Date.Time)), 
+        x = as.Date(active_sites_param$Date.Time), 
         y = active_sites_param$Value, name = s, type = 'scatter', mode = 'lines + markers')
     }
-    fig3
+    fig3})
+ #######################
+ #WQI leaflet over time#########################################################
+ #######################
+  output$WQImap <- renderLeaflet({
     
-    #end of renderplotly
-  }
-  )
-  #End of Data Over Time
-}
-)
+    leaflet()%>% addTiles()%>%addCircleMarkers(lng= stationData1$Longitude, lat = stationData1$Latitude,layerId = stationData1$Name,color = "black", fillOpacity = 0.9,
+                                               fillColor = beatCol(as.numeric(wqiData1[nrow(wqiData1),])),opacity = 1, radius = 15,
+                                               label = paste("Station name:",stationData1$Name,"\n","Water quality index:",wqiData1[nrow(wqiData1),]))})
+  
+  colors <- c("#184e77", "#1e6091", "#1a759f","#168aad", "#34a0a4", "#52b69a", "#76c893", "#99d98c", "#b5e48c","#d9ed92")
+  output$wqiLinePlot <- renderPlotly({figWQI <- plot_ly()%>%layout(title = 'Water Quality over Time',colorscale="blues2green",shapes = vline(wqiData$Date[nrow(wqiData1)]), plot_bgcolor = "#e5ecf6", 
+                                                                yaxis = list(title = 'Durham City Water Quality Index'),
+                                                                legend = list(orientation = 'h'))
+  i = 1
+  for (site in sites){figWQI <- figWQI %>% add_trace(x = wqiData$Date, y = wqiData[[site]], line = list(color = colors[i]),
+                                               type = 'scatter', mode = 'lines', name = site)
+  i = i + 1}
+  figWQI})
+  
+  #Dynamically update
+  observe({
+    dateRow = which.min(abs(wqiData$Date-input$wqiDate)) #Gets index of date closest to the date shown on the slider
+    rowVals = as.numeric(wqiData1[dateRow,])
+    leafletProxy('WQImap') %>%
+    addCircleMarkers(lng= stationData1$Longitude, lat = stationData1$Latitude, layerId = stationData1$Name,color = "black",fillOpacity = 0.9,
+                       fillColor = ifelse(rowVals > 50 , beatCol(rowVals), "#d73027"),opacity = 1, radius =15,
+                       label = paste("Station name:",stationData1$Name,"\n","Water quality index:",wqiData1[dateRow,]))
+    plotlyProxy("wqiLinePlot", session) %>% plotlyProxyInvoke("relayout",c(shapes = vline(wqiData$Date[dateRow])))
+    })
+  
+}) #End of server
+
+

@@ -1,11 +1,31 @@
 body {
-  font-family: 'Hind', sans-serif;
   background-color: #222d32;
+}
+* {
+ font-family: 'Hind', sans-serif;
+}
+p{
+  font-size: 18px;
+}
+
+hr{
+  border-top: 2px solid;
+  width: 20%;
+  background: #08d8b2;
+}
+
+.tab-panel{
+  background-color: #222d32;
+}
+
+.dropdown-content {
+  color: #202A44;
 }
 
 /*input[type=checkbox]:checked ~ div {
   background-color: #50bcf2;
 }
+; #202A44;
 */
 input[type=checkbox] + label {
   color: #ccc;
