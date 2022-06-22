@@ -25,7 +25,7 @@ shinyUI(fluidPage(
   # load page layout
   dashboardPage(
     
-    skin = "green",
+    skin = "blue",
       
     dashboardHeader(title="Ellerbe Creek Watershed", titleWidth = 300),
     
