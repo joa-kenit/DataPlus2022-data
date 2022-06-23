@@ -45,11 +45,10 @@ shinyUI(fluidPage(
                        menuItem("Home", tabName = "home", icon = icon("home")),
                        menuItem("Background", tabName = "background", icon = icon("leaf")),
                        menuItem("Data", icon = icon("list"),
-                                menuItem("Overview", tabName = "overview", icon = icon("map")),
-                                menuSubItem("Explore Relations", tabName = "relations", icon = icon("chart-bar")),
-                                menuSubItem("Explore Trends", tabName = "trends", icon = icon("chart-line")),
-                                menuSubItem("Download", tabName = "download", icon = icon("download"))
-                       ),
+                                menuSubItem("Data Collection", tabName = "dc", icon = icon("map")),
+                                menuSubItem("Ellerbe Creek Health Status", tabName = "health", icon = icon("chart-bar")),
+                                menuSubItem("Environmental Justice", tabName = "justice", icon = icon("chart-line"))),
+                       menuItem("Download", tabName = "download", icon = icon("download")),
                        menuItem("Team", tabName = "team", icon = icon("users"))
                      )
                      
@@ -82,105 +81,23 @@ shinyUI(fluidPage(
                           column(width = 1))
         ),
         
-        tabItem(tabName = "overview",
-                tags$h1("Overview of Data"),
+        tabItem(tabName = "dc",
+                tags$h1("Data Collection"),
                 tealLine,
                 
-                tags$div(
-                  HTML('<iframe src="https://dukeuniv.maps.arcgis.com/apps/instant/minimalist/index.html?appid=0ccb2a3586e640dbbeabab10fa218c62" width="95%" height="600" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe>')
-                )
+                ),
                 
-        ),
         
-        tabItem(tabName = "relations",
-                tags$h1("Compare Data"),
+        tabItem(tabName = "health",
+                tags$h1("Health Status of Ellrbe Creek"),
                 tealLine,
-                
-                tabBox(id = "tabset1", width="940px", height = "1400px",
-                       tabPanel("Summary of correlations",  
-                                column(12, align="center",plotOutput("corTable"))),
-                       
-                       tabPanel("Explore correlations", 
-                                fluidRow(column(width = 9, plotlyOutput("value2")),column(width=3, 
-                                                                                          box(width = 12, background = 'navy',
-                                                                                              textOutput(outputId="text1"), 
-                                                                                              # dropdownButton("0 indicates no linear correlation. 1 indicates high linear correlation. 0-0.25 is often considered low correlation. 0.5-1 is often considered high correlation.", 
-                                                                                              #                status = 'success', icon = icon('question'),style="color: navy"),
-                                                                                              textOutput(outputId="text2"),
-                                                                                              textOutput(outputId="text3")))),
-                                fluidRow(
-                                  column(width = 3,
-                                         rank_list(
-                                           text = "Contaminants",
-                                           labels = Contaminant,
-                                           input_id = "main_list1",
-                                           options = sortable_options(group = "my_shared_group")
-                                         )),
-                                  column(width = 3,
-                                         rank_list(
-                                           text = "Infrastructure & Environment",
-                                           labels = Infrastructure,
-                                           input_id = "main_list2",
-                                           options = sortable_options(group = "my_shared_group")
-                                         ),
-                                         rank_list(
-                                           text = "Demographics",
-                                           labels = Demographics,
-                                           input_id = "main_list3",
-                                           options = sortable_options(group = "my_shared_group")
-                                         )),
-                                  column(width = 6,
-                                         rank_list(
-                                           text = "X axis",
-                                           labels = c(),
-                                           input_id = "list_1",
-                                           options = max_1_item_opts
-                                         ),
-                                         rank_list(
-                                           text = "Y axis",
-                                           labels = c(),
-                                           input_id = "list_2",
-                                           options = max_1_item_opts
-                                         ),
-                                         rank_list(
-                                           text = "Z axis (optional)",
-                                           labels = c(),
-                                           input_id = "list_3",
-                                           options = max_1_item_opts
-                                           
-                                         )))
-                                #fluidRow(textOutput(outputId="text"))
-                                #,textOutput(outputId="text")))
                                 
-                                
-                       )
-                )
-        ),
-        
-        tabItem(tabName = "trends",
-                tags$h1("Look at Data Over Time"),
-                tealLine,
-                tabBox(id = "tabset1", width="940px", height = "940px",
-                       tabPanel("Trends by parameter",
-                                column(12, align="center",
-                                       #Insert trend tool from Durham city data 
-                                       titlePanel("Time Graphs"),
-                                       selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
-                                       selectInput("Param", "Select Parameter", Parameter),
-                                       #outPut for Plot
-                                       plotlyOutput("Plot"))),
-                       tabPanel("Overall water quality trends",
-                                leafletOutput("WQImap"),
-                                sliderInput("wqiDate", "Magnitudes", min(wqiData$Date), max(wqiData$Date),
-                                            value = max(wqiData$Date),
-                                            step = 30,
-                                            timeFormat = "%b %y",
-                                            width = "100%",
-                                            animate = animationOptions(interval = 100, loop = FALSE)
-                                ),
-                                plotlyOutput("wqiLinePlot")
                        ),
-                )),
+        
+        tabItem(tabName = "justics",
+                tags$h1("Environmental Justice"),
+                tealLine,
+        ),
         
         tabItem(tabName = "download",
                 tags$h1("Download Data"),
