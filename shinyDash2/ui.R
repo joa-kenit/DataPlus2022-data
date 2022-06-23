@@ -85,8 +85,48 @@ shinyUI(fluidPage(
                 tags$h1("Data Collection"),
                 tealLine,
                 
+                #subsection 1
+                #SAMPLE GRAPH, NEEDS ADJUSTING
+                tags$h3("What Data was Collected?"),
+                tags$p("Text for first section"),
+                
+                tabBox(id = "tabset1", width="470px", height = "470px",
+                       tabPanel("Trends by parameter",
+                                column(12, align="center",
+                                       #Insert trend tool from Durham city data 
+                                       titlePanel("Time Graphs"),
+                                       selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
+                                       selectInput("Param", "Select Parameter", Parameter),
+                                       #outPut for Plot
+                                       plotlyOutput("Plot"))),
+                       tabPanel("Overall water quality trends",
+                                leafletOutput("WQImap"),
+                                sliderInput("wqiDate", "Magnitudes", min(wqiData$Date), max(wqiData$Date),
+                                            value = max(wqiData$Date),
+                                            step = 30,
+                                            timeFormat = "%b %y",
+                                            width = "100%",
+                                            animate = animationOptions(interval = 100, loop = FALSE)
+                                ),
+                                plotlyOutput("wqiLinePlot")
+                       ),
                 ),
                 
+                #subsection 2
+                tags$h3("Where was the Data Collected?"),
+                tags$p("Text for second section
+                       
+                       
+                       
+                       "),
+                #subsection 3
+                tags$h3("How do the Data Sets Compare"),
+                tags$p("Text for third section
+                       
+                       
+                       
+                       "),
+        ),#end of dc
         
         tabItem(tabName = "health",
                 tags$h1("Health Status of Ellrbe Creek"),
@@ -144,11 +184,14 @@ shinyUI(fluidPage(
                 
                 
                 #Insert head shots and short bios
-                
-        ))#end of tabs
+              
+             )#end of teams subtab
+        
+        )#end of tabs
       
     ) # end dashboardBody
     
   )# end dashboardPage
   
-))
+)
+)
