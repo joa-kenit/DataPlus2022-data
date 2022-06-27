@@ -109,7 +109,7 @@ ggplot(data = Durham_Data_Modified, mapping = aes(x = Station.Name)) + geom_bar(
 
 
 
-```{r Data/Time Bar}
+```{r}
 Durham_Data_Modified %>% 
 ggplot(Durham_Data_Modified, aes(Date.Time)) + geom_bar()
 ```
