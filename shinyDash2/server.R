@@ -9,8 +9,8 @@ shinyServer(function(input, output, session) {
   #Explore relations tab########################################################
   #######################
   
-    # Compute the linear regression 
-    
+  # Compute the linear regression 
+  
   ############
   #Downloader###################################################################
   ############
@@ -98,6 +98,53 @@ shinyServer(function(input, output, session) {
                        fillColor = ifelse(rowVals > 50 , beatCol(rowVals), "#d73027"),opacity = 1, radius =15,
                        label = paste("Station name:",stationData1$Name,"\n","Water quality index:",wqiData1[dateRow,]))
     plotlyProxy("wqiLinePlot", session) %>% plotlyProxyInvoke("relayout",c(shapes = vline(wqiData$Date[dateRow])))
+  })
+  
+  #######################
+  #leafletminicharts param3map#########################################################
+  #######################
+  # Initialize map #input$prods=choices in ui.R
+  output$param3map <- renderLeaflet({
+    leaflet()%>% addTiles %>% 
+      addPolygons(data = huc14, 
+                  fillColor = ~pal(durham_contaminants$Value),
+                  weight = 1.5,
+                  opacity = 1.5,
+                  color = "black",
+                  dashArray = "3",
+                  fillOpacity = 0.1) %>% 
+      addMinicharts(
+        durham_contaminants$Longitude,durham_contaminants$Latitude,
+        type = input$type, #"polar-area",
+        chartdata = durham_contaminants[, input$prods], 
+        time = durham_contaminants$Date.Time,
+        layerId = durham_contaminants$Station.Name, 
+        showLabels = input$labels,
+        #colorPalette = colors,
+        width = 45#, height = 25
+      )
+  })
+  #Update charts each time input value changes
+  
+  
+  #Change fr test commit
+  observe({
+    if (length(input$prods) == 0) {
+      data <- 1
+    } else {
+      data <- durham_contaminants[ ,input$prods] #durham_contaminants[ durham_contaminants$Parameter == input$prods,]
+    }
+    maxValue <- max(as.matrix(data))
+    
+    leafletProxy("param3map", session) %>%
+      updateMinicharts(
+        durham_contaminants$Longitude,durham_contaminants$Latitude,
+        chartdata = data, #durham_contaminants[, input$prods], #durham_contaminants$Value.n
+        maxValues = maxValue,
+        time = durham_contaminants$Date.Time,
+        type = input$type, #"polar-area",
+        showLabels = input$labels
+      )
   })
   
   

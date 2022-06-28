@@ -12,6 +12,12 @@ library(leaflet)
 library(leaflet.minicharts)
 library(zoo)
 
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(arcpullr)
+library(mapview)
+library(wesanderson)
 
 #Trends graph
 active_sitesReal <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/main/asites.csv")
@@ -60,3 +66,14 @@ vline <- function(x = 0) {
     x1 = x,
     line = list(color = "black", dash="dot")))}
 
+#1. leafletminicharts param3map
+#durham_stations <- read.csv(file= "durham_station_filtered.csv", header = TRUE, sep = ";")
+durham_contaminants <- na.omit(read.csv(file= "www/durham_contaminants.csv", header = TRUE, sep = ";"))
+durham_contaminants$Date.Time = as.Date (durham_contaminants$Date.Time, format = "%d/%m/%Y")
+
+huc14 <- get_spatial_layer(url = "https://services1.arcgis.com/XBhYkoXKJCRHbe7M/arcgis/rest/services/Ellerbe_Creek_CatchmentsWMIP_view/FeatureServer/0") 
+huc15 <- mapview(huc14)
+
+#adding some color
+bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
+pal <- colorBin("YlOrRd", bins = bins) #domain = durham_contaminants$Value, )

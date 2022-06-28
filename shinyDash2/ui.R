@@ -131,10 +131,15 @@ shinyUI(fluidPage(
         tabItem(tabName = "health",
                 tags$h1("Health Status of Ellrbe Creek"),
                 tealLine,
-                                
-                       ),
+                titlePanel("Demo of leaflet.minicharts"),
+                p("This application uses the Durham stations.",
+                  "It contains data from 2016 to 2022."),
+                selectInput("prods", "Select parameter", choices = c("Fecal.Coliform", "Total.Phosphorus", "Zinc"), multiple = TRUE),
+                selectInput("type", "Chart type", choices = c("bar","polar-area")),
+                checkboxInput("labels", "Show values"),
+                leafletOutput("param3map")),
         
-        tabItem(tabName = "justics",
+        tabItem(tabName = "justice",
                 tags$h1("Environmental Justice"),
                 tealLine,
         ),
@@ -184,10 +189,10 @@ shinyUI(fluidPage(
                 
                 
                 #Insert head shots and short bios
-              
-             )#end of teams subtab
+                
+        )#end of teams subtab
         
-        )#end of tabs
+      )#end of tabs
       
     ) # end dashboardBody
     
