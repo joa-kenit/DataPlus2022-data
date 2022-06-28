@@ -90,7 +90,7 @@ shinyUI(fluidPage(
                 tags$h3("What Data was Collected?"),
                 tags$p("Text for first section"),
                 
-                tabBox(id = "tabset1", width="470px", height = "470px",
+                        tabBox(id = "tabset1", width="470px", height = "470px",
                        tabPanel("Trends by parameter",
                                 column(12, align="center",
                                        #Insert trend tool from Durham city data 
@@ -114,11 +114,17 @@ shinyUI(fluidPage(
                 
                 #subsection 2
                 tags$h3("Where was the Data Collected?"),
-                tags$p("Text for second section
+                
+                tags$p("Water quality data is collected accross the whole Ellerbe Creek Watershed to study the changes in water quality and find possible patterns. The data stations are divided in two type of sites: Durham Sites and Survey Sites (Synoptic data). 
+                Both of which share certain parameters and have different sampling frequency.
                        
                        
                        
                        "),
+                #Insert text and simplified arcGIS embedding
+                tags$div(
+                  HTML('<iframe src="https://dukeuniv.maps.arcgis.com/apps/instant/minimalist/index.html?appid=0ccb2a3586e640dbbeabab10fa218c62" width="95%" height="600" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe>')
+                ),
                 #subsection 3
                 tags$h3("How do the Data Sets Compare"),
                 tags$p("Text for third section
