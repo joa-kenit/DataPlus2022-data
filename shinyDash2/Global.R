@@ -19,11 +19,17 @@ library(arcpullr)
 library(mapview)
 library(wesanderson)
 
+tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
 #Trends graph
 active_sitesReal <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/main/asites.csv")
 active_sites_param <- active_sitesReal  
 sites <- unique(active_sitesReal$Station.Name)
 Parameter <- unique(active_sitesReal$Parameter)
+Parameter1 <- as.data.frame(Parameter)
+shortlist <- active_sites_param[, c("Parameter", "Unit")] 
+units_set <- left_join(Parameter1, shortlist)
+#list of 38 params with corresponding unit
+units_set <- units_set[!duplicated(units_set$Parameter), ]
 
 #Compare vars graph
 #S+U

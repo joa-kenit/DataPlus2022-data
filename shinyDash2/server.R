@@ -8,8 +8,72 @@ shinyServer(function(input, output, session) {
   #######################
   #Explore relations tab########################################################
   #######################
+  fit <- reactive({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){
+    lm(jonnyData[, input$list_3] ~ jonnyData[, input$list_2] + jonnyData[, input$list_1])}
+    else if((length(input$list_1) + length(input$list_2))  == 2){
+      lm(jonnyData[, input$list_2] ~ jonnyData[, input$list_1])}}) 
   
-  # Compute the linear regression 
+  output$value2 <- renderPlotly({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){
+    xVar = jonnyData[, input$list_1] #road
+    yVar = jonnyData[, input$list_2] #pipe
+    zVar = jonnyData[, input$list_3] #Cl
+    fig3D <- plot_ly(x = xVar, y = yVar, z = zVar)
+    fig3D <- fig3D %>% add_markers(x = xVar, y = yVar, marker = list(size = 10,color = '#08d8b2',line = list(color = '#004058', width = 2)))
+    
+    fig3D <- fig3D %>% layout(scene = list(xaxis = list(title = paste(input$list_1,con$Unit[con$Feature == input$list_1])),
+                                           yaxis = list(title = paste(input$list_2,con$Unit[con$Feature == input$list_2])),
+                                           zaxis = list(title = paste(input$list_3,con$Unit[con$Feature == input$list_3])),
+                                           #aspectmode='cube',
+                                           showlegend = F))
+    
+    # Compute the linear regression 
+    if(input$bestFitSwitch){
+      M <- (mesh(yVar, xVar))
+      fit3D <- fit()
+      zNew <- with (M, fit3D[[1]][[1]] + fit3D[[1]][[2]]*x+fit3D[[1]][[3]]*y)
+      fig3D <- fig3D %>%  add_surface(type = 'surface', x = xVar, y = yVar, z = zNew,opacity = .15, colorscale = list(c(0,1),c("#08d8b2",'#004058')))
+    }
+    
+    fig3D <- fig3D %>% hide_colorbar()
+    
+    fig3D}
+    else if((length(input$list_1) + length(input$list_2))  == 2){
+      fig <- plot_ly(type = "scatter",mode = "markers")
+      xVar = jonnyData[, input$list_1]
+      yVar = jonnyData[, input$list_2]
+      
+      fig <- fig %>% layout(title = 'Variable Comparison',
+                            xaxis = list(title = paste(input$list_1,con$Unit[con$Feature == input$list_1])),
+                            yaxis = list(title = paste(input$list_2,con$Unit[con$Feature == input$list_2])),
+                            showlegend = F)
+      
+      fig <- fig %>% add_markers(x = xVar, y = yVar,marker = list(size = 10, color = '08d8b2', line = list(color = '004058', width = 2))) 
+      
+      if(input$bestFitSwitch){
+        fig <- fig%>%add_trace(x = xVar, y = fitted(fit()),mode = "lines",line=list(color='004058'))
+      }
+      fig}
+    else{
+      emptyFig
+    }})
+  
+  observe({
+    if(input$bestFitSwitch){
+      output$text1 <- renderText({paste("R squared:", signif(summary(fit())[r.squared],2))})
+      output$text2 <- renderText({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){""}
+        else if((length(input$list_1) + length(input$list_2))  == 2){paste("P value: ", signif(summary(fit())$coefficients[2,4], 2))}
+        else{""}})
+      
+      fitText <- reactive({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){paste(input$list_3,"=",signif(fit()[[1]][[3]],2),'x',input$list_2,'+',signif(fit()[[1]][[2]],2),'x',input$list_1,"+",signif(fit()[[1]][[1]],2))}
+        else if((length(input$list_1) + length(input$list_2))  == 2){paste(input$list_2,"=",signif(fit()[[1]][[2]],2),'x',input$list_1,"+",signif(fit()[[1]][[1]],2))}
+        else{""}})
+      output$text3 <- renderText({fitText()})}
+    else{
+      output$text1 <- renderText("")
+      output$text2 <- renderText("")
+      output$text3 <- renderText("")
+    }
+  })
   
   ############
   #Downloader###################################################################
@@ -54,7 +118,7 @@ shinyServer(function(input, output, session) {
                zerolinecolor = '#ffff',  
                zerolinewidth = 2,  
                gridcolor = 'ffff'),
-             showlegend = TRUE, width = 1100)
+             showlegend = TRUE)
     
     for(s in input$Site) {
       #reset asz to original just zinc a.s (a.s is the constant)
@@ -146,6 +210,52 @@ shinyServer(function(input, output, session) {
         showLabels = input$labels
       )
   })
+  #######################
+  # Read tables         #########################################################
+  #######################
+  output$tableSources <- renderTable({read.csv('www/tableOfCollectionSources.csv',check.names = TRUE)},width = "50%")
+  
+  #######################
+  #Generate Choropleth #########################################################
+  #######################
+  
+  output$synced_maps <- renderUI({
+    
+    if(length(input$list_1)==1){
+      x = choroData[, input$list_1]
+      choroXColor <- colorNumeric(palette = 'Blues',  domain=c(0,max(x)))
+      Xtitle <- tags$div(HTML(paste(input$list_1," (",con$Unit[con$Feature == input$list_1],")",sep="")))  
+      m1 <- leaflet()%>% addTiles()%>%
+        addPolygons(data = huc14, fillColor = choroXColor(x), weight = 1, opacity = 1, color = "black", fillOpacity = 0.3,
+                    label = paste("Subbasin:",huc14$SUBBA,input$list_1,":",signif(x,3),con$Unit[con$Feature == input$list_1]))%>%
+        addControl(Xtitle, position = "bottomleft")
+    }else{
+      m1 = emptyMap
+    }
+    if(length(input$list_2)==1){
+      y = choroData[, input$list_2]
+      choroYColor <- colorNumeric(palette = 'Blues',  domain=c(0,max(y)))
+      Ytitle <- tags$div(HTML(paste(input$list_2," (",con$Unit[con$Feature == input$list_2],")",sep=""))) 
+      m2 <- leaflet()%>% addTiles()%>%addPolygons(data = huc14, fillColor = choroYColor(y), weight = 1, opacity = 1, color = "black", fillOpacity = 0.3,
+                                                  label = paste("Subbasin:",huc14$SUBBA,input$list_2,":",signif(y,3),con$Unit[con$Feature == input$list_2]))%>%
+        addControl(Ytitle, position = "bottomleft")
+    }else{
+      m2 = emptyMap
+    }
+    
+    if(length(input$list_1) + length(input$list_2) + length(input$list_3)==3){
+      z = choroData[, input$list_3]
+      choroZColor <- colorNumeric(palette = 'Blues',  domain=c(0,max(z)))
+      Ztitle <- tags$div(HTML(paste(input$list_3," (",con$Unit[con$Feature == input$list_3],")",sep=""))) 
+      m3 <- leaflet()%>% addTiles()%>%addPolygons(data = huc14, fillColor = choroZColor(z), weight = 1, opacity = 1, color = "black", fillOpacity = 0.3,
+                                                  label = paste("Subbasin:",huc14$SUBBA,input$list_3,":",signif(z,3),con$Unit[con$Feature == input$list_3]))%>%
+        addControl(Ztitle, position = "bottomleft")
+      sync(m1, m2, m3, ncol = 3)}
+    else{sync(m1,m2)}})
+  ###########
+  #Cor table#########
+  ###########
+  output$corTable <- renderPlot({corr.plot})
   
   
 }) #End of server
