@@ -1,0 +1,5 @@
+Station Name;Fecal Coliform;Total Phosphorus;Zinc;Date/Time;Value;Value.n;Standard;Unit;Standard;Latitude;Longitude;Description;Creek Type
+EL1.9EC;210;40;20;10/05/2016;4200;210;2000;cfu/100mL;200;36.0597;-78.83;Ellerbe Crk at Glenn Rd.;Ellerbe Creek
+EL1.9EC;40;0;0;19/01/2017;84;4.2;2000;cfu/100mL;200;36.0597;-78.83;Ellerbe Crk at Glenn Rd.;Ellerbe Creek
+EL5.5GC;9.4;0;0;19/01/2017;188;9.4;2000;cfu/100mL;200;36.0247;-78.86;Goose Crk at Camden Ave;Goose Creek
+EL5.5GC;2.75;0;0;10/05/2016;55;2.75;2000;cfu/100mL;200;36.0247;-78.86;Goose Crk at Camden Ave;Goose Creek

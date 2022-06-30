@@ -1,11 +1,15 @@
 body {
-  background-color: #222d32;
+  background-color: #222d32;/*#004058;*/
 }
 * {
  font-family: 'Hind', sans-serif;
 }
 p{
-  font-size: 18px;
+    font-family: 'Hind', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.75;
+    margin: 0 auto 30px;
 }
 
 hr{
@@ -14,12 +18,26 @@ hr{
   background: #08d8b2;
 }
 
-.tab-panel{
-  background-color: #222d32;
+table {
+  width: 50%
+  margin-left:25%; 
+  margin-right:25%;
+  background-color: white;
+  color: black;
 }
 
+.tab-panel{
+  background-color: #004058;
+}
+.skin-blue .sidebar-menu > li.active > a {
+  border-left-color: #08d8b2;
+}
 .dropdown-content {
   color: #202A44;
+}
+
+.well{
+  background-color: red;
 }
 
 /*input[type=checkbox]:checked ~ div {
@@ -44,5 +62,9 @@ font-size: 20px;
 }
 #text3{color: white;
 font-size: 20px;
+}
+
+.pure-material-switch {
+background-color: #c110a0;
 }
 

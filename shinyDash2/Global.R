@@ -12,12 +12,24 @@ library(leaflet)
 library(leaflet.minicharts)
 library(zoo)
 
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(arcpullr)
+library(mapview)
+library(wesanderson)
 
+tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
 #Trends graph
 active_sitesReal <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/main/asites.csv")
 active_sites_param <- active_sitesReal  
 sites <- unique(active_sitesReal$Station.Name)
 Parameter <- unique(active_sitesReal$Parameter)
+Parameter1 <- as.data.frame(Parameter)
+shortlist <- active_sites_param[, c("Parameter", "Unit")] 
+units_set <- left_join(Parameter1, shortlist)
+#list of 38 params with corresponding unit
+units_set <- units_set[!duplicated(units_set$Parameter), ]
 
 #Compare vars graph
 #S+U
@@ -60,3 +72,14 @@ vline <- function(x = 0) {
     x1 = x,
     line = list(color = "black", dash="dot")))}
 
+#1. leafletminicharts param3map
+#durham_stations <- read.csv(file= "durham_station_filtered.csv", header = TRUE, sep = ";")
+durham_contaminants <- na.omit(read.csv(file= "www/durham_contaminants.csv", header = TRUE, sep = ";"))
+durham_contaminants$Date.Time = as.Date (durham_contaminants$Date.Time, format = "%d/%m/%Y")
+
+huc14 <- get_spatial_layer(url = "https://services1.arcgis.com/XBhYkoXKJCRHbe7M/arcgis/rest/services/Ellerbe_Creek_CatchmentsWMIP_view/FeatureServer/0") 
+huc15 <- mapview(huc14)
+
+#adding some color
+bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
+pal <- colorBin("YlOrRd", bins = bins) #domain = durham_contaminants$Value, )
