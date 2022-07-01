@@ -1,0 +1,84 @@
+---
+title: "Varitaion_Graphs"
+output: pdf_document
+date: '2022-06-21'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Loading Packages
+```{r}
+library(ggplot2)
+library(plotly)
+```
+
+Graph Part 1:
+For First Stage:
+- filter by each site, then choose one specific param to filter for.
+- For each Site, create box and whisker plot (Necessary to get summary stats?)
+
+```{r plot pt. 1}
+var1 <- plot_ly()
+as_holder <- active_sites_param
+for(s in sites){
+  active_sites_param <- as_holder
+  #Double filter for Site and Parameter (Pick DO as example)
+  active_sites_param <- active_sites_param %>% filter(Station.Name == s) %>% 
+    filter(Parameter == "Dissolved Oxygen")
+  var1 <- var1 %>% add_trace(y = active_sites_param$Value, type = "box")
+}
+var1
+```
+
+
+Plot with Bass Connections Data, plot different instances of sampling as traces,
+y value still value of singular parameter.
+
+```{r File in Data and Clean it}
+bc_data <- read.csv(file = "SS1-SS2_Merged.csv")
+dates <- c("9/25/21", "2/26/22")
+```
+
+
+```{r Plotly Plot 2}
+var2 <- plot_ly()
+as_holder2 <- bc_data
+
+for(d in dates){
+  bc_data <- as_holder2
+  bc_data <- bc_data %>% filter(DATE == d)
+  var2 <- var2 %>% add_trace(y = bc_data$DO.mg.L, type = "box")
+}
+var2
+```
+
+Box Plots for Durham Data Over Time
+
+Get just month and year out of the dates:
+```{r}
+#for(date in active_sitesReal$Date.Time){
+  split_yr <- active_sitesReal
+  split_yr$Date.Time <- substr(split_yr$Date.Time, 0, 4)
+years <- c("2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011",
+           "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", 
+           "2020", "2021", "2022")
+```
+
+```{r plot}
+var3 <- plot_ly()
+as_holder3 <- split_yr
+
+for(y in years){
+  split_yr <- as_holder3
+  split_yr <- split_yr %>% filter(Date.Time == y) %>% 
+    filter(Parameter == "Dissolved Oxygen")
+  
+  var3 <- var3 %>% add_trace(y = split_yr$Value, type = 'box')
+  print("ran")
+}
+split_yr <- as_holder3
+var3
+```
+
