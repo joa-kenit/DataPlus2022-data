@@ -88,7 +88,20 @@ shinyUI(fluidPage(
                 tags$h3("What Data was Collected?"),
                 tags$p("Text for first section"),
                 fluidRow(column(12, align="center", tableOutput('tableSources'))),
-                
+                #subtext
+                tags$h4("City of Durham - Sites"),
+                tags$h5("EL1.9EC – Glen Road"), 
+                tags$h5("EL5.0EC– Club Boulevard"), 
+                tags$h5("EL5.5GC – Camden Avenue "),
+                tags$h5("EL5.6EC – Midland Terrace "),
+                tags$h5("EL7.1EC – Club Boulevard and Acadia Street"),
+                tags$h5("EL7.1SEC – Glendale Avenue"),
+                tags$h5("EL7.9EC – Murray Avenue"),
+                tags$h5("EL8.1GC – Holloway Street"),
+                tags$h5("EL8.5SEC – Onslow Street and Club Boulevard"),
+                tags$h5("EL8.6SECUT – Foster Street and Hunt Street"),
+                tags$h5("EL10.7EC – Bellevue Avenue"),
+                 
                 #Subsection 2
                 tags$h3("Where was the Data Collected?"),
                 tags$p("Water quality data is collected accross the whole Ellerbe Creek Watershed to study the changes in water quality and find possible patterns. The data stations are divided in two type of sites: Durham Sites and Survey Sites (Synoptic data). 
@@ -103,7 +116,7 @@ shinyUI(fluidPage(
         
         tabItem(tabName = "health",
                 #Header
-                tags$h1("Health Status of Ellrbe Creek"),
+                tags$h1("Health Status of Ellerbe Creek"),
                 tealLine,
                 
                 #Subsection 1
@@ -132,7 +145,7 @@ shinyUI(fluidPage(
                 #Subsection 5
                 tags$h3("How has the Ellerbe Creek Watershed changed over time??"),
                 tags$p("[Insert text here]"),
-                tags$h3("Water Quality Measruments Over Time",style="text-align: center"),
+                tags$h3("Water Quality Measurements Over Time",style="text-align: center"),
                 #Insert trend tool from Durham city data 
                 fluidRow(column(3,box(width = "100%", background = "navy",
                                       selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
@@ -161,9 +174,35 @@ shinyUI(fluidPage(
                                     animate = animationOptions(interval = 100, loop = FALSE))))
                        #plotlyOutput("wqiLinePlot")
                        ),
-                tags$p("[Insert more text here]")
-                ),
+                tags$p("[Insert more text here]"),
+          
+                
+                #bargraph     
+                br(),
+                tags$p("In the following graph we show the number of water quality samples (n) that comply or not with the National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
+                        # U.S. Environmental Protection Agency | US EPA, 2022."),
+                br(),
+                
+                column(12, align="center",
+                       titlePanel("Regulation compliance by Parameter - Aquatic Life Criteria")),
+                
+                fluidRow(column(3,box(width = "100%", background = "navy",
+
+                        selectInput("Parameter", "Select Water Contaminant: ", parameters),
+                        # hr(),
+                        # helpText("Regulation: National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
+                        # U.S. Environmental Protection Agency | US EPA, 2022.")
+                        #         )
+                        
+                      )),
+                      column(9, align="center",
+                             #outPut for Plot
+                             box(width = "100%", background = "navy",
+                        plotlyOutput("barPlot"))))
+   
+        ),
         
+        ###########
         tabItem(tabName = "justice",
                 tags$h1("Environmental Justice"),
                 tealLine,

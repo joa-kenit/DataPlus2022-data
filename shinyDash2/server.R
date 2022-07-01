@@ -258,6 +258,21 @@ shinyServer(function(input, output, session) {
   output$corTable <- renderPlot({corr.plot})
   
   
+  #######################
+  #Generate barchart #########################################################
+  #######################
+  # Fill in the spot we created for a plot
+  output$barPlot <- renderPlotly({
+    # Render a barplotly
+    #barchart
+    
+    barploty <- plotly()
+    barploty <- bardata %>% filter(vars == input$Parameter) %>% 
+      plot_ly(x = ~Year, y = ~n, color = ~Regulation.compliance) %>% 
+      layout(showlegend=T)
+    
+  })
+  
 }) #End of server
 
 
