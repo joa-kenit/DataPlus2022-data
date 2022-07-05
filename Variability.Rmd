@@ -20,13 +20,21 @@ For First Stage:
 - For each Site, create box and whisker plot (Necessary to get summary stats?)
 
 ```{r plot pt. 1}
-var1 <- plot_ly()
-as_holder <- active_sites_param
+sites <- unique(active_sitesReal$Station.Name)
+var1 <- plot_ly() %>% 
+  layout(title = paste("Box Plots of Ellerbe Creek Sample Sites"),
+                    xaxis = list(  
+                        title = 'Site Label'),
+                    yaxis = list(  
+                        title = 'Param Value'))
+
+as_holder <- active_sitesReal
 for(s in sites){
   active_sites_param <- as_holder
   #Double filter for Site and Parameter (Pick DO as example)
   active_sites_param <- active_sites_param %>% filter(Station.Name == s) %>% 
     filter(Parameter == "Dissolved Oxygen")
+  #use parameter reactivity above
   var1 <- var1 %>% add_trace(y = active_sites_param$Value, type = "box")
 }
 var1
@@ -38,19 +46,30 @@ y value still value of singular parameter.
 
 ```{r File in Data and Clean it}
 bc_data <- read.csv(file = "SS1-SS2_Merged.csv")
-dates <- c("9/25/21", "2/26/22")
+bc_data3 <- read.csv(file = "SS1-SS2-SS3_MERGED_DATA.csv")
+#operation for this specific dataset
+bc_data3[40, "SITE"] <- 6.1
+dates <- c("2021-09-25","2022-02-26", "2022-06-16") 
 ```
 
 
 ```{r Plotly Plot 2}
-var2 <- plot_ly()
-as_holder2 <- bc_data
+var2 <- plot_ly() %>% layout(title = paste("Box Plots of Ellerbe Creek Samplings"),
+                    xaxis = list(  
+                        title = 'Site Label'),
+                    yaxis = list(  
+                        title = 'Param Value')) 
+
+
+
+as_holder2 <- bc_data3
 
 for(d in dates){
-  bc_data <- as_holder2
-  bc_data <- bc_data %>% filter(DATE == d)
-  var2 <- var2 %>% add_trace(y = bc_data$DO.mg.L, type = "box")
+  bc_data3 <- as_holder2
+  bc_data3 <- bc_data3 %>% filter(DATE == d)
+  var2 <- var2 %>% add_trace(y = bc_data3$DOC..mg.L., type = "box")
 }
+bc_data3 <- as_holder2
 var2
 ```
 

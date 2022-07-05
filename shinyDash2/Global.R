@@ -86,6 +86,7 @@ pal <- colorBin("YlOrRd", bins = bins) #domain = durham_contaminants$Value, )
 
 ##############BARDATATABLE######
 bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE, sep= ";"))
+
 bardatatable$Regulation.compliance <- as.factor(bardatatable$Regulation.compliance)
 
 # CONVERT Character to a factor with ordered level

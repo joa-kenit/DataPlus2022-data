@@ -8,22 +8,105 @@ date: '2022-06-27'
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r Detection Limit Data}
+#Contams with 0.01 dection limit
+contams1 <- c("Cl", "SO4", "Br", "NO3.N", "Phosphate", "DOC..mg.L.", 
+              "TDN..mg.L.", "TDN..mg.L.")
+#replace all E. Coli with half of 10 detection limit.
+#List with contams only measured in one or part of samplings, also .01 limit
+contams2 <- c("Na", "K", "Mg", "Ca")
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+```{r Set up and Clean Data}
+#Clear the environment
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+#Load all libraries
+library(devtools)
+library(ggfortify) #package that has the functions for PCA
+library(tidyverse)
+library(knitr)
+library(openxlsx)
+library(reshape2)
+
+#Load Data
+bc_data <- read.csv("SS1-SS2_Merged.csv")
+#Remove Duplicate from Data Set
+bc_data <- bc_data[!duplicated(bc_data$DOC..mg.L.), ]
+
+#filter for two sampling dates
+
+bc_data <- bc_data %>% 
+  filter(DATE == "09/25/2021" | DATE == "02/26/2022"| DATE == "06/16/2003")
+
+#Fill in NA values with half of the detection limit
+#df %>% mutate_at(vars(c("AAA", "BAA":"BBA", "BBB")), ~replace_na(.,0))
+bc_data <- bc_data %>% mutate_at(vars(contams1), ~replace_na(., .005))
+#bc_data <- bc_data %>% mutate_at(vars("E.Coli..CFU.per.100mL."), ~replace_na(5))
+
+#filter to only columns with non-NA values and relevant params
+  #check which columns have NA
+bc_data <- bc_data %>%
+    select_if(~ !any(is.na(.)))
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+```{r Conduct PCA}
+#subset of just September and Feb. samples
+pca1 <- prcomp(bc_data[, c(3:9)], center = TRUE, scale=TRUE)
+
+summary(pca1)
+```
+
+```{r PCA plots}
+plota <-autoplot(pca1, x=1, y=2, data=bc_data, colour = 'Type', main = "PCA of Ellerbe Creek September and February Surveys",
+         alpha=0.7, loadings.colour='black', loadings.label.colour='black',
+         loadings=TRUE, loadings.label=TRUE, size=3) + theme_classic()
+plotb <- autoplot(pca1, x=1, y=2, data=bc_data, colour = 'DATE', main = "PCA of Ellerbe Creek September and February Surveys",
+         alpha=0.7, loadings.colour='black', loadings.label.colour='black',
+         loadings=TRUE, loadings.label=TRUE, size=3) + theme_classic()
+plota
+plotb
+```
+
+PCA with Durham Data and eight sites in Ellebe Creek
+
+```{r fix Durham Data}
+#shrink data set to contain only Station name, date, Param, Value
+wider_durham <- active_sitesReal[, c(1, 3:5)]
+
+#removed duplicates by taking avg of lists(lists contain uniform values)
+wider_durham <- wider_durham %>% pivot_wider(id_cols = c("Date.Time", "Station.Name"), names_from = "Parameter", values_from = "Value", values_fn = list("Value" = mean))
+
+
+#remove copper col
+wider_select <- wider_durham
+
+#count # of NAs per col
+colSums(is.na(wider_select))
+
+#select params wanting to use for PCA
+wider_select <- wider_select[, c(1:2, 6, 10, 12, 14:16, 18, 20, 21, 23)]
+
+#eliminate all null values
+wider_select <- na.omit(wider_select)
+
+#write for loop to do elim all null values for each param.
+#wider_select <- wider_select[ !grepl("NULL", wider_select$), ] 
+```
+
+```{r PCA analysis Durham Data}
+pca2 <- prcomp(wider_select[, c(3:12)], center = TRUE, scale=TRUE)
+summary(pca2)
+```
+
+```{r PCA Plot Durham Data}
+plotc <-autoplot(pca2, x=1, y=2, data= wider_select, colour = 'Station.Name', main = "PCA of Ellerbe Creek Sampling Sites Durham Data",
+         alpha=0.7, loadings.colour='black', loadings.label.colour='black',
+         loadings=TRUE, loadings.label=TRUE, size=3) + theme_classic()
+plotc
+```
+
+
