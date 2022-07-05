@@ -1,5 +1,17 @@
 Station Name;Fecal Coliform;Total Phosphorus;Zinc;Date/Time;Value;Value.n;Standard;Unit;Standard;Latitude;Longitude;Description;Creek Type
 EL1.9EC;210;40;20;10/05/2016;4200;210;2000;cfu/100mL;200;36.0597;-78.83;Ellerbe Crk at Glenn Rd.;Ellerbe Creek
 EL1.9EC;40;0;0;19/01/2017;84;4.2;2000;cfu/100mL;200;36.0597;-78.83;Ellerbe Crk at Glenn Rd.;Ellerbe Creek
-EL5.5GC;9.4;0;0;19/01/2017;188;9.4;2000;cfu/100mL;200;36.0247;-78.86;Goose Crk at Camden Ave;Goose Creek
-EL5.5GC;2.75;0;0;10/05/2016;55;2.75;2000;cfu/100mL;200;36.0247;-78.86;Goose Crk at Camden Ave;Goose Creek
+EL5.5GC;20;0;0;19/01/2017;188;9.4;2000;cfu/100mL;200;36.0247;-78.86;Goose Crk at Camden Ave;Goose Creek
+EL5.5GC;35;0;0;10/05/2016;55;2.75;2000;cfu/100mL;200;36.0247;-78.86;Goose Crk at Camden Ave;Goose Creek
+EL5.6EC;210;40;20;10/05/2016;55;2.75;2001;cfu/100mL;200;36.02212;-78.87;Goose Crk at Camden Ave;Goose Creek
+EL5.6EC;160;20;10;19/01/2017;55;2.75;2002;cfu/100mL;200;36.02212;-78.87;Goose Crk at Camden Ave;Goose Creek
+EL7.1EC;210;40;30;19/01/2017;55;2.75;2003;cfu/100mL;200;36.02;-78.9;Goose Crk at Camden Ave;Goose Creek
+EL7.1EC;400;50;40;10/05/2016;55;2.75;2004;cfu/100mL;200;36.02;-78.9;Goose Crk at Camden Ave;Goose Creek
+EL7.1SEC;50;60;50;10/05/2016;55;2.75;2005;cfu/100mL;200;36.01806;-78.9;Goose Crk at Camden Ave;Goose Creek
+EL7.1SEC;50;70;60;19/01/2017;55;2.75;2006;cfu/100mL;200;36.01806;-78.9;Goose Crk at Camden Ave;Goose Creek
+EL8.1GC;80;80;61;19/01/2017;55;2.75;2007;cfu/100mL;200;35.99464;-78.88;Goose Crk at Camden Ave;Goose Creek
+EL8.1GC;40;90;62;10/05/2016;55;2.75;2008;cfu/100mL;200;35.99464;-78.88;Goose Crk at Camden Ave;Goose Creek
+EL8.5SEC;49;100;63;10/05/2016;55;2.75;2009;cfu/100mL;200;36.01678;-78.91;Goose Crk at Camden Ave;Goose Creek
+EL8.5SEC;93;60;64;19/01/2017;55;2.75;2010;cfu/100mL;200;36.01678;-78.91;Goose Crk at Camden Ave;Goose Creek
+EL8.6SECUT;39;40;65;19/01/2017;55;2.75;2011;cfu/100mL;200;36.000188;-78.9;Goose Crk at Camden Ave;Goose Creek
+EL8.6SECUT;30;40;66;10/05/2016;55;2.75;2012;cfu/100mL;200;36.000188;-78.9;Goose Crk at Camden Ave;Goose Creek
