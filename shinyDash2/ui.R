@@ -20,10 +20,10 @@ shinyUI(fluidPage(
   
   # remove shiny "red" warning messages on GUI
   tags$style(type="text/css",".shiny-output-error { visibility: hidden; }",".shiny-output-error:before { visibility: hidden; }"),
-
+  
   # load page layout
   dashboardPage(
-
+    
     #skin = "green",
     
     dashboardHeader(title="Ellerbe Creek Watershed", titleWidth = 300),
@@ -38,25 +38,25 @@ shinyUI(fluidPage(
                               }
                               '))),
       width = 342,
-                     #Change background color #004058
-                     tags$head(tags$style(HTML('/* body */
+      #Change background color #004058
+      tags$head(tags$style(HTML('/* body */
                                  .content-wrapper, .right-side {
                                  background-color: #08d8b2;
                                  }'))),
-                     sidebarMenu(
-                       #ECWA Logo
-                       HTML(paste0("<br>","<a href='https://www.ellerbecreek.org/' target='_blank'><img style = 'display: block; margin-left: auto; margin-right: auto;' src='logoECWA.png' width = '186'></a>","<br>")),
-                       menuItem("Home", tabName = "home", icon = icon("home")),
-                       menuItem("Background", tabName = "background", icon = icon("leaf")),
-                       menuItem("Data", icon = icon("list"),
-                                menuSubItem("Data Collection", tabName = "dc", icon = icon("map")),
-                                menuSubItem("Ellerbe Creek Health Status", tabName = "health", icon = icon("chart-bar")),
-                                menuSubItem("Environmental Justice", tabName = "justice", icon = icon("chart-line"))),
-                       menuItem("Download", tabName = "download", icon = icon("download")),
-                       menuItem("Team", tabName = "team", icon = icon("users")))), # end dashboardSidebar
+      sidebarMenu(
+        #ECWA Logo
+        HTML(paste0("<br>","<a href='https://www.ellerbecreek.org/' target='_blank'><img style = 'display: block; margin-left: auto; margin-right: auto;' src='logoECWA.png' width = '186'></a>","<br>")),
+        menuItem("Home", tabName = "home", icon = icon("home")),
+        menuItem("Background", tabName = "background", icon = icon("leaf")),
+        menuItem("Data", icon = icon("list"),
+                 menuSubItem("Data Collection", tabName = "dc", icon = icon("map")),
+                 menuSubItem("Ellerbe Creek Health Status", tabName = "health", icon = icon("chart-bar")),
+                 menuSubItem("Environmental Justice", tabName = "justice", icon = icon("chart-line"))),
+        menuItem("Download", tabName = "download", icon = icon("download")),
+        menuItem("Team", tabName = "team", icon = icon("users")))), # end dashboardSidebar
     
     dashboardBody(
-    
+      
       #Change background color
       tags$head(tags$style(HTML('/* body */.content-wrapper, .right-side {background-color: #f0fefb;}'))), 
       
@@ -68,7 +68,7 @@ shinyUI(fluidPage(
                 
                 #Read in home page content
                 includeMarkdown("www/home.md")
-                ),
+        ),
         
         tabItem(tabName = "background",
                 #Header
@@ -77,7 +77,7 @@ shinyUI(fluidPage(
                 
                 #Read in pollutant page content
                 fluidRow(column(width=1),column(width = 10,includeMarkdown("www/probando.md")),column(width = 1))
-                ),
+        ),
         
         tabItem(tabName = "dc",
                 #Header
@@ -88,6 +88,19 @@ shinyUI(fluidPage(
                 tags$h3("What Data was Collected?"),
                 tags$p("Text for first section"),
                 fluidRow(column(12, align="center", tableOutput('tableSources'))),
+                #subtext
+                tags$h4("City of Durham - Sites"),
+                tags$h5("EL1.9EC – Glen Road"), 
+                tags$h5("EL5.0EC– Club Boulevard"), 
+                tags$h5("EL5.5GC – Camden Avenue "),
+                tags$h5("EL5.6EC – Midland Terrace "),
+                tags$h5("EL7.1EC – Club Boulevard and Acadia Street"),
+                tags$h5("EL7.1SEC – Glendale Avenue"),
+                tags$h5("EL7.9EC – Murray Avenue"),
+                tags$h5("EL8.1GC – Holloway Street"),
+                tags$h5("EL8.5SEC – Onslow Street and Club Boulevard"),
+                tags$h5("EL8.6SECUT – Foster Street and Hunt Street"),
+                tags$h5("EL10.7EC – Bellevue Avenue"),
                 
                 #Subsection 2
                 tags$h3("Where was the Data Collected?"),
@@ -98,22 +111,12 @@ shinyUI(fluidPage(
                 #subsection 3
                 tags$h3("How do the Data Sets Compare?"),
                 tags$p("Text for third section"),
-                fluidRow(
-                    column(3, align="left",
-                                #Insert trend tool from Durham city data 
-                                titlePanel("Variability of Sampling Sites"),
-                                selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
-                                selectInput("Param", "Select Parameter", Parameter),
-                                #outPut for Plot
-                                ),
-                #ploty graph
-                    column(9, align = "center", plotlyOutput("Boxplots"))),
-                tags$p("End of Section")
-                ),
+                tags$p("[Insert boxplot here]")
+        ),
         
         tabItem(tabName = "health",
                 #Header
-                tags$h1("Health Status of Ellrbe Creek"),
+                tags$h1("Health Status of Ellerbe Creek"),
                 tealLine,
                 
                 #Subsection 1
@@ -134,7 +137,7 @@ shinyUI(fluidPage(
                 #Subsection 3
                 tags$h3("How does the Ellerbe Creek Watershed compare to local water?"),
                 tags$p("[Insert text here]"),
-            
+                
                 #Subsection 4
                 tags$h3("How does the Ellerbe Creek Watershed compare to local water?"),
                 tags$p("[Insert text here]"),
@@ -142,7 +145,7 @@ shinyUI(fluidPage(
                 #Subsection 5
                 tags$h3("How has the Ellerbe Creek Watershed changed over time??"),
                 tags$p("[Insert text here]"),
-                tags$h3("Water Quality Measruments Over Time",style="text-align: center"),
+                tags$h3("Water Quality Measurements Over Time",style="text-align: center"),
                 #Insert trend tool from Durham city data 
                 fluidRow(column(3,box(width = "100%", background = "navy",
                                       selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
@@ -150,30 +153,56 @@ shinyUI(fluidPage(
                          column(9, align="center",
                                 #outPut for Plot
                                 box(width = "100%", background = "navy",
-                                plotlyOutput("Plot")))),
+                                    plotlyOutput("Plot")))),
                 br(),
                 tags$p("[Insert text here]"),
                 br(),
                 column(12, align="center",
                        titlePanel("Water Quality Index over time"),
                        box(width = "100%", background = "navy",
-                       leafletOutput("WQImap")),
+                           leafletOutput("WQImap")),
                        tags$style(type="text/css", ".slider1 .irs-grid-text{font-size: 14px;}
                                      .slider1 .irs-bar {border-color: black; background-color: #08d8b2;}
                                      .slider1 .irs-bar-edge { border-color: red; background-color: red;}"),
                        box(width = "100%", background = "navy",
                            tags$div(id = "slider1", class="slider1",
-                           sliderInput("wqiDate", "Magnitudes", min(wqiData$Date), max(wqiData$Date),
-                                    value = max(wqiData$Date),
-                                    step = 30,
-                                    timeFormat = "%b %Y",
-                                    width = "90%",
-                                    animate = animationOptions(interval = 100, loop = FALSE))))
+                                    sliderInput("wqiDate", "Magnitudes", min(wqiData$Date), max(wqiData$Date),
+                                                value = max(wqiData$Date),
+                                                step = 30,
+                                                timeFormat = "%b %Y",
+                                                width = "90%",
+                                                animate = animationOptions(interval = 100, loop = FALSE))))
                        #plotlyOutput("wqiLinePlot")
-                       ),
-                tags$p("[Insert more text here]")
                 ),
+                tags$p("[Insert more text here]"),
+                
+                
+                #bargraph     
+                br(),
+                tags$p("In the following graph we show the number of water quality samples (n) that comply or not with the National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
+                        # U.S. Environmental Protection Agency | US EPA, 2022."),
+                br(),
+                
+                column(12, align="center",
+                       titlePanel("Regulation compliance by Parameter - Aquatic Life Criteria")),
+                
+                fluidRow(column(3,box(width = "100%", background = "navy",
+                                      
+                                      selectInput("Parameter", "Select Water Contaminant: ", parameters),
+                                      # hr(),
+                                      # helpText("Regulation: National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
+                                      # U.S. Environmental Protection Agency | US EPA, 2022.")
+                                      #         )
+                                      
+                )),
+                column(9, align="center",
+                       #outPut for Plot
+                       box(width = "100%", background = "navy",
+                           plotlyOutput("barPlot"))))
+                
+        ),
         
+        ###########
         tabItem(tabName = "justice",
                 tags$h1("Environmental Justice"),
                 tealLine,

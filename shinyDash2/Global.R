@@ -83,3 +83,18 @@ huc15 <- mapview(huc14)
 #adding some color
 bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
 pal <- colorBin("YlOrRd", bins = bins) #domain = durham_contaminants$Value, )
+
+##############BARDATATABLE######
+bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE, sep= ";"))
+bardatatable$Regulation.compliance <- as.factor(bardatatable$Regulation.compliance)
+
+# CONVERT Character to a factor with ordered level
+bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c("Below the standard","80% or more of the standard","Exceed the standard",">200% of the standard"))
+bardatatable$Year <- factor(bardatatable$Year, order=TRUE, levels = c("2016", "2017", "2018", "2019", "2020", "2021", "2022"))
+
+#barchart
+bardata <- na.omit(bardatatable %>% count(Year, Regulation.compliance, vars = bardatatable$Parameter))
+
+#input vector
+parameters <- unique(bardatatable$Parameter) 
+parameters <- as.list(parameters)

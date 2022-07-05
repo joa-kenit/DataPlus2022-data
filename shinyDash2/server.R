@@ -25,34 +25,6 @@ shinyServer(function(input, output, session) {
                                            zaxis = list(title = paste(input$list_3,con$Unit[con$Feature == input$list_3])),
                                            #aspectmode='cube',
                                            showlegend = F))
-    #Server for Box Plot 1
-    plotyOutput$Boxplots <- renderPlotly({
-      
-    units_label <- units_set %>% filter(Parameter == input$Param)
-    units_label <- units_label$Unit
-    
-    var1 <- plot_ly() %>% 
-      layout(title = paste("Box Plots of Ellerbe Creek Sample Sites"),
-             xaxis = list(  
-               title = 'Site Label'),
-             yaxis = list(  
-               title = paste(input$Param, 'Levels in ', units_label)))
-    
-    as_holder <- active_sitesReal
-    for(s in sites){
-      active_sites_param <- as_holder
-      #Double filter for Site and Parameter (Pick DO as example)
-      active_sites_param <- active_sites_param %>% filter(Station.Name == s) %>% 
-        filter(Parameter == input$Param)
-      #use parameter reactivity above
-      var1 <- var1 %>% add_trace(y = active_sites_param$Value, type = "box")
-    }
-    var1
-    })
-    
-    
-    
-    
     
     # Compute the linear regression 
     if(input$bestFitSwitch){
@@ -286,6 +258,19 @@ shinyServer(function(input, output, session) {
   output$corTable <- renderPlot({corr.plot})
   
   
+  #######################
+  #Generate barchart #########################################################
+  #######################
+  # Fill in the spot we created for a plot
+  output$barPlot <- renderPlotly({
+    # Render a barplotly
+    #barchart
+    
+    barploty <- plotly()
+    barploty <- bardata %>% filter(vars == input$Parameter) %>% 
+      plot_ly(x = ~Year, y = ~n, color = ~Regulation.compliance) %>% 
+      layout(showlegend=T)
+    
+  })
+  
 }) #End of server
-
-
