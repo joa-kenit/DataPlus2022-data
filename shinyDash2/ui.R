@@ -111,7 +111,16 @@ shinyUI(fluidPage(
                 #subsection 3
                 tags$h3("How do the Data Sets Compare?"),
                 tags$p("Text for third section"),
-                tags$p("[Insert boxplot here]")
+                fluidRow(
+                  column(3, align="left",
+                         #Insert trend tool from Durham city data 
+                         titlePanel("Variability of Sampling Sites"),
+                         selectInput("Param", "Select Parameter", Parameter),
+                         #outPut for Plot
+                  ),
+                  #ploty graph
+                  column(9, align = "center", plotlyOutput("Boxplots"))),
+                tags$p("End of Section")
         ),
         
         tabItem(tabName = "health",
