@@ -1,3 +1,4 @@
+
 ############################################
 # ECWA Data Visualization ITERATION TWO    #
 # by Jack Tsenane, Ryan Yu, Joanna Huertas #
@@ -337,5 +338,4 @@ shinyUI(fluidPage(
     
   )# end dashboardPage
   
-)
 )

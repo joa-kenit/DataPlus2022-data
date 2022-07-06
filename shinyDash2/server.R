@@ -1,3 +1,4 @@
+
 ############################################
 # ECWA Data Visualization ITERATION TWO    #
 # by Jack Tsenane, Ryan Yu, Joanna Huertas #
@@ -311,5 +312,6 @@ shinyServer(function(input, output, session) {
   })
   
 }) #End of server
+
 
 
