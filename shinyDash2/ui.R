@@ -1,3 +1,4 @@
+
 ############################################
 # ECWA Data Visualization ITERATION TWO    #
 # by Jack Tsenane, Ryan Yu, Joanna Huertas #
@@ -20,10 +21,10 @@ shinyUI(fluidPage(
   
   # remove shiny "red" warning messages on GUI
   tags$style(type="text/css",".shiny-output-error { visibility: hidden; }",".shiny-output-error:before { visibility: hidden; }"),
-  
+
   # load page layout
   dashboardPage(
-    
+
     #skin = "green",
     
     dashboardHeader(title="Ellerbe Creek Watershed", titleWidth = 300),
@@ -38,25 +39,25 @@ shinyUI(fluidPage(
                               }
                               '))),
       width = 342,
-      #Change background color #004058
-      tags$head(tags$style(HTML('/* body */
+                     #Change background color #004058
+                     tags$head(tags$style(HTML('/* body */
                                  .content-wrapper, .right-side {
                                  background-color: red;
                                  }'))),
-      sidebarMenu(
-        #ECWA Logo
-        HTML(paste0("<br>","<a href='https://www.ellerbecreek.org/' target='_blank'><img style = 'display: block; margin-left: auto; margin-right: auto;' src='logoECWA.png' width = '186'></a>","<br>")),
-        menuItem("Home", tabName = "home", icon = icon("home")),
-        menuItem("Background", tabName = "background", icon = icon("leaf")),
-        menuItem("Data", icon = icon("list"),
-                 menuSubItem("Data Collection", tabName = "dc", icon = icon("map")),
-                 menuSubItem("Ellerbe Creek Health Status", tabName = "health", icon = icon("chart-bar")),
-                 menuSubItem("Environmental Justice", tabName = "justice", icon = icon("chart-line"))),
-        menuItem("Download", tabName = "download", icon = icon("download")),
-        menuItem("Team", tabName = "team", icon = icon("users")))), # end dashboardSidebar
+                     sidebarMenu(
+                       #ECWA Logo
+                       HTML(paste0("<br>","<a href='https://www.ellerbecreek.org/' target='_blank'><img style = 'display: block; margin-left: auto; margin-right: auto;' src='logoECWA.png' width = '186'></a>","<br>")),
+                       menuItem("Home", tabName = "home", icon = icon("home")),
+                       menuItem("Background", tabName = "background", icon = icon("leaf")),
+                       menuItem("Data", icon = icon("list"),
+                                menuSubItem("Data Collection", tabName = "dc", icon = icon("map")),
+                                menuSubItem("Ellerbe Creek Health Status", tabName = "health", icon = icon("chart-bar")),
+                                menuSubItem("Environmental Justice", tabName = "justice", icon = icon("chart-line"))),
+                       menuItem("Download", tabName = "download", icon = icon("download")),
+                       menuItem("Team", tabName = "team", icon = icon("users")))), # end dashboardSidebar
     
     dashboardBody(
-      
+    
       #Change background color
       tags$head(tags$style(HTML('/* body */.content-wrapper, .right-side {background-color: #f0fefb;}'))), 
       
@@ -68,7 +69,7 @@ shinyUI(fluidPage(
                 
                 #Read in home page content
                 includeMarkdown("www/home.md")
-        ),
+                ),
         
         tabItem(tabName = "background",
                 #Header
@@ -77,7 +78,7 @@ shinyUI(fluidPage(
                 
                 #Read in pollutant page content
                 fluidRow(column(width=1),column(width = 10,includeMarkdown("www/probando.md")),column(width = 1))
-        ),
+                ),
         
         tabItem(tabName = "dc",
                 #Header
@@ -102,13 +103,13 @@ shinyUI(fluidPage(
                 fluidRow(
                   column(3, align="left",
                          box(width = "100%", background = "navy",
-                             selectInput("Param", "Select Parameter", Parameter))),
+                         selectInput("Param", "Select Parameter", Parameter))),
                   #ploty graph
                   column(9, align = "center",
                          box(width = "100%", background = "navy", 
                              plotlyOutput("Boxplots")))),
                 tags$p("End of Section")
-        ),
+                ),
         
         tabItem(tabName = "health",
                 #Header
@@ -125,7 +126,7 @@ shinyUI(fluidPage(
                                     selectInput("type", "Chart type", choices = c("polar-area","bar")),
                                     checkboxInput("labels", "Show values"))),
                          column(width = 9, box(width = "100%", background = "navy",leafletOutput("param3map")))),
-                
+            
                 #Subsection 2
                 tags$h3("How does the Ellerbe Creek Watershed compare to local water?"),
                 tags$p("The environmental protection agency (EPA) has created a tool titled “How’s My Waterway?” to understand where waterways that have been declared impaired are relative to the community. The EPA graphic is shown below. The graphic shows that many waterways in populated areas are impaired. However, there are also many streams that are doing well."),
@@ -167,9 +168,9 @@ shinyUI(fluidPage(
                          column(9, align="center",
                                 #outPut for Plot
                                 box(width = "100%", background = "navy",
-                                    plotlyOutput("Plot")))),
-                
-                
+                                plotlyOutput("Plot")))),
+
+
                 tags$p("Some spikes can be seen in some water quality metrics. This is expected because some samples will be taken during short term events like a rain storm or a nearby construction project. Short term spikes are not always indicative of unhealthy waterways."),
                 br(),
                 tags$p("In the following graph we show the number of water quality samples (n) that comply or not with the National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
@@ -191,8 +192,8 @@ shinyUI(fluidPage(
                        #outPut for Plot
                        box(width = "100%", background = "navy",
                            plotlyOutput("barPlot"))))
-                
-        ),
+  
+                ),
         
         tabItem(tabName = "justice",
                 tags$h1("Environmental Justice"),
@@ -213,73 +214,73 @@ shinyUI(fluidPage(
                 tags$p("Duke researchers have mapped out pollution within the Ellerbe creek  watershed. The graph below shows the linear correlation between each of the variables with “x’s” through all of the correlations that are not statistically significant."),
                 tags$h3("Correlation table of variables within the Ellerbe Creek WaterShed",style="text-align: center"),
                 fluidRow(column(width=2),column(width =8, box(width = "100%",height="620px",background = "navy", plotOutput("corTable"))),column(width=2)),
-                
+
                 tags$p("You can use the tool below to understand how different water quality measurements relate to the infrastructure and demographics of the region. To inform your comparison, you can use the correlation plot above. Alternatively, you can investigate common research questions:"),
                 tags$p("Is there more excess nutrients (nitrogen, phosphorus) from fertilizer where there is more cultivated farm land?"),
                 tags$p("Is there a stronger correlation between where salt is and where roads are in the winteror the summer?"),
                 tags$h3("Variable Comparison Tool",style="text-align: center"),
                 fluidRow(column(12,box(width = "100%", background = "navy",uiOutput("synced_maps", width="100%")))),
                 fluidRow(box(width = 6, background = "navy",                               
-                             column(width = 4,
-                                    radioButtons("season", "Season of Sampling of Water Quality Measurments",
-                                                 c("Fall" = "fall",
-                                                   "Winter" = "wint",
-                                                   "Summer" = "summ"),
-                                                 inline = FALSE,
-                                                 selected = "wint"),
-                                    rank_list(
-                                      text = "Water Quality Measurements",
-                                      labels = Contaminant,
-                                      input_id = "main_list1",
-                                      options = sortable_options(group = "my_shared_group"),
-                                      class = "rankJack"
-                                    )),
-                             column(width = 4,
-                                    rank_list(
-                                      text = "Infrastructure & Environment",
-                                      labels = Infrastructure,
-                                      input_id = "main_list2",
-                                      options = sortable_options(group = "my_shared_group"),
-                                      class = "rankJack"
-                                    ),
-                                    rank_list(
-                                      text = "Demographics",
-                                      labels = Demographics,
-                                      input_id = "main_list3",
-                                      options = sortable_options(group = "my_shared_group"),
-                                      class = "rankJack")
-                             ), column(width=4,                                         
-                                       rank_list(
-                                         text = "X axis",
-                                         labels = c(),
-                                         input_id = "list_1",
-                                         options = max_1_item_opts,
-                                         class = "rankJack"
-                                       ),
-                                       rank_list(
-                                         text = "Y axis",
-                                         labels = c(),
-                                         input_id = "list_2",
-                                         options = max_1_item_opts,
-                                         class = "rankJack"
-                                       ),
-                                       rank_list(
-                                         text = "Z axis (optional)",
-                                         labels = c(),
-                                         input_id = "list_3",
-                                         options = max_1_item_opts,
-                                         class = "rankJack"
-                                         
-                                       ))),
-                         column(width = 6,box(width = "100%", background = "navy",plotlyOutput("value2")), 
-                                box(width = "100%", background = 'navy',
-                                    materialSwitch(inputId = "bestFitSwitch", label = "Show best fit linear equation"),
-                                    textOutput(outputId="text1"), 
-                                    # dropdownButton("0 indicates no linear correlation. 1 indicates high linear correlation. 0-0.25 is often considered low correlation. 0.5-1 is often considered high correlation.", 
-                                    #                status = 'success', icon = icon('question'),style="color: navy"),
-                                    textOutput(outputId="text2"),
-                                    textOutput(outputId="text3"),
-                                    tags$head(tags$style("#text1#text2{font-size: 12px;}"))))) 
+                  column(width = 4,
+                         radioButtons("season", "Season of Sampling of Water Quality Measurments",
+                                      c("Fall" = "fall",
+                                        "Winter" = "wint",
+                                        "Summer" = "summ"),
+                                      inline = FALSE,
+                                      selected = "wint"),
+                         rank_list(
+                           text = "Water Quality Measurements",
+                           labels = Contaminant,
+                           input_id = "main_list1",
+                           options = sortable_options(group = "my_shared_group"),
+                           class = "rankJack"
+                         )),
+                  column(width = 4,
+                         rank_list(
+                           text = "Infrastructure & Environment",
+                           labels = Infrastructure,
+                           input_id = "main_list2",
+                           options = sortable_options(group = "my_shared_group"),
+                           class = "rankJack"
+                         ),
+                         rank_list(
+                           text = "Demographics",
+                           labels = Demographics,
+                           input_id = "main_list3",
+                           options = sortable_options(group = "my_shared_group"),
+                           class = "rankJack")
+                  ), column(width=4,                                         
+                            rank_list(
+                              text = "X axis",
+                              labels = c(),
+                              input_id = "list_1",
+                              options = max_1_item_opts,
+                              class = "rankJack"
+                            ),
+                            rank_list(
+                              text = "Y axis",
+                              labels = c(),
+                              input_id = "list_2",
+                              options = max_1_item_opts,
+                              class = "rankJack"
+                            ),
+                            rank_list(
+                              text = "Z axis (optional)",
+                              labels = c(),
+                              input_id = "list_3",
+                              options = max_1_item_opts,
+                              class = "rankJack"
+                              
+                            ))),
+                  column(width = 6,box(width = "100%", background = "navy",plotlyOutput("value2")), 
+                         box(width = "100%", background = 'navy',
+                             materialSwitch(inputId = "bestFitSwitch", label = "Show best fit linear equation"),
+                             textOutput(outputId="text1"), 
+                             # dropdownButton("0 indicates no linear correlation. 1 indicates high linear correlation. 0-0.25 is often considered low correlation. 0.5-1 is often considered high correlation.", 
+                             #                status = 'success', icon = icon('question'),style="color: navy"),
+                             textOutput(outputId="text2"),
+                             textOutput(outputId="text3"),
+                             tags$head(tags$style("#text1#text2{font-size: 12px;}"))))) 
                 
         ),
         
@@ -337,5 +338,4 @@ shinyUI(fluidPage(
     
   )# end dashboardPage
   
-)
 )
