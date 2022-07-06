@@ -11,13 +11,18 @@ library(shinyWidgets)
 library(leaflet)
 library(leaflet.minicharts)
 library(zoo)
-
+library('sf')
 library(tidyverse)
 library(lubridate)
 library(sf)
 library(arcpullr)
 library(mapview)
 library(wesanderson)
+library(geojsonio)
+library(RColorBrewer)
+library('sf')
+library(leaflegend)
+library(leafsync)
 
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
 #Trends graph
@@ -25,23 +30,11 @@ active_sitesReal <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPl
 active_sites_param <- active_sitesReal  
 sites <- unique(active_sitesReal$Station.Name)
 Parameter <- unique(active_sitesReal$Parameter)
-#Edit this to be automated:
-Parameter2 <- c("NH4.N.mg.L","PO4.P", "DOC.mg.L", "TDN.mg.L", "Cl.mg.L", "SO4.mg.L"
-                , "Br.mg.L", "NO3.N.mg.L", "Na.mg.L", "K.mg.L", "Mg.mg.L","Ca.mg.L")
 Parameter1 <- as.data.frame(Parameter)
 shortlist <- active_sites_param[, c("Parameter", "Unit")] 
 units_set <- left_join(Parameter1, shortlist)
 #list of 38 params with corresponding unit
 units_set <- units_set[!duplicated(units_set$Parameter), ]
-
-#second boxplot data
-bc_data3 <- read.csv(file = "www/SS1-SS2-SS3_MERGED_DATA.csv")
-as_holder2 <- bc_data3
-#operation for this specific dataset
-bc_data3[40, "SITE"] <- 6.1
-#change dates of "2022-09-25" to "2021-09-25:
-bc_data3[35:65, "DATE"] <- "2021-09-25"
-dates <- c("2021-09-25","2022-02-26", "2022-06-16") 
 
 #Compare vars graph
 #S+U
@@ -96,6 +89,24 @@ huc15 <- mapview(huc14)
 bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
 pal <- colorBin("YlOrRd", bins = bins) #domain = durham_contaminants$Value, )
 
+#Redlining
+redlining <- read_sf('www/NCDurham1937.geojson')
+facil<-na.omit(read.csv('www/ECIndustrialFacilities.csv'))
+holcVals <- unique(redlining$holc_grade)
+redliningCol<-rev(brewer.pal(length(holcVals),"RdYlGn"))
+redliningCols <- colorFactor(palette=redliningCol,levels=holcVals)
+facil$permitIcon <- ifelse(facil$NPDES.Permit.Type=="No Permit Required","industry", "industry-windows")
+icons <- makeAwesomeIcon(
+  icon = facil$permitIcon,
+  iconColor = 'black',
+  library = 'ion',
+)
+
+#Choro data
+colnames(jonnyData)[1] = "SUBBA" 
+choroData = merge(jonnyData,huc14,by = "SUBBA")
+emptyMap = leaflet()%>% addTiles()%>%addPolygons(data = huc14, weight = 1, opacity = 1, color = "black", fillOpacity = 0)
+
 ##############BARDATATABLE######
 bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE, sep= ";"))
 
@@ -111,4 +122,3 @@ bardata <- na.omit(bardatatable %>% count(Year, Regulation.compliance, vars = ba
 #input vector
 parameters <- unique(bardatatable$Parameter) 
 parameters <- as.list(parameters)
-
