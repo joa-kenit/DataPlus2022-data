@@ -25,11 +25,23 @@ active_sitesReal <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPl
 active_sites_param <- active_sitesReal  
 sites <- unique(active_sitesReal$Station.Name)
 Parameter <- unique(active_sitesReal$Parameter)
+#Edit this to be automated:
+Parameter2 <- c("NH4.N.mg.L","PO4.P", "DOC.mg.L", "TDN.mg.L", "Cl.mg.L", "SO4.mg.L"
+                , "Br.mg.L", "NO3.N.mg.L", "Na.mg.L", "K.mg.L", "Mg.mg.L","Ca.mg.L")
 Parameter1 <- as.data.frame(Parameter)
 shortlist <- active_sites_param[, c("Parameter", "Unit")] 
 units_set <- left_join(Parameter1, shortlist)
 #list of 38 params with corresponding unit
 units_set <- units_set[!duplicated(units_set$Parameter), ]
+
+#second boxplot data
+bc_data3 <- read.csv(file = "www/SS1-SS2-SS3_MERGED_DATA.csv")
+as_holder2 <- bc_data3
+#operation for this specific dataset
+bc_data3[40, "SITE"] <- 6.1
+#change dates of "2022-09-25" to "2021-09-25:
+bc_data3[35:65, "DATE"] <- "2021-09-25"
+dates <- c("2021-09-25","2022-02-26", "2022-06-16") 
 
 #Compare vars graph
 #S+U
@@ -99,3 +111,4 @@ bardata <- na.omit(bardatatable %>% count(Year, Regulation.compliance, vars = ba
 #input vector
 parameters <- unique(bardatatable$Parameter) 
 parameters <- as.list(parameters)
+

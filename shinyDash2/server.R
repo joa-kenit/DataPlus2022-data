@@ -279,6 +279,30 @@ shinyServer(function(input, output, session) {
     }
     var1
   })
+  
+  #Box Plot 2
+  output$Boxplots2 <- renderPlotly({
+    
+    units_label <- units_set %>% filter(Parameter == input$Param2)
+    units_label <- units_label$Unit
+    
+    box2 <- plot_ly() %>% layout(title = paste("Box Plots of Ellerbe Creek Samplings"),
+                                 xaxis = list(  
+                                   title = 'Date'),
+                                 yaxis = list(  
+                                   title = paste(input$Param2))) 
+  
+    select_param <- input$Param2
+    
+    for(d in dates){
+      bc_data3 <- as_holder2
+      bc_data3 <- bc_data3 %>% filter(DATE == d) 
+      box2 <- var2 %>% add_trace(y = bc_data3$select_param, type = "box", name = d)
+    }
+  
+    box2
+  })
+  
   ###########
   #Cor table#########
   ###########

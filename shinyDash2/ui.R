@@ -111,15 +111,30 @@ shinyUI(fluidPage(
                 #subsection 3
                 tags$h3("How do the Data Sets Compare?"),
                 tags$p("Text for third section"),
+                tabBox(id = "tabsetBox", width="940px", height = "940px",
+                tabPanel("Variability of Sampling Sites",
                 fluidRow(
                   column(3, align="left",
                          #Insert trend tool from Durham city data 
-                         titlePanel("Variability of Sampling Sites"),
+                        
                          selectInput("Param", "Select Parameter", Parameter),
                          #outPut for Plot
                   ),
                   #ploty graph
-                  column(9, align = "center", plotlyOutput("Boxplots"))),
+                  column(9, align = "center", plotlyOutput("Boxplots")))
+                      ),
+                tabPanel("Variability of Sampling Dates", 
+                  fluidRow(
+                    column(3, align="left",
+                           #Insert trend tool from Durham city data 
+                          
+                           selectInput("Param2", "Select Parameter", Parameter2),
+                           #outPut for Plot
+                    ),
+                    #ploty graph
+                    column(9, align = "center", plotlyOutput("Boxplots2")))
+                )
+                ),
                 tags$p("End of Section")
         ),
         

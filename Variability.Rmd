@@ -49,6 +49,8 @@ bc_data <- read.csv(file = "SS1-SS2_Merged.csv")
 bc_data3 <- read.csv(file = "SS1-SS2-SS3_MERGED_DATA.csv")
 #operation for this specific dataset
 bc_data3[40, "SITE"] <- 6.1
+#change dates of "2022-09-25" to "2021-09-25:
+bc_data3[35:65, "DATE"] <- "2021-09-25"
 dates <- c("2021-09-25","2022-02-26", "2022-06-16") 
 ```
 
@@ -56,7 +58,7 @@ dates <- c("2021-09-25","2022-02-26", "2022-06-16")
 ```{r Plotly Plot 2}
 var2 <- plot_ly() %>% layout(title = paste("Box Plots of Ellerbe Creek Samplings"),
                     xaxis = list(  
-                        title = 'Site Label'),
+                        title = 'Date'),
                     yaxis = list(  
                         title = 'Param Value')) 
 
@@ -66,8 +68,9 @@ as_holder2 <- bc_data3
 
 for(d in dates){
   bc_data3 <- as_holder2
-  bc_data3 <- bc_data3 %>% filter(DATE == d)
-  var2 <- var2 %>% add_trace(y = bc_data3$DOC..mg.L., type = "box")
+  bc_data3 <- bc_data3 %>% filter(DATE == d) 
+  var2 <- var2 %>% add_trace(y = bc_data3$K.mg.L, type = "box", name = d)
+  print("Ran")
 }
 bc_data3 <- as_holder2
 var2
