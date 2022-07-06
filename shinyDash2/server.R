@@ -135,7 +135,7 @@ shinyServer(function(input, output, session) {
     }
     fig3})
   #######################
-  #WQI leaflet over time#########################################################
+  #WQI leaflet over time########################################################
   #######################
   output$WQImap <- renderLeaflet({
     
@@ -164,19 +164,19 @@ shinyServer(function(input, output, session) {
     plotlyProxy("wqiLinePlot", session) %>% plotlyProxyInvoke("relayout",c(shapes = vline(wqiData$Date[dateRow])))
   })
   
-  #######################
-  #leafletminicharts param3map#########################################################
-  #######################
+  #############################
+  #leafletminicharts param3map##################################################
+  #############################
   # Initialize map #input$prods=choices in ui.R
   output$param3map <- renderLeaflet({
     leaflet()%>% addTiles %>% 
       addPolygons(data = huc14, 
-                  fillColor = ~pal(durham_contaminants$Value),
+                  #fillColor = ~pal(durham_contaminants$Value),
                   weight = 1.5,
-                  opacity = 1.5,
+                  opacity = 1,
                   color = "black",
                   dashArray = "3",
-                  fillOpacity = 0.1) %>% 
+                  fillOpacity = 0) %>% 
       addMinicharts(
         durham_contaminants$Longitude,durham_contaminants$Latitude,
         type = input$type, #"polar-area",
@@ -211,7 +211,7 @@ shinyServer(function(input, output, session) {
       )
   })
   #######################
-  # Read tables         #########################################################
+  # Read tables         ########################################################
   #######################
   output$tableSources <- renderTable({read.csv('www/tableOfCollectionSources.csv',check.names = TRUE)},width = "50%")
   
@@ -253,8 +253,9 @@ shinyServer(function(input, output, session) {
       sync(m1, m2, m3, ncol = 3)}
     else{sync(m1,m2)}})
   
-  #Box Plots
-  
+  ###########
+  #Box Plots####################################################################
+  ###########
   output$Boxplots <- renderPlotly({
     
     units_label <- units_set %>% filter(Parameter == input$Param)
@@ -275,29 +276,40 @@ shinyServer(function(input, output, session) {
         filter(Parameter == input$Param)
       #use parameter reactivity above
       var1 <- var1 %>% 
-      add_trace(y = active_sites_param$Value, type = "box", name  = s)
+        add_trace(y = active_sites_param$Value, type = "box", name  = s)
     }
     var1
   })
-  ###########
-  #Cor table#########
-  ###########
-  output$corTable <- renderPlot({corr.plot})
   
+  ###########
+  #Cor table####################################################################
+  ###########
+  output$corTable <- renderPlot({corr.plot},height=600)
+  
+  ##########################
+  #Generate redlining plot #####################################################
+  ##########################
+  output$redliningLeaflet<- renderLeaflet({
+    leaflet(redlining) %>%
+      addTiles('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}') %>%
+      addPolygons(fillColor = redliningCols(redlining$holc_grade), weight = 2, opacity = 1, color = redliningCols(redlining$holc_grade), fillOpacity = 0.3,label =
+                    redlining$holc_id)%>%
+      addPolygons(data = huc14, weight = 1, opacity = 1, color = "black", fillOpacity = 0)%>%
+      #addAwesomeMarkers(lng = facil$Longitude, lat = facil$Latitude, label = facil$Facility.Name, icon = icons)%>% #Supposed to show where permitted facilites are
+      addLegend(colors = redliningCol, labels = holcVals, opacity = 1,title = "Housing Grade")
+  })
   
   #######################
   #Generate barchart #########################################################
   #######################
-  # Fill in the spot we created for a plot
   output$barPlot <- renderPlotly({
-    # Render a barplotly
-    #barchart
-    
-    barploty <- plotly()
+    barploty <- plot_ly()
     barploty <- bardata %>% filter(vars == input$Parameter) %>% 
-      plot_ly(x = ~Year, y = ~n, color = ~Regulation.compliance) %>% 
+      plot_ly(x = ~Year, y = ~n,type = "bar", color = ~Regulation.compliance, colors="Blues",marker = list(line = list(color = 'rgb(8,48,107)', width = 1.5))) %>% 
       layout(showlegend=T)
     
   })
   
 }) #End of server
+
+

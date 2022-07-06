@@ -11,13 +11,18 @@ library(shinyWidgets)
 library(leaflet)
 library(leaflet.minicharts)
 library(zoo)
-
+library('sf')
 library(tidyverse)
 library(lubridate)
 library(sf)
 library(arcpullr)
 library(mapview)
 library(wesanderson)
+library(geojsonio)
+library(RColorBrewer)
+library('sf')
+library(leaflegend)
+library(leafsync)
 
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
 #Trends graph
@@ -83,6 +88,24 @@ huc15 <- mapview(huc14)
 #adding some color
 bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
 pal <- colorBin("YlOrRd", bins = bins) #domain = durham_contaminants$Value, )
+
+#Redlining
+redlining <- read_sf('www/NCDurham1937.geojson')
+facil<-na.omit(read.csv('www/ECIndustrialFacilities.csv'))
+holcVals <- unique(redlining$holc_grade)
+redliningCol<-rev(brewer.pal(length(holcVals),"RdYlGn"))
+redliningCols <- colorFactor(palette=redliningCol,levels=holcVals)
+facil$permitIcon <- ifelse(facil$NPDES.Permit.Type=="No Permit Required","industry", "industry-windows")
+icons <- makeAwesomeIcon(
+  icon = facil$permitIcon,
+  iconColor = 'black',
+  library = 'ion',
+)
+
+#Choro data
+colnames(jonnyData)[1] = "SUBBA" 
+choroData = merge(jonnyData,huc14,by = "SUBBA")
+emptyMap = leaflet()%>% addTiles()%>%addPolygons(data = huc14, weight = 1, opacity = 1, color = "black", fillOpacity = 0)
 
 ##############BARDATATABLE######
 bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE, sep= ";"))
