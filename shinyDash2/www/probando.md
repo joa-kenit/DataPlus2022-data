@@ -107,7 +107,6 @@ oxygen conditions that can harm fish and other aquatic life.
 <center><h2>Other</h2></center>
 <hr></hr>
 
-<h3>Meaning<h3>
 Many more parameters are used to assess the quality of waterways such as
 metals, E coli presence, pH, etc.
 

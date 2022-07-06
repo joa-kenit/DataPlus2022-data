@@ -6,7 +6,7 @@ body {
 }
 p{
     font-family: 'Hind', sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 500;
     line-height: 1.75;
     margin: 0 auto 30px;
@@ -18,12 +18,41 @@ hr{
   background: #08d8b2;
 }
 
-table {
-  width: 50%
-  margin-left:25%; 
-  margin-right:25%;
-  background-color: white;
+.rankJack{
+  background-color: white!important;
   color: black;
+  border-radius: 5px;
+  font-size: 17px;
+  font-family: 'Source Sans Pro', sans-serif;
+  padding: 6px 18px;
+  margin-bottom: 10px;
+}
+
+.rankJack .rank-list-item{
+  border-style: none;
+  background-color: #001f3f!important;
+  color: white;
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: 'Source Sans Pro', sans-serif;
+  padding: 6px 18px;
+  margin-bottom: 5px;
+}
+
+.rankJack .rank-list-empty{
+  border-style: dashed;
+  border-color: gray;
+  background-color: lightgray!important;
+  padding: 15px;
+  margin-bottom: 5px;
+}
+
+table, th, td {
+  width: 50%;
+  background-color: #001f3f;
+  color: white;
+  border: 2px solid;
+  border-color: #d3d3d3;
 }
 
 .tab-panel{
@@ -36,7 +65,9 @@ table {
   color: #202A44;
 }
 
-
+.well{
+  background-color: red;
+}
 
 /*input[type=checkbox]:checked ~ div {
   background-color: #50bcf2;
