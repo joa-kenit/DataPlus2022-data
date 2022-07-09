@@ -113,12 +113,23 @@ bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE
 bardatatable$Regulation.compliance <- as.factor(bardatatable$Regulation.compliance)
 
 # CONVERT Character to a factor with ordered level
-bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c("Below the standard","80% or more of the standard","Exceed the standard",">200% of the standard"))
+bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c("Acceptable level","80% or more of the acceptable level","Exceed the acceptable level",">200% of the acceptable level"))
 bardatatable$Year <- factor(bardatatable$Year, order=TRUE, levels = c("2016", "2017", "2018", "2019", "2020", "2021", "2022"))
 
 #barchart
 bardata <- na.omit(bardatatable %>% count(Year, Regulation.compliance, vars = bardatatable$Parameter))
+bardata
 
+# bardata_percent <- bardata %>%
+bardata_percent <- aggregate(bardata$n, by=list(bardata$vars,bardata$Year), FUN=sum) 
+#cahngin the name of the columns for the next step
+colnames(bardata_percent) <- c('vars','Year','x')
+
+# merge according to conditions (same col names)
+bla <- merge(bardata, bardata_percent,all=TRUE)
+
+bardata_percent1 <- bla %>% mutate (Percentage = bla$n*100 / bla$x)
+bardata_percent1 
 #input vector
 parameters <- unique(bardatatable$Parameter) 
 parameters <- as.list(parameters)

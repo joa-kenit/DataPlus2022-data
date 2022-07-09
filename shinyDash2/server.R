@@ -188,11 +188,11 @@ shinyServer(function(input, output, session) {
         #colorPalette = colors,
         width = 45#, height = 25
       )
+    
+ 
   })
   #Update charts each time input value changes
-  
-  
-  #Change fr test commit
+    #Change fr test commit
   observe({
     if (length(input$prods) == 0) {
       data <- 1
@@ -210,6 +210,37 @@ shinyServer(function(input, output, session) {
         type = input$type, #"polar-area",
         showLabels = input$labels
       )
+   #probando 
+  #   observe({
+  #       leafletProxy("param3map", session) %>%
+  #       clearShapes() %>%
+  #       clearControls() %>%
+  #       addPolygons(color = "#444444" ,
+  #                   weight = 1, 
+  #                   smoothFactor = 0.5,
+  #                   opacity = 1.0,
+  #                   fillOpacity = 0.5
+  #                   
+  #                   )%>%
+  #       
+  #       addLegend(position = "topright", pal = pal , values =input$prods,
+  #                 title =  ~paste(input$prods))
+  #     
+  #   )
+  # }
+# 
+#     %>% clearShapes() %>%clearControls()
+#     if (input$type == "Fecal.Coliform") {
+#       proxy %>% addPolygons(color = "#444444" ,
+#                             weight = 1,
+#                             smoothFactor = 0.5,
+#                             opacity = 1.0,
+#                             fillOpacity = 0.5,
+#                             popup = popup1 ,
+#                             fillColor = ~pal(dat1[[input$type]]))%>%
+# 
+#         addLegend(position = "topright", pal = pal, values = [[input$type]] ,
+#                   title =  ~paste(input$type)) }
   })
   #######################
   # Read tables         ########################################################
@@ -305,10 +336,10 @@ shinyServer(function(input, output, session) {
   #######################
   output$barPlot <- renderPlotly({
     barploty <- plot_ly()
-    barploty <- bardata %>% filter(vars == input$Parameter) %>% 
-      plot_ly(x = ~Year, y = ~n,type = "bar", color = ~Regulation.compliance, colors="Blues",marker = list(line = list(color = 'rgb(8,48,107)', width = 1.5))) %>% 
+    barploty <- bardata_percent1 %>% filter(vars == input$Parameter) %>% 
+      plot_ly(x = ~Year, y = ~Percentage,type = "bar", color = ~Regulation.compliance, colors=c("#a6d96a","#c63637"), marker = list(line = list(color = 'rgb(255,255,191)', width = 1.5))) %>% 
       layout(showlegend=T)
-    
+    #colors="Blues",
   })
   
 }) #End of server

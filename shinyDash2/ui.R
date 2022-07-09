@@ -133,6 +133,7 @@ shinyUI(fluidPage(
                 tags$h3("EPA: How's My Waterway?",style="text-align: center"),
                 tags$head(tags$style(".testImage{border: solid 10px #202A44;  width: 100% !important;height: auto !important;}")),
                 fluidRow(column(width = 3),column(width=6,img(src='hamww.PNG',class="testImage"))),
+                tags$div(HTML('<center><iframe src="https://www.epa.gov/sites/production/files/widgets/mywaterway/index.html" id="mywaterway" width="220" height="170" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe><center>')),
                 
                 #Subsection 3
                 tags$h3("What is a water quality index?"),
@@ -302,29 +303,29 @@ shinyUI(fluidPage(
                 tealLine,
                 fluidRow(
                   tags$head(tags$style(".headShot{border: solid 2px #202A44;  width: 100% !important;height: auto !important;}")),
-                  column(width=1),
-                  column(width=3, align="center",
+                  #column(width=1),
+                  column(width=4, align="center",
                          br(),br(),br(),
-                         img(src='JackPhoto.PNG',class = "headShot"),
+                         img(src='JackPhoto.JPG',class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Jack Tsenane"),
                              tags$hr(style = "width: 30%;height: 2px;"),
-                             p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio. Bio bio bio bio bio bio."))),
-                  column(width=3, align="center",
+                             p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio. Bio bio bio bio bio bio.",style="text-align:left"))),
+                  column(width=4, align="center",
                          br(),br(),br(),
                          img(src='JoannaPhoto.PNG',height = "400",class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Joanna Huertas"),
                              tags$hr(style = "width: 30%;height: 2px;"),
-                             p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio. Bio bio bio bio bio bio."))),
-                  column(width=3, align="center",
+                             p("Joanna is an Environmental Engineer with more than four years of experience in environmental consulting companies and she is currently pursuing the Master’s degree in Environmental Engineering at Duke University. Her experience in private, academic, and government sectors in regards to water quality compliance, aids with the technical underpinning for the display of water quality monitoring results." ,style="text-align:left;padding:5px;border-radius:10px"))),
+                  column(width=4, align="center",
                          br(),br(),br(),
-                         img(src='RyanPhoto.PNG',height = "400",class = "headShot"),
+                         img(src='RyanPhoto.JPG',height = "400",class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Ryan Yu"),
                              tags$hr(style = "width: 30%;height: 2px;"),
-                             p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio. Bio bio bio bio bio bio."))),
-                  column(width=1)
+                             p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio.",style="text-align:left"))),
+                  #column(width=1)
                 )
                 
                 
@@ -338,4 +339,5 @@ shinyUI(fluidPage(
     
   )# end dashboardPage
   
+)
 )
