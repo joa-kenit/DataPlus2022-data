@@ -1,4 +1,3 @@
-
 ############################################
 # ECWA Data Visualization ITERATION TWO    #
 # by Jack Tsenane, Ryan Yu, Joanna Huertas #
@@ -9,21 +8,68 @@ shinyServer(function(input, output, session) {
   #######################
   #Explore relations tab########################################################
   #######################
-  fit <- reactive({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){
-    lm(jonnyData[, input$list_3] ~ jonnyData[, input$list_2] + jonnyData[, input$list_1])}
-    else if((length(input$list_1) + length(input$list_2))  == 2){
-      lm(jonnyData[, input$list_2] ~ jonnyData[, input$list_1])}}) 
+  varsDataframe <- reactive({
+    words = c(input$list_1,input$list_2,input$list_3)
+    words = words[length(words) != 0]
+    words = append(words, c("Site","Season","SUBBA"))
+    b = con$Feature[con$displayedTitle %in% words]
+    a = na.omit(jonnyData[b])
+    a <- a %>% filter(Season == input$season)
+    #Get highest stream order representing subbasin
+    a = a[order(a$SITE, decreasing = TRUE), ]
+    a = distinct(a,SUBBA, .keep_all = TRUE) 
+    return(a)
+  })
+
+  xVar = reactive({  
+    if(length(input$list_1)==1){
+      return(varsDataframe()[[2]])}
+    else{
+      return(input$list_1) #should be empty 
+    }})
+  yVar = reactive({
+    if(length(input$list_2)==1){
+      if(length(input$list_1)==1){
+        return(varsDataframe()[[3]])
+      }else{
+        return(varsDataframe()[[2]])
+      }}
+    else{
+      yVar = return(input$list_2) #should be empty 
+    }})
+  zVar = reactive({
+    if(length(input$list_3)==1){
+      if(length(input$list_1)==1 && length(input$list_1)==1){
+        return(varsDataframe()[[4]])
+      }else if(length(input$list_1)==1 || length(input$list_1)==1){
+        return(varsDataframe()[[3]])
+      }else{
+        return(varsDataframe[[2]])
+      }}
+      else{
+        return(input$list_3) #should be empty 
+      }})
   
-  output$value2 <- renderPlotly({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){
-    xVar = jonnyData[, input$list_1] #road
-    yVar = jonnyData[, input$list_2] #pipe
-    zVar = jonnyData[, input$list_3] #Cl
+  fit <- reactive({
+    xVar = xVar()
+    yVar = yVar()
+    zVar = zVar()
+    if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){
+    lm(zVar ~ yVar + xVar)}
+    else if((length(input$list_1) + length(input$list_2))  == 2){
+      lm(yVar ~ xVar)}}) 
+  
+  output$value2 <- renderPlotly({
+    xVar = xVar()
+    yVar = yVar()
+    zVar = zVar()
+    if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){
     fig3D <- plot_ly(x = xVar, y = yVar, z = zVar)
     fig3D <- fig3D %>% add_markers(x = xVar, y = yVar, marker = list(size = 10,color = '#08d8b2',line = list(color = '#004058', width = 2)))
     
-    fig3D <- fig3D %>% layout(scene = list(xaxis = list(title = paste(input$list_1,con$Unit[con$Feature == input$list_1])),
-                                           yaxis = list(title = paste(input$list_2,con$Unit[con$Feature == input$list_2])),
-                                           zaxis = list(title = paste(input$list_3,con$Unit[con$Feature == input$list_3])),
+    fig3D <- fig3D %>% layout(scene = list(xaxis = list(title = paste(input$list_1,con$Unit[con$displayedTitle == input$list_1])),
+                                           yaxis = list(title = paste(input$list_2,con$Unit[con$displayedTitle == input$list_2])),
+                                           zaxis = list(title = paste(input$list_3,con$Unit[con$displayedTitle == input$list_3])),
                                            #aspectmode='cube',
                                            showlegend = F))
     
@@ -39,17 +85,16 @@ shinyServer(function(input, output, session) {
     
     fig3D}
     else if((length(input$list_1) + length(input$list_2))  == 2){
+      print(xVar)
+      print(typeof(xVar))
+      print(yVar)
+      print(typeof(yVar))
       fig <- plot_ly(type = "scatter",mode = "markers")
-      xVar = jonnyData[, input$list_1]
-      yVar = jonnyData[, input$list_2]
-      
-      fig <- fig %>% layout(title = 'Variable Comparison',
-                            xaxis = list(title = paste(input$list_1,con$Unit[con$Feature == input$list_1])),
-                            yaxis = list(title = paste(input$list_2,con$Unit[con$Feature == input$list_2])),
+      fig <- fig %>% layout(title = paste(input$list_2,"Vs.",input$list_1,"on",unique(jonnyData$DATE[jonnyData$Season==input$season])),
+                            xaxis = list(title = paste(input$list_1,con$Unit[con$displayedTitle == input$list_1])),
+                            yaxis = list(title = paste(input$list_2,con$Unit[con$displayedTitle == input$list_2])),
                             showlegend = F)
-      
       fig <- fig %>% add_markers(x = xVar, y = yVar,marker = list(size = 10, color = '08d8b2', line = list(color = '004058', width = 2))) 
-      
       if(input$bestFitSwitch){
         fig <- fig%>%add_trace(x = xVar, y = fitted(fit()),mode = "lines",line=list(color='004058'))
       }
@@ -126,13 +171,12 @@ shinyServer(function(input, output, session) {
       #active_sitesReal sorted first for date
       active_sites_param <- active_sitesReal %>% filter(Parameter == input$Param) %>% 
         filter(Station.Name == s)
-      
       # active_sites_zinc <- active_sites_zinc %>% filter(Station.Name == s) %>%
       #   order((Date.Time))
       #filter for station name and then sort by date
       fig3 <- fig3 %>% add_trace(
         x = as.Date(active_sites_param$Date.Time), 
-        y = active_sites_param$Value, name = s, type = 'scatter', mode = 'lines + markers')
+        y = active_sites_param$Value, name = s, type = 'scatter', mode = 'lines+markers', line=list(dash='dot'))
     }
     fig3})
   #######################
@@ -188,11 +232,11 @@ shinyServer(function(input, output, session) {
         #colorPalette = colors,
         width = 45#, height = 25
       )
-    
- 
   })
   #Update charts each time input value changes
-    #Change fr test commit
+  
+  
+  #Change fr test commit
   observe({
     if (length(input$prods) == 0) {
       data <- 1
@@ -210,37 +254,6 @@ shinyServer(function(input, output, session) {
         type = input$type, #"polar-area",
         showLabels = input$labels
       )
-   #probando 
-  #   observe({
-  #       leafletProxy("param3map", session) %>%
-  #       clearShapes() %>%
-  #       clearControls() %>%
-  #       addPolygons(color = "#444444" ,
-  #                   weight = 1, 
-  #                   smoothFactor = 0.5,
-  #                   opacity = 1.0,
-  #                   fillOpacity = 0.5
-  #                   
-  #                   )%>%
-  #       
-  #       addLegend(position = "topright", pal = pal , values =input$prods,
-  #                 title =  ~paste(input$prods))
-  #     
-  #   )
-  # }
-# 
-#     %>% clearShapes() %>%clearControls()
-#     if (input$type == "Fecal.Coliform") {
-#       proxy %>% addPolygons(color = "#444444" ,
-#                             weight = 1,
-#                             smoothFactor = 0.5,
-#                             opacity = 1.0,
-#                             fillOpacity = 0.5,
-#                             popup = popup1 ,
-#                             fillColor = ~pal(dat1[[input$type]]))%>%
-# 
-#         addLegend(position = "topright", pal = pal, values = [[input$type]] ,
-#                   title =  ~paste(input$type)) }
   })
   #######################
   # Read tables         ########################################################
@@ -254,33 +267,33 @@ shinyServer(function(input, output, session) {
   output$synced_maps <- renderUI({
     
     if(length(input$list_1)==1){
-      x = choroData[, input$list_1]
+      x = xVar()
       choroXColor <- colorNumeric(palette = 'Blues',  domain=c(0,max(x)))
-      Xtitle <- tags$div(HTML(paste(input$list_1," (",con$Unit[con$Feature == input$list_1],")",sep="")))  
+      Xtitle <- tags$div(HTML(paste(input$list_1," (",con$Unit[con$displayedTitle == input$list_1],")",sep="")))  
       m1 <- leaflet()%>% addTiles()%>%
         addPolygons(data = huc14, fillColor = choroXColor(x), weight = 1, opacity = 1, color = "black", fillOpacity = 0.3,
-                    label = paste("Subbasin:",huc14$SUBBA,input$list_1,":",signif(x,3),con$Unit[con$Feature == input$list_1]))%>%
+                    label = paste("Subbasin:",huc14$SUBBA,input$list_1,":",signif(x,3),con$Unit[con$displayedTitle == input$list_1]))%>%
         addControl(Xtitle, position = "bottomleft")
     }else{
       m1 = emptyMap
     }
     if(length(input$list_2)==1){
-      y = choroData[, input$list_2]
+      y = yVar()
       choroYColor <- colorNumeric(palette = 'Blues',  domain=c(0,max(y)))
-      Ytitle <- tags$div(HTML(paste(input$list_2," (",con$Unit[con$Feature == input$list_2],")",sep=""))) 
+      Ytitle <- tags$div(HTML(paste(input$list_2," (",con$Unit[con$displayedTitle == input$list_2],")",sep=""))) 
       m2 <- leaflet()%>% addTiles()%>%addPolygons(data = huc14, fillColor = choroYColor(y), weight = 1, opacity = 1, color = "black", fillOpacity = 0.3,
-                                                  label = paste("Subbasin:",huc14$SUBBA,input$list_2,":",signif(y,3),con$Unit[con$Feature == input$list_2]))%>%
+                                                  label = paste("Subbasin:",huc14$SUBBA,input$list_2,":",signif(y,3),con$Unit[con$displayedTitle == input$list_2]))%>%
         addControl(Ytitle, position = "bottomleft")
     }else{
       m2 = emptyMap
     }
     
     if(length(input$list_1) + length(input$list_2) + length(input$list_3)==3){
-      z = choroData[, input$list_3]
+      z = zVar()
       choroZColor <- colorNumeric(palette = 'Blues',  domain=c(0,max(z)))
-      Ztitle <- tags$div(HTML(paste(input$list_3," (",con$Unit[con$Feature == input$list_3],")",sep=""))) 
+      Ztitle <- tags$div(HTML(paste(input$list_3," (",con$Unit[con$displayedTitle  == input$list_3],")",sep=""))) 
       m3 <- leaflet()%>% addTiles()%>%addPolygons(data = huc14, fillColor = choroZColor(z), weight = 1, opacity = 1, color = "black", fillOpacity = 0.3,
-                                                  label = paste("Subbasin:",huc14$SUBBA,input$list_3,":",signif(z,3),con$Unit[con$Feature == input$list_3]))%>%
+                                                  label = paste("Subbasin:",huc14$SUBBA,input$list_3,":",signif(z,3),con$Unit[con$displayedTitle == input$list_3]))%>%
         addControl(Ztitle, position = "bottomleft")
       sync(m1, m2, m3, ncol = 3)}
     else{sync(m1,m2)}})
@@ -290,27 +303,33 @@ shinyServer(function(input, output, session) {
   ###########
   output$Boxplots <- renderPlotly({
     
-    units_label <- units_set %>% filter(Parameter == input$Param)
-    units_label <- units_label$Unit
+    wider_durham <- wider_durham %>% pivot_wider(id_cols = c("Date.Time", "Station.Name"), names_from = "Parameter", values_from = "Value", values_fn = list("Value" = mean))
     
-    var1 <- plot_ly() %>% 
-      layout(title = paste("Box Plots of Ellerbe Creek Sample Sites"),
-             xaxis = list(  
-               title = 'Site Label'),
-             yaxis = list(  
-               title = paste(input$Param, 'Levels in ', units_label)))
+    wider_select_2 <- wider_durham[, c(2,4, 7, 14, 20:21, 33, 37:39)]
     
-    as_holder <- active_sitesReal
-    for(s in sites){
-      active_sites_param <- as_holder
-      #Double filter for Site and Parameter (Pick DO as example)
-      active_sites_param <- active_sites_param %>% filter(Station.Name == s) %>% 
-        filter(Parameter == input$Param)
-      #use parameter reactivity above
-      var1 <- var1 %>% 
-        add_trace(y = active_sites_param$Value, type = "box", name  = s)
-    }
-    var1
+    alt_bc_data3 <- bc_data3[, c(3,8, 9, 11:15,20:21 )]
+    #convert units from ug/L to mg/L by dividing by 1000
+    wider_select_2[, c(5,6,8,9 )] <- wider_select_2[, c(5,6,8,9)]*.001
+    #change column names to be consistent with alt_bc_data3
+    #colnames(wider_select_2) <- c("Station.Name", "DO.mg.L", "pH", "NO3.N.mg.L", "Ca.mg.L","Mg.mg.L", "Cl.mg.L", "K.mg.L", "Na.mg.L","SO4.mg.L")
+
+    #creating the plot
+    curParam <- con$Feature[con$displayedTitle==input$ParamBoxplots]
+    print(curParam)
+    print(typeof(curParam))
+    
+    names(wider_select_2)[names(wider_select_2) == input$ParamBoxplots] <- 'targetVar1'
+    p1 <- plot_ly(wider_select_2, x = ~Station.Name, y = ~targetVar1, type = "box", name = "Durham Data Sites")
+    names(wider_select_2)[names(wider_select_2) == 'targetVa1r'] <- input$ParamBoxplots
+    
+    
+    names(alt_bc_data3)[names(alt_bc_data3) == curParam] <- 'targetVar2'
+    p2 <- plot_ly(alt_bc_data3, x = ~DATE, y = ~targetVar2, type = "box", name = "Bass Connection Samples")
+    names(alt_bc_data3)[names(alt_bc_data3) == 'targetVar2'] <- curParam
+    
+    fig =subplot(p1, p2, nrows = 1, shareX = FALSE, shareY = TRUE)
+    print(fig)
+    return(fig)
   })
   
   ###########
@@ -337,12 +356,11 @@ shinyServer(function(input, output, session) {
   output$barPlot <- renderPlotly({
     barploty <- plot_ly()
     barploty <- bardata_percent1 %>% filter(vars == input$Parameter) %>% 
-      plot_ly(x = ~Year, y = ~Percentage,type = "bar", color = ~Regulation.compliance, colors=c("#a6d96a","#c63637"), marker = list(line = list(color = 'rgb(255,255,191)', width = 1.5))) %>% 
+      plot_ly(x = ~Year, y = ~Percentage,type = "bar", color = ~Regulation.compliance, colors=c("#a6d96a","#c63637"), marker = list(line = list(color = '#001f3f', width = 1.5))) %>% 
       layout(showlegend=T)
     #colors="Blues",
   })
   
 }) #End of server
-
 
 

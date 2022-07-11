@@ -23,6 +23,7 @@ library(RColorBrewer)
 library('sf')
 library(leaflegend)
 library(leafsync)
+#library(shinydashboardPlus)
 
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
 #Trends graph
@@ -38,19 +39,46 @@ units_set <- units_set[!duplicated(units_set$Parameter), ]
 
 #Compare vars graph
 #S+U
-con <- read.csv('www/ECWAWaterQuality2021Context.csv')
+con <- read.csv('www/synopticDataContext.csv')
 #Server
-jonnyData <- na.omit(read.csv('www/ECWAWaterQuality2021.csv'))
+jonnyData <- read.csv('www/synopticData.csv')
+bc_data3 <- jonnyData
+jonnyData$DATE = as.Date(jonnyData$DATE, format = "%Y-%m-%d")
+jonnyData = jonnyData[order(jonnyData$DATE, decreasing = TRUE), ]
+jonnyData$SUBBA <- as.integer(trunc(jonnyData$SITE))
+extraVars <- read.csv('www/extraVars.csv')
+jonnyData <- merge(jonnyData, extraVars, by="SUBBA")
+jonnyData <- jonnyData %>% filter(SITE != 27.3) #remove waste water treatment plant 
+getApproximateSeason <- function(DATES) {
+  WS <- as.Date("2012-12-15", format = "%Y-%m-%d") # Winter Solstice
+  SE <- as.Date("2012-3-15",  format = "%Y-%m-%d") # Spring Equinox
+  SS <- as.Date("2012-6-15",  format = "%Y-%m-%d") # Summer Solstice
+  FE <- as.Date("2012-9-15",  format = "%Y-%m-%d") # Fall Equinox
+  
+  # Convert dates from any year to 2012 dates
+  d <- as.Date(strftime(DATES, format="2012-%m-%d"))
+  
+  ifelse (d >= WS | d < SE, "Winter",
+          ifelse (d >= SE & d < SS, "Spring",
+                  ifelse (d >= SS & d < FE, "Summer", "Fall")))
+}
+var = jonnyData$DATE# as.Date(c("2/14/2022","6/10/2022"), format = "%m/%d/%Y")
+jonnyData$Season = paste(getApproximateSeason(var),format(var,"%Y"))
+synopticSeasons = unique(jonnyData$Season)
+
+#Plotly
 emptyFig <- plot_ly()
-jonnyData1<-jonnyData[,!(names(jonnyData) %in% c("SubBasin","Type","Longitude","Latitude"))]
-corr <- cor(jonnyData1)
+#Corr plot
+newCol = con$Feature[con$Type!="None"]
+jonnyData1<-jonnyData[,(names(jonnyData) %in% newCol)]
+corr <- cor(na.omit(jonnyData1))
 p.mat <- cor_pmat(jonnyData1)
 options(repr.plot.width = 14, repr.plot.height = 14)
 corr.plot <- ggcorrplot(corr, hc.order = TRUE, type = "upper", outline.col = "white",colors = c("navy", "white", "#08d8b2"), p.mat = p.mat)
 #UI
-Contaminant = con$Feature[con$Type == "Contaminant"]
-Infrastructure = con$Feature[con$Type == "Infrastructure"]
-Demographics = con$Feature[con$Type == "Demographics"]
+Contaminant = con$displayedTitle[con$Type == "Contaminants"]
+Infrastructure = con$displayedTitle[con$Type == "Infrastructure"]
+Demographics = con$displayedTitle[con$Type == "Demographics"]
 max_1_item_opts <- sortable_options(group = list(name = "my_shared_group", put = htmlwidgets::JS("function(to) {return to.el.children.length < 1;}"))) #Prevents drop boxes from having more than 1 element
 
 #WQI Leaflet graphic
@@ -103,7 +131,7 @@ icons <- makeAwesomeIcon(
 )
 
 #Choro data
-colnames(jonnyData)[1] = "SUBBA" 
+#colnames(jonnyData)[1] = "SUBBA" 
 choroData = merge(jonnyData,huc14,by = "SUBBA")
 emptyMap = leaflet()%>% addTiles()%>%addPolygons(data = huc14, weight = 1, opacity = 1, color = "black", fillOpacity = 0)
 
@@ -118,8 +146,6 @@ bardatatable$Year <- factor(bardatatable$Year, order=TRUE, levels = c("2016", "2
 
 #barchart
 bardata <- na.omit(bardatatable %>% count(Year, Regulation.compliance, vars = bardatatable$Parameter))
-bardata
-
 # bardata_percent <- bardata %>%
 bardata_percent <- aggregate(bardata$n, by=list(bardata$vars,bardata$Year), FUN=sum) 
 #cahngin the name of the columns for the next step
@@ -129,7 +155,12 @@ colnames(bardata_percent) <- c('vars','Year','x')
 bla <- merge(bardata, bardata_percent,all=TRUE)
 
 bardata_percent1 <- bla %>% mutate (Percentage = bla$n*100 / bla$x)
-bardata_percent1 
+
 #input vector
 parameters <- unique(bardatatable$Parameter) 
 parameters <- as.list(parameters)
+
+#Boxplot
+matchedparams <- as.list(con$displayedTitle[con$boxplotMatch=="yes"])
+
+wider_durham <- active_sitesReal[, c(2, 4:6)]

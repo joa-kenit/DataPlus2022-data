@@ -1,4 +1,3 @@
-
 ############################################
 # ECWA Data Visualization ITERATION TWO    #
 # by Jack Tsenane, Ryan Yu, Joanna Huertas #
@@ -77,8 +76,7 @@ shinyUI(fluidPage(
                 tealLine,
                 
                 #Read in pollutant page content
-                fluidRow(column(width=1),column(width = 10,includeMarkdown("www/probando.md")),column(width = 1))
-                ),
+                fluidRow(column(width=1),column(width = 10,includeMarkdown("www/probando.md")),column(width = 1))),
         
         tabItem(tabName = "dc",
                 #Header
@@ -103,12 +101,12 @@ shinyUI(fluidPage(
                 fluidRow(
                   column(3, align="left",
                          box(width = "100%", background = "navy",
-                         selectInput("Param", "Select Parameter", Parameter))),
+                         selectInput("ParamBoxplots", "Select Parameter", matchedparams))),
                   #ploty graph
                   column(9, align = "center",
                          box(width = "100%", background = "navy", 
                              plotlyOutput("Boxplots")))),
-                tags$p("End of Section")
+                tags$p("")
                 ),
         
         tabItem(tabName = "health",
@@ -220,15 +218,16 @@ shinyUI(fluidPage(
                 tags$p("Is there more excess nutrients (nitrogen, phosphorus) from fertilizer where there is more cultivated farm land?"),
                 tags$p("Is there a stronger correlation between where salt is and where roads are in the winteror the summer?"),
                 tags$h3("Variable Comparison Tool",style="text-align: center"),
-                fluidRow(column(12,box(width = "100%", background = "navy",uiOutput("synced_maps", width="100%")))),
+                fluidRow(column(12,align="center",box(width = "100%", background = "navy",uiOutput("synced_maps", width="100%")))),
                 fluidRow(box(width = 6, background = "navy",                               
                   column(width = 4,
-                         radioButtons("season", "Season of Sampling of Water Quality Measurments",
-                                      c("Fall" = "fall",
-                                        "Winter" = "wint",
-                                        "Summer" = "summ"),
+                         prettyRadioButtons("season", "Season of Sampling of Water Quality Measurments",
+                                      choices = synopticSeasons,
+                                      shape = "curve",
+                                      animation = "smooth",
                                       inline = FALSE,
-                                      selected = "wint"),
+                                      selected = synopticSeasons[1]),
+                         
                          rank_list(
                            text = "Water Quality Measurements",
                            labels = Contaminant,
@@ -303,41 +302,36 @@ shinyUI(fluidPage(
                 tealLine,
                 fluidRow(
                   tags$head(tags$style(".headShot{border: solid 2px #202A44;  width: 100% !important;height: auto !important;}")),
-                  #column(width=1),
+                  
                   column(width=4, align="center",
                          br(),br(),br(),
-                         img(src='JackPhoto.JPG',class = "headShot"),
+                         img(src='JackPhoto.PNG',class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Jack Tsenane"),
                              tags$hr(style = "width: 30%;height: 2px;"),
-                             p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio. Bio bio bio bio bio bio.",style="text-align:left"))),
+                             p("Jack studied chemical engineering at Vanderbilt University. He first began river monitoring for the Wisconsin DNR in middle school. Jack enjoys employing data science tools to better understand and improve the world.",style="text-align:left;padding:5px;border-radius:10px"))),
                   column(width=4, align="center",
                          br(),br(),br(),
                          img(src='JoannaPhoto.PNG',height = "400",class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Joanna Huertas"),
                              tags$hr(style = "width: 30%;height: 2px;"),
-                             p("Joanna is an Environmental Engineer with more than four years of experience in environmental consulting companies and she is currently pursuing the Master’s degree in Environmental Engineering at Duke University. Her experience in private, academic, and government sectors in regards to water quality compliance, aids with the technical underpinning for the display of water quality monitoring results." ,style="text-align:left;padding:5px;border-radius:10px"))),
+                             p("Joanna is an environmental engineer with more than four years of experience in environmental consulting. She is currently pursuing a Master’s degree in Environmental Engineering at Duke University. Her experience in private, academic, and government sectors in regards to water quality compliance aids the technical underpinning of the display of water quality monitoring results." ,style="text-align:left;padding:5px;border-radius:10px"))),
                   column(width=4, align="center",
                          br(),br(),br(),
-                         img(src='RyanPhoto.JPG',height = "400",class = "headShot"),
+                         img(src='RyanPhoto.PNG',height = "400",class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Ryan Yu"),
                              tags$hr(style = "width: 30%;height: 2px;"),
-                             p("Brief bio. Bio bio bio bio bio bio. Bio bio bio bio. Bio bio bio bio. Bio bio bio bio bio bio.",style="text-align:left"))),
-                  #column(width=1)
-                )
-                
-                
-                #Insert head shots and short bios
-                
-        )#end of teams subtab
+                             p("Ryan is a rising sophomore at Duke University who has taken coursework in mathematics, computer science, and statistical science. In addition to these areas, he is exploring finance and economics. Ryan is planning on declaring for a major in Computer Science and Statistics in the Spring of 2023." ,style="text-align:left;padding:5px;border-radius:10px"))),
+                  )
+      
+        )#end of team subtab
         
       )#end of tabs
       
-    ) # end dashboardBody
+    )#end dashboard body
     
-  )# end dashboardPage
-  
-)
-)
+  )#end dashboard page
+))
+

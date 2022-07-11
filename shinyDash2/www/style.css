@@ -18,6 +18,10 @@ hr{
   background: #08d8b2;
 }
 
+input[type='radio'] {
+  background-color: white;
+}
+
 .rankJack{
   background-color: white!important;
   color: black;
@@ -26,6 +30,7 @@ hr{
   font-family: 'Source Sans Pro', sans-serif;
   padding: 6px 18px;
   margin-bottom: 10px;
+  text-align: left;
 }
 
 .rankJack .rank-list-item{
@@ -96,4 +101,5 @@ font-size: 20px;
 .pure-material-switch {
 background-color: #c110a0;
 }
+
 
