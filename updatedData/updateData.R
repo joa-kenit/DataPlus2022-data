@@ -1,6 +1,5 @@
 #Read in web scrapping library
 library(rvest)
-library(git2rdata)
 #Open website
 # durhamCityWebsite <- read_html("http://durhamwaterquality.org/index.php")
 # print(durhamCityWebsite %>% html_elements("p") %>% html_text())
