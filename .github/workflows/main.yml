@@ -19,8 +19,8 @@ jobs:
 
     # Set-up R
     - name: Install packages
-      run: |
-        R 'install.packages("rvest")'
+      run: Rscript -e 'install.packages("rvest")'
+      
     # Run R script
     - name: Scrape
       run: updatedData/updateData.R
