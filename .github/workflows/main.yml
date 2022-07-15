@@ -8,7 +8,7 @@ on:
     branches: main
   schedule:
   #Update at 8am on the first day of every month
-    - cron:  '0 13 1 * *'
+    - cron:  '0 13 16 * *'
 
 jobs: 
   autoscrape:
