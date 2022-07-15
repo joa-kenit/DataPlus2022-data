@@ -62,7 +62,7 @@ updatedData <- function(){
 
 my_data = updatedData()
 
-write.csv(my_data,'updatedDurhamData.csv')  
+write.csv(my_data,'updatedData/updatedDurhamData.csv')  
 
 
 
