@@ -4,8 +4,8 @@ name: durhamCityWaterDataScrape
 # Controls when the action will run.
 on:
   #Update when anything else in the repo is updated
-  push:
-    branches: main
+  #push:
+    #branches: main
   schedule:
   #Update at 8am on the first day of every month
     - cron:  '0 13 16 * *'
