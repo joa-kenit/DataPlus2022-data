@@ -186,7 +186,8 @@ shinyServer(function(input, output, session) {
     
     leaflet()%>% addTiles()%>%addCircleMarkers(lng= stationData1$Longitude, lat = stationData1$Latitude,layerId = stationData1$Name,color = "black", fillOpacity = 0.9,
                                                fillColor = beatCol(as.numeric(wqiData1[nrow(wqiData1),])),opacity = 1, radius = 15,
-                                               label = paste("Station name:",stationData1$Name,"\n","Water quality index:",wqiData1[nrow(wqiData1),]))})
+                                               label = paste("Station name:",stationData1$Name,"\n","Water quality index:",wqiData1[nrow(wqiData1),]))%>%addLegend(position = "bottomleft",pal = palwqi
+                                                                                                                                                                   , values=c(0,100), opacity=2, title= "Water Quality Index")})
   
   colors <- c("#184e77", "#1e6091", "#1a759f","#168aad", "#34a0a4", "#52b69a", "#76c893", "#99d98c", "#b5e48c","#d9ed92")
   output$wqiLinePlot <- renderPlotly({figWQI <- plot_ly()%>%layout(title = 'Water Quality over Time',colorscale="blues2green",shapes = vline(wqiData$Date[nrow(wqiData1)]), plot_bgcolor = "#e5ecf6", 
@@ -214,6 +215,7 @@ shinyServer(function(input, output, session) {
   #############################
   # Initialize map #input$prods=choices in ui.R
   output$param3map <- renderLeaflet({
+    Xtitle <- tags$div(HTML(paste(input$prods," (",unit$Unit[unit$Parameter == input$prods],")",sep="")))
     leaflet()%>% addTiles %>% 
       addPolygons(data = huc14, 
                   #fillColor = ~pal(durham_contaminants$Value),
@@ -230,8 +232,8 @@ shinyServer(function(input, output, session) {
         layerId = durham_contaminants$Station.Name, 
         showLabels = input$labels,
         #colorPalette = colors,
-        width = 45#, height = 25
-      )
+        width = 45)%>% #, height = 25
+      addControl(Xtitle, position = "bottomleft") 
   })
   #Update charts each time input value changes
   
@@ -355,10 +357,9 @@ shinyServer(function(input, output, session) {
   #######################
   output$barPlot <- renderPlotly({
     barploty <- plot_ly()
-    barploty <- bardata_percent1 %>% filter(vars == input$Parameter) %>% 
-      plot_ly(x = ~Year, y = ~Percentage,type = "bar", color = ~Regulation.compliance, colors=c("#a6d96a","#c63637"), marker = list(line = list(color = '#001f3f', width = 1.5))) %>% 
-      layout(showlegend=T)
-    #colors="Blues",
+    barploty <- bardata_percent1 %>% filter(vars == input$Parameter) %>%
+      plot_ly(x = ~Year, y = ~Percentage,type = "bar", color = ~Regulation.compliance, colors=c("#c63637","#a6d96a"), name = ~Regulation.compliance, marker = list(line = list(color = '#001f3f', width = 1))) %>% 
+      layout(barmode = "stack", showlegend=T, yaxis = list(title = 'Percentage (%)'))
   })
   
 }) #End of server

@@ -92,6 +92,21 @@ wqiData1 <- wqiData[toKeep]
 
 beatCol <- colorNumeric(palette = 'RdYlGn',  domain=c(50,100),na.color = "#808080")
 
+pali <- brewer.pal(11,"Paired")
+pali[1] <- "#d73027"
+pali[2] <- "#d73027"
+pali[3] <- "#d73027"
+pali[4] <- "#d73027"
+pali[5] <- "#d73027"
+pali[6] <- "#fdae61"
+pali[7] <- "#fdae61"
+pali[8] <- "#fee08b"
+pali[9] <- "#ffffbf"
+pali[10] <- "#d9ef8b"
+pali[11] <- "#a6d96a"
+pali[12] <- "#1a9850"
+palwqi <- colorNumeric(palette = pali,  domain=c(0,50, 100),na.color = "#808080")
+
 stationData = read.csv('www/durham_station.csv')
 stationData1 = stationData[stationData$Name %in% c("EL5.5GC","EL1.9EC","EL5.6EC","EL8.1GC","EL8.5SEC","EL7.1SEC","EL8.6SECUT","EL7.1EC"),]
 
@@ -141,7 +156,7 @@ bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE
 bardatatable$Regulation.compliance <- as.factor(bardatatable$Regulation.compliance)
 
 # CONVERT Character to a factor with ordered level
-bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c("Acceptable level","80% or more of the acceptable level","Exceed the acceptable level",">200% of the acceptable level"))
+bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c(">200% of the acceptable level","Exceed the acceptable level","80% or more of the acceptable level","Acceptable level"))
 bardatatable$Year <- factor(bardatatable$Year, order=TRUE, levels = c("2016", "2017", "2018", "2019", "2020", "2021", "2022"))
 
 #barchart

@@ -120,7 +120,7 @@ shinyUI(fluidPage(
                 tags$h3("Key Pollution Indicators (Demo)",style="text-align: center"),
                 fluidRow(column(width = 3, 
                                 box(width = "100%", background = "navy",
-                                    selectInput("prods", "Select parameter", choices = c("Fecal.Coliform", "Total.Phosphorus", "Zinc"),selected = "Fecal.Coliform", multiple = TRUE),
+                                    selectInput("prods", "Select parameter", choices = c("Ammonium","Chloride", "Sulfate"),selected = "Ammonium", multiple = TRUE),
                                     selectInput("type", "Chart type", choices = c("polar-area","bar")),
                                     checkboxInput("labels", "Show values"))),
                          column(width = 9, box(width = "100%", background = "navy",leafletOutput("param3map")))),
@@ -159,7 +159,7 @@ shinyUI(fluidPage(
                 tags$p("Again, a lot of information is lost when one attempts to summarize the quality of water with only a handful of metrics. For a more detailed breakdown of how individual water quality parameters vary over time, use the interactive graphic below."),
                 br(),
                 
-                tags$h3("Water Quality Measruments Over Time",style="text-align: center"),
+                tags$h3("Water Quality Measurements Over Time",style="text-align: center"),
                 #Insert trend tool from Durham city data 
                 fluidRow(column(3,box(width = "100%", background = "navy",
                                       selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
