@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #libraries and object used for Over-Time Graphs
 library(shiny)
 library(dplyr)
@@ -206,3 +207,187 @@ wider_select_2 <- wider_durham[, c(4, 7, 14, 20:21, 33, 37:39)]
 wider_select <- na.omit(wider_select)
 
 
+=======
+#libraries and object used for Over-Time Graphs
+library(shiny)
+library(dplyr)
+library(plotly)
+library(shinydashboard)
+library(shinycssloaders)
+library(sortable)
+library('plot3D')
+library(ggcorrplot)
+library(shinyWidgets)
+library(leaflet)
+library(leaflet.minicharts)
+library(zoo)
+library('sf')
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(arcpullr)
+library(mapview)
+library(wesanderson)
+library(geojsonio)
+library(RColorBrewer)
+library('sf')
+library(leaflegend)
+library(leafsync)
+#library(shinydashboardPlus)
+
+tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
+#Trends graph
+active_sitesReal <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/main/asites.csv")
+active_sites_param <- active_sitesReal  
+sites <- unique(active_sitesReal$Station.Name)
+Parameter <- unique(active_sitesReal$Parameter)
+Parameter1 <- as.data.frame(Parameter)
+shortlist <- active_sites_param[, c("Parameter", "Unit")] 
+units_set <- left_join(Parameter1, shortlist)
+#list of 38 params with corresponding unit
+units_set <- units_set[!duplicated(units_set$Parameter), ]
+
+#Compare vars graph
+#S+U
+con <- read.csv('www/synopticDataContext.csv')
+#Server
+jonnyData <- read.csv('www/synopticData.csv')
+bc_data3 <- jonnyData
+jonnyData$DATE = as.Date(jonnyData$DATE, format = "%Y-%m-%d")
+jonnyData = jonnyData[order(jonnyData$DATE, decreasing = TRUE), ]
+jonnyData$SUBBA <- as.integer(trunc(jonnyData$SITE))
+extraVars <- read.csv('www/extraVars.csv')
+jonnyData <- merge(jonnyData, extraVars, by="SUBBA")
+jonnyData <- jonnyData %>% filter(SITE != 27.3) #remove waste water treatment plant 
+getApproximateSeason <- function(DATES) {
+  WS <- as.Date("2012-12-15", format = "%Y-%m-%d") # Winter Solstice
+  SE <- as.Date("2012-3-15",  format = "%Y-%m-%d") # Spring Equinox
+  SS <- as.Date("2012-6-15",  format = "%Y-%m-%d") # Summer Solstice
+  FE <- as.Date("2012-9-15",  format = "%Y-%m-%d") # Fall Equinox
+  
+  # Convert dates from any year to 2012 dates
+  d <- as.Date(strftime(DATES, format="2012-%m-%d"))
+  
+  ifelse (d >= WS | d < SE, "Winter",
+          ifelse (d >= SE & d < SS, "Spring",
+                  ifelse (d >= SS & d < FE, "Summer", "Fall")))
+}
+var = jonnyData$DATE# as.Date(c("2/14/2022","6/10/2022"), format = "%m/%d/%Y")
+jonnyData$Season = paste(getApproximateSeason(var),format(var,"%Y"))
+synopticSeasons = unique(jonnyData$Season)
+
+#Plotly
+emptyFig <- plot_ly()
+#Corr plot
+newCol = con$Feature[con$Type!="None"]
+jonnyData1<-jonnyData[,(names(jonnyData) %in% newCol)]
+corr <- cor(na.omit(jonnyData1))
+p.mat <- cor_pmat(jonnyData1)
+options(repr.plot.width = 14, repr.plot.height = 14)
+corr.plot <- ggcorrplot(corr, hc.order = TRUE, type = "upper", outline.col = "white",colors = c("navy", "white", "#08d8b2"), p.mat = p.mat)
+#UI
+Contaminant = con$displayedTitle[con$Type == "Contaminants"]
+Infrastructure = con$displayedTitle[con$Type == "Infrastructure"]
+Demographics = con$displayedTitle[con$Type == "Demographics"]
+max_1_item_opts <- sortable_options(group = list(name = "my_shared_group", put = htmlwidgets::JS("function(to) {return to.el.children.length < 1;}"))) #Prevents drop boxes from having more than 1 element
+
+#WQI Leaflet graphic
+wqiData <- read.csv('www/wqiReport.csv')
+wqiData$Date = as.Date(wqiData$Date, format = "%m/%d/%Y")
+#wqiData <- na.approx(wqiData,na.rm = FALSE)
+wqiData = na.locf(wqiData, na.rm = FALSE)
+wqiData1 = distinct(wqiData, Date, .keep_all = TRUE)
+toKeep = !(names(wqiData) %in% c("Date"))
+wqiData1 <- wqiData[toKeep]
+
+beatCol <- colorNumeric(palette = 'RdYlGn',  domain=c(50,100),na.color = "#808080")
+
+pali <- brewer.pal(11,"Paired")
+pali[1] <- "#d73027"
+pali[2] <- "#d73027"
+pali[3] <- "#d73027"
+pali[4] <- "#d73027"
+pali[5] <- "#d73027"
+pali[6] <- "#fdae61"
+pali[7] <- "#fdae61"
+pali[8] <- "#fee08b"
+pali[9] <- "#ffffbf"
+pali[10] <- "#d9ef8b"
+pali[11] <- "#a6d96a"
+pali[12] <- "#1a9850"
+palwqi <- colorNumeric(palette = pali,  domain=c(0,50, 100),na.color = "#808080")
+
+stationData = read.csv('www/durham_station.csv')
+stationData1 = stationData[stationData$Name %in% c("EL5.5GC","EL1.9EC","EL5.6EC","EL8.1GC","EL8.5SEC","EL7.1SEC","EL8.6SECUT","EL7.1EC"),]
+
+vline <- function(x = 0) {
+  return(list(
+    type = "line",
+    y0 = 0,
+    y1 = 1,
+    yref = "paper",
+    x0 = x,
+    x1 = x,
+    line = list(color = "black", dash="dot")))}
+
+#1. leafletminicharts param3map
+#durham_stations <- read.csv(file= "durham_station_filtered.csv", header = TRUE, sep = ";")
+durham_contaminants <- na.omit(read.csv(file= "www/durham_contaminants.csv", header = TRUE, sep = ";"))
+durham_contaminants$Date.Time = as.Date (durham_contaminants$Date.Time, format = "%d/%m/%Y")
+
+huc14 <- get_spatial_layer(url = "https://services1.arcgis.com/XBhYkoXKJCRHbe7M/arcgis/rest/services/Ellerbe_Creek_CatchmentsWMIP_view/FeatureServer/0") 
+huc15 <- mapview(huc14)
+
+#adding some color
+bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
+pal <- colorBin("YlOrRd", bins = bins) #domain = durham_contaminants$Value, )
+
+#Redlining
+redlining <- read_sf('www/NCDurham1937.geojson')
+facil<-na.omit(read.csv('www/ECIndustrialFacilities.csv'))
+holcVals <- unique(redlining$holc_grade)
+redliningCol<-rev(brewer.pal(length(holcVals),"RdYlGn"))
+redliningCols <- colorFactor(palette=redliningCol,levels=holcVals)
+facil$permitIcon <- ifelse(facil$NPDES.Permit.Type=="No Permit Required","industry", "industry-windows")
+icons <- makeAwesomeIcon(
+  icon = facil$permitIcon,
+  iconColor = 'black',
+  library = 'ion',
+)
+
+#Choro data
+#colnames(jonnyData)[1] = "SUBBA" 
+choroData = merge(jonnyData,huc14,by = "SUBBA")
+emptyMap = leaflet()%>% addTiles()%>%addPolygons(data = huc14, weight = 1, opacity = 1, color = "black", fillOpacity = 0)
+
+##############BARDATATABLE######
+bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE, sep= ";"))
+
+bardatatable$Regulation.compliance <- as.factor(bardatatable$Regulation.compliance)
+
+# CONVERT Character to a factor with ordered level
+bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c(">200% of the acceptable level","Exceed the acceptable level","80% or more of the acceptable level","Acceptable level"))
+bardatatable$Year <- factor(bardatatable$Year, order=TRUE, levels = c("2016", "2017", "2018", "2019", "2020", "2021", "2022"))
+
+#barchart
+bardata <- na.omit(bardatatable %>% count(Year, Regulation.compliance, vars = bardatatable$Parameter))
+# bardata_percent <- bardata %>%
+bardata_percent <- aggregate(bardata$n, by=list(bardata$vars,bardata$Year), FUN=sum) 
+#cahngin the name of the columns for the next step
+colnames(bardata_percent) <- c('vars','Year','x')
+
+# merge according to conditions (same col names)
+bla <- merge(bardata, bardata_percent,all=TRUE)
+
+bardata_percent1 <- bla %>% mutate (Percentage = bla$n*100 / bla$x)
+
+#input vector
+parameters <- unique(bardatatable$Parameter) 
+parameters <- as.list(parameters)
+
+#Boxplot
+matchedparams <- as.list(con$displayedTitle[con$boxplotMatch=="yes"])
+
+wider_durham <- active_sitesReal[, c(2, 4:6)]
+
+>>>>>>> d9e80288c39b49f9a5bfc09c90d4d05da9c4157d
