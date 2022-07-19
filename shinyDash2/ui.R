@@ -51,7 +51,8 @@ shinyUI(fluidPage(
                        menuItem("Data", icon = icon("list"),
                                 menuSubItem("Data Collection", tabName = "dc", icon = icon("map")),
                                 menuSubItem("Ellerbe Creek Health Status", tabName = "health", icon = icon("chart-bar")),
-                                menuSubItem("Environmental Justice", tabName = "justice", icon = icon("chart-line"))),
+                                menuSubItem("Environmental Justice", tabName = "justice", icon = icon("chart-line")),
+                                menuSubItem("Deeper Dive", tabName = "advanced", icon = icon("chart-area"))),
                        menuItem("Download", tabName = "download", icon = icon("download")),
                        menuItem("Team", tabName = "team", icon = icon("users")))), # end dashboardSidebar
     
@@ -284,6 +285,35 @@ shinyUI(fluidPage(
                 
         ),
         
+        tabItem(tabName = "advanced",
+                tags$h1("Principal Component Analysis"),
+                tabBox(width = 12,
+                  #first PCA plot type
+                  tabPanel("Infrastructure and Demographic Factors",
+                             selectInput("PCAparams", "Select Shade Parameter", pca_params),
+                           plotOutput("PCA"),
+                  ),
+                  #second PCA plot type
+                  tabPanel("Sampling Dates", 
+                           selectInput("Dates", "Select Sampling Dates", dates, multiple = TRUE, selected = dates[1]),
+                           plotOutput("PCA2")
+                  ),
+                  tabPanel("Sites",
+                           selectInput("SitePCA", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
+                           plotOutput("PCA3")
+                           )
+                  ),
+                tags$h3("Understanding a Principle Component Analysis"),
+                tags$p("The purpose of this Principle Component Analysis (PCA) 
+                       is to understand the clustering of our data with respect to 
+                       more than two parameters on a two dimensional plot. The vectors 
+                       of contaminants on the plot indicate their magnitude of influence
+                       on the variance of the data points. The axes are the first two 
+                       principle components, and they represent the first, and second largest
+                       directions of variance in the data.")
+                
+                ),
+        
         tabItem(tabName = "download",
                 tags$h1("Download Data"),
                 tealLine,
@@ -334,4 +364,5 @@ shinyUI(fluidPage(
     
   )#end dashboard page
 ))
+
 
