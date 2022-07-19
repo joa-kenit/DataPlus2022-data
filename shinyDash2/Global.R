@@ -180,3 +180,44 @@ matchedparams <- as.list(con$displayedTitle[con$boxplotMatch=="yes"])
 
 wider_durham <- active_sitesReal[, c(2, 4:6)]
 
+#PCA Plot Extras#####################
+dates <- c("2021-09-25","2022-02-26", "2022-06-16") 
+bc_data3 <- bc_data3[!duplicated(bc_data$DOC..mg.L.), ]
+
+#change september 2022 to 2021
+
+bc_data3[35:64, "DATE"] <- "2021-09-25"
+
+#Fill in NA values with half of the detection limit
+#df %>% mutate_at(vars(c("AAA", "BAA":"BBA", "BBB")), ~replace_na(.,0))
+contams1 <- c("Cl.mg.L", "SO4.mg.L", "Br.mg.L", "NO3.N.mg.L", "Na.mg.L", 
+              "K.mg.L", "Mg.mg.L", "Ca.mg.L", "NH4.N.mg.L", "PO4.P", "DOC.mg.L", "TDN.mg.L")
+bc_dataRepNA <- bc_data3 %>% mutate_at(vars(contams1), ~replace_na(., .005))
+#bc_data <- bc_data %>% mutate_at(vars("E.Coli..CFU.per.100mL."), ~replace_na(5))
+
+#remove column at bottom with NAs
+bc_dataRepNA <- bc_dataRepNA[-(99),]
+
+#filter to only columns with non-NA values and relevant params
+#check which columns have NA
+colSums(is.na(jonnyData))
+
+extraCols <- jonnyData[, c(2,25, 28, 30,36, 40)]
+
+bc_dataRepNA <- left_join(bc_dataRepNA, extraCols)
+bc_dataRepNA <- bc_dataRepNA[!duplicated(bc_dataRepNA$X), ]
+
+pca_params <- c("roadDensity_kmkm2", "pipeDensity_kmkm2", "Impervious", "Developed", "MedianHHIn")
+
+wider_durham <- wider_durham %>% pivot_wider(id_cols = c("Date.Time", "Station.Name"), names_from = "Parameter", values_from = "Value", values_fn = list("Value" = mean))
+
+wider_select <- wider_durham
+
+
+wider_select <- wider_select[, c(1:2, 6, 10, 12, 14:16, 18, 20, 21)]
+
+wider_select_2 <- wider_durham[, c(4, 7, 14, 20:21, 33, 37:39)]
+#eliminate all null values
+wider_select <- na.omit(wider_select)
+
+
