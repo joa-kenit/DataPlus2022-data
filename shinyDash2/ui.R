@@ -47,12 +47,14 @@ shinyUI(fluidPage(
                        #ECWA Logo
                        HTML(paste0("<br>","<a href='https://www.ellerbecreek.org/' target='_blank'><img style = 'display: block; margin-left: auto; margin-right: auto;' src='logoECWA.png' width = '186'></a>","<br>")),
                        menuItem("Home", tabName = "home", icon = icon("home")),
-                       menuItem("Background", tabName = "background", icon = icon("leaf")),
                        menuItem("Data", icon = icon("list"),
-                                menuSubItem("Data Collection", tabName = "dc", icon = icon("map")),
-                                menuSubItem("Ellerbe Creek Health Status", tabName = "health", icon = icon("chart-bar")),
-                                menuSubItem("Environmental Justice", tabName = "justice", icon = icon("chart-line")),
-                                menuSubItem("Deeper Dive", tabName = "advanced", icon = icon("chart-area"))),
+                                menuSubItem("Locations + Data Source", tabName = "dc", icon = icon("map")),
+                                menuSubItem("Water Quality through Time", tabName = "health", icon = icon("chart-bar")),
+                                menuSubItem("Water Quality though Space", tabName = "justice", icon = icon("chart-line"))),
+                       menuItem("Additional Resources", icon = icon("list"),
+                                menuSubItem("Pollutant Information", tabName = "background", icon = icon("leaf")),
+                                menuSubItem("Scientific Deep Dive - PCA", tabName = "PCA", icon = icon("chart-area")),
+                                menuSubItem("Scientific Deep Dive - Tracer Pollution", tabName = "param3", icon = icon("chart-area"))),
                        menuItem("Download", tabName = "download", icon = icon("download")),
                        menuItem("Team", tabName = "team", icon = icon("users")))), # end dashboardSidebar
     
@@ -70,14 +72,6 @@ shinyUI(fluidPage(
                 #Read in home page content
                 includeMarkdown("www/home.md")
                 ),
-        
-        tabItem(tabName = "background",
-                #Header
-                tags$h1("Pollutant Information"),
-                tealLine,
-                
-                #Read in pollutant page content
-                fluidRow(column(width=1),column(width = 10,includeMarkdown("www/probando.md")),column(width = 1))),
         
         tabItem(tabName = "dc",
                 #Header
@@ -114,17 +108,6 @@ shinyUI(fluidPage(
                 #Header
                 tags$h1("Health Status of Ellerbe Creek"),
                 tealLine,
-                
-                #Subsection 1
-                tags$h3("What are the primary types of pollution?"),
-                p("Environmental scientists use various pollution metrics to get an idea of the pollution landscape. The sources of pollution can be inferred by looking at particular contaminants known to come from unique sources. Sucralose is found in wastewater. Dipropylene glycol is a tire additive, and is therefore expected to be associated with car pollution. Glyphosate is used in the herbicides homeowners would put on their lawn. In conjunction, we can get an idea of where certain types of pollution should be expected. This is shown in the interactive figure below."),
-                tags$h3("Key Pollution Indicators (Demo)",style="text-align: center"),
-                fluidRow(column(width = 3, 
-                                box(width = "100%", background = "navy",
-                                    selectInput("prods", "Select parameter", choices = c("Ammonium","Chloride", "Sulfate"),selected = "Ammonium", multiple = TRUE),
-                                    selectInput("type", "Chart type", choices = c("polar-area","bar")),
-                                    checkboxInput("labels", "Show values"))),
-                         column(width = 9, box(width = "100%", background = "navy",leafletOutput("param3map")))),
             
                 #Subsection 2
                 tags$h3("How does the Ellerbe Creek Watershed compare to local water?"),
@@ -141,7 +124,9 @@ shinyUI(fluidPage(
                 #Subsection 4
                 tags$h3("How has the Ellerbe Creek Watershed changed over time?"),
                 tags$p("While the water quality index is limited in what it can do, we do get a good starting point as to how the water is doing. The sampling locations within the Ellerbe Creek Watershed with the associated water quality are shown in the figure below."),
-                column(12, align="center",
+                fluidRow(
+                column(width=2),
+                column(8, align="center",
                        tags$h3("Water Quality Index over time",style="text-align: center"),
                        box(width = "100%", background = "navy",
                            leafletOutput("WQImap")),
@@ -155,7 +140,7 @@ shinyUI(fluidPage(
                                                 width = "90%",
                                                 animate = animationOptions(interval = 100, loop = FALSE))))
                        #plotlyOutput("wqiLinePlot")
-                ),
+                ),column(width=2)),
                 br(),
                 tags$p("Again, a lot of information is lost when one attempts to summarize the quality of water with only a handful of metrics. For a more detailed breakdown of how individual water quality parameters vary over time, use the interactive graphic below."),
                 br(),
@@ -213,80 +198,49 @@ shinyUI(fluidPage(
                 tags$h3("What other relationships exist?"),
                 tags$p("Duke researchers have mapped out pollution within the Ellerbe creek  watershed. The graph below shows the linear correlation between each of the variables with “x’s” through all of the correlations that are not statistically significant."),
                 tags$h3("Correlation table of variables within the Ellerbe Creek WaterShed",style="text-align: center"),
-                fluidRow(column(width=2),column(width =8, box(width = "100%",height="620px",background = "navy", plotOutput("corTable"))),column(width=2)),
+                fluidRow(column(width=5,box(width = "100%",background = "navy", plotOutput("corTableDemo"))),
+                         column(width = 2,box(width = "100%",background = "navy",prettyRadioButtons("seasonCorr", "Season of Sampling of Water Quality Measurments",
+                                                                                                    choices = synopticSeasons,
+                                                                                                    shape = "curve",
+                                                                                                    animation = "smooth",
+                                                                                                    inline = FALSE,
+                                                                                                    selected = synopticSeasons[1]))),
+                         column(width=5,box(width = "100%",background = "navy", plotOutput("corTableInfra")))),
 
                 tags$p("You can use the tool below to understand how different water quality measurements relate to the infrastructure and demographics of the region. To inform your comparison, you can use the correlation plot above. Alternatively, you can investigate common research questions:"),
                 tags$p("Is there more excess nutrients (nitrogen, phosphorus) from fertilizer where there is more cultivated farm land?"),
                 tags$p("Is there a stronger correlation between where salt is and where roads are in the winteror the summer?"),
                 tags$h3("Variable Comparison Tool",style="text-align: center"),
                 fluidRow(column(12,align="center",box(width = "100%", background = "navy",uiOutput("synced_maps", width="100%")))),
-                fluidRow(box(width = 6, background = "navy",                               
-                  column(width = 4,
-                         prettyRadioButtons("season", "Season of Sampling of Water Quality Measurments",
-                                      choices = synopticSeasons,
-                                      shape = "curve",
-                                      animation = "smooth",
-                                      inline = FALSE,
-                                      selected = synopticSeasons[1]),
-                         
-                         rank_list(
-                           text = "Water Quality Measurements",
-                           labels = Contaminant,
-                           input_id = "main_list1",
-                           options = sortable_options(group = "my_shared_group"),
-                           class = "rankJack"
-                         )),
-                  column(width = 4,
-                         rank_list(
-                           text = "Infrastructure & Environment",
-                           labels = Infrastructure,
-                           input_id = "main_list2",
-                           options = sortable_options(group = "my_shared_group"),
-                           class = "rankJack"
-                         ),
-                         rank_list(
-                           text = "Demographics",
-                           labels = Demographics,
-                           input_id = "main_list3",
-                           options = sortable_options(group = "my_shared_group"),
-                           class = "rankJack")
-                  ), column(width=4,                                         
-                            rank_list(
-                              text = "X axis",
-                              labels = c(),
-                              input_id = "list_1",
-                              options = max_1_item_opts,
-                              class = "rankJack"
-                            ),
-                            rank_list(
-                              text = "Y axis",
-                              labels = c(),
-                              input_id = "list_2",
-                              options = max_1_item_opts,
-                              class = "rankJack"
-                            ),
-                            rank_list(
-                              text = "Z axis (optional)",
-                              labels = c(),
-                              input_id = "list_3",
-                              options = max_1_item_opts,
-                              class = "rankJack"
-                              
-                            ))),
-                  column(width = 6,box(width = "100%", background = "navy",plotlyOutput("value2")), 
-                         box(width = "100%", background = 'navy',
-                             materialSwitch(inputId = "bestFitSwitch", label = "Show best fit linear equation"),
-                             textOutput(outputId="text1"), 
-                             # dropdownButton("0 indicates no linear correlation. 1 indicates high linear correlation. 0-0.25 is often considered low correlation. 0.5-1 is often considered high correlation.", 
-                             #                status = 'success', icon = icon('question'),style="color: navy"),
-                             textOutput(outputId="text2"),
-                             textOutput(outputId="text3"),
-                             tags$head(tags$style("#text1#text2{font-size: 12px;}"))))) 
+                fluidRow(column(width=6,
+                                prettyRadioButtons("season", "Season of Sampling of Water Quality Measurments",
+                                                   choices = synopticSeasons,
+                                                   shape = "curve",
+                                                   animation = "smooth",
+                                                   inline = FALSE,
+                                                   selected = synopticSeasons[1]),
+                                uiOutput("dragAndDropListChloro")
+                                ),
+                         column(width = 6,box(width = "100%", background = "navy",plotlyOutput("value2")), 
+                           box(width = "100%", background = 'navy',
+                           materialSwitch(inputId = "bestFitSwitch", label = "Show best fit linear equation"),
+                           textOutput(outputId="text1"), 
+                           textOutput(outputId="text2"),
+                           textOutput(outputId="text3"),
+                           tags$head(tags$style("#text1#text2{font-size: 12px;}")))))
                 
         ),
+        tabItem(tabName = "background",
+                #Header
+                tags$h1("Pollutant Information"),
+                tealLine,
+                
+                #Read in pollutant page content
+                fluidRow(column(width=1),column(width = 10,includeMarkdown("www/probando.md")),column(width = 1))),
         
-        tabItem(tabName = "advanced",
-                tags$h1("Principal Component Analysis"),
+        tabItem(tabName = "PCA",
+                #Subsection 1
+                tags$h2("Principal Component Analysis",style="text-align: center"),
                 tabBox(width = 12,
                        #first PCA plot type
                        tabPanel("Infrastructure and Demographic Factors",
@@ -310,7 +264,23 @@ shinyUI(fluidPage(
                        of contaminants on the plot indicate their magnitude of influence
                        on the variance of the data points. The axes are the first two 
                        principle components, and they represent the first, and second largest
-                       directions of variance in the data.")
+                       directions of variance in the data.")),
+        
+        
+        tabItem(tabName = "param3",     
+                #Subsection 2
+                tags$h2("What are the primary types of pollution?",style="text-align: center"),
+                p("Environmental scientists use various pollution metrics to get an idea of the pollution landscape. The sources of pollution can be inferred by looking at particular contaminants known to come from unique sources. Sucralose is found in wastewater. Dipropylene glycol is a tire additive, and is therefore expected to be associated with car pollution. Glyphosate is used in the herbicides homeowners would put on their lawn. In conjunction, we can get an idea of where certain types of pollution should be expected. This is shown in the interactive figure below."),
+                fluidRow(column(width=3),
+                         column(width=6,box(width = "100%", background = "navy", plotlyOutput("logisticPlot"))),
+                         column(width=3)),
+                tags$h3("Key Pollution Indicators (Demo)",style="text-align: center"),
+                fluidRow(column(width = 3, 
+                                box(width = "100%", background = "navy",
+                                    selectInput("prods", "Select parameter", choices = c("Ammonium","Chloride", "Sulfate"),selected = "Ammonium", multiple = TRUE),
+                                    selectInput("type", "Chart type", choices = c("polar-area","bar")),
+                                    checkboxInput("labels", "Show values"))),
+                         column(width = 9, box(width = "100%", background = "navy",leafletOutput("param3map")))),
                 
         ),
         tabItem(tabName = "download",
@@ -320,8 +290,9 @@ shinyUI(fluidPage(
                 br(),
                 downloadButton('downloadData0','SiteLocations&Descriptions', class = "btn-block"),
                 downloadButton('downloadData1', 'DataBySubbasin', class = "btn-block"),
+                a("GitHub Codebase", href="https://github.com/joa-kenit/DataPlus2022-data", class = "btn-block"),
                 #style="display: block; margin: 0 auto; width: 230px;color: black;"  width: 20%;
-                tags$head(tags$style(".btn-block{background-color:#202A44;color: white;width: 30%;margin-left: 35%;margin-right: 30%;height:50px;font-size: 20px;}"))  
+                tags$head(tags$style(".btn-block{background-color:#202A44;color: white;width: 30%;margin-left: 35%;margin-right: 30%;height:50px;font-size: 20px;text-align: center;}"))  
                 
         ), 
         
@@ -329,31 +300,35 @@ shinyUI(fluidPage(
         tabItem(tabName = "team", 
                 tags$h1("Team"),
                 tealLine,
+                tags$h2("Coding Team",style="text-align: center"),
                 fluidRow(
                   tags$head(tags$style(".headShot{border: solid 2px #202A44;  width: 100% !important;height: auto !important;}")),
-                  
-                  column(width=4, align="center",
+                  column(width=1),
+                  column(width=3, align="center",
                          br(),br(),br(),
                          img(src='JackPhoto.PNG',class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Jack Tsenane"),
                              tags$hr(style = "width: 30%;height: 2px;"),
                              p("Jack studied chemical engineering at Vanderbilt University. He first began river monitoring for the Wisconsin DNR in middle school. Jack enjoys employing data science tools to better understand and improve the world.",style="text-align:left;padding:5px;border-radius:10px"))),
-                  column(width=4, align="center",
+                  column(width=3, align="center",
                          br(),br(),br(),
                          img(src='JoannaPhoto.PNG',height = "400",class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Joanna Huertas"),
                              tags$hr(style = "width: 30%;height: 2px;"),
                              p("Joanna is an environmental engineer with more than four years of experience in environmental consulting. She is currently pursuing a Master’s degree in Environmental Engineering at Duke University. Her experience in private, academic, and government sectors in regards to water quality compliance aids the technical underpinning of the display of water quality monitoring results." ,style="text-align:left;padding:5px;border-radius:10px"))),
-                  column(width=4, align="center",
+                  column(width=3, align="center",
                          br(),br(),br(),
                          img(src='RyanPhoto.PNG',height = "400",class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Ryan Yu"),
                              tags$hr(style = "width: 30%;height: 2px;"),
                              p("Ryan is a rising sophomore at Duke University who has taken coursework in mathematics, computer science, and statistical science. In addition to these areas, he is exploring finance and economics. Ryan is planning on declaring for a major in Computer Science and Statistics in the Spring of 2023." ,style="text-align:left;padding:5px;border-radius:10px"))),
-                  )
+                  column(width=1),
+                  ),
+                tags$h2("Acknowledgments",style="text-align: center"),
+                tags$p("This project was made possible by the extensive support of the Duke River Center. Namely, Jonathan Behrens, Steven Anderson, and Emily Bernhardt. These people had the roles of project manager, project mentor, and project lead. We would also like to thank the Ellerbe Creek Watershed Association for their collaboration.")
       
         )#end of team subtab
         

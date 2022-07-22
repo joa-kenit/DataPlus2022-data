@@ -8,6 +8,59 @@ shinyServer(function(input, output, session) {
   #######################
   #Explore relations tab########################################################
   #######################
+  output$dragAndDropListChloro = renderUI({
+    Contaminant = con$displayedTitle[(con$Type == "Contaminants") & (unusableVars[unusableVars$Group.1==input$season,con$Feature]==FALSE)]
+    Infrastructure = con$displayedTitle[(con$Type == "Infrastructure") & (unusableVars[unusableVars$Group.1==input$season,con$Feature]==FALSE)]
+    Demographics = con$displayedTitle[(con$Type == "Demographics") & (unusableVars[unusableVars$Group.1==input$season,con$Feature]==FALSE)]
+    
+    return(fluidRow(box(width = 12, background = "navy",                               
+                        column(width = 4,
+                               rank_list(
+                                 text = "Water Quality Measurements",
+                                 labels = Contaminant,
+                                 input_id = "main_list1",
+                                 options = sortable_options(group = "my_shared_group"),
+                                 class = "rankJack"
+                               )),
+                        column(width = 4,
+                               rank_list(
+                                 text = "Infrastructure & Environment",
+                                 labels = Infrastructure,
+                                 input_id = "main_list2",
+                                 options = sortable_options(group = "my_shared_group"),
+                                 class = "rankJack"
+                               ),
+                               rank_list(
+                                 text = "Demographics",
+                                 labels = Demographics,
+                                 input_id = "main_list3",
+                                 options = sortable_options(group = "my_shared_group"),
+                                 class = "rankJack")
+                        ), column(width=4,                                         
+                                  rank_list(
+                                    text = "X axis",
+                                    labels = c(),
+                                    input_id = "list_1",
+                                    options = max_1_item_opts,
+                                    class = "rankJack"
+                                  ),
+                                  rank_list(
+                                    text = "Y axis",
+                                    labels = c(),
+                                    input_id = "list_2",
+                                    options = max_1_item_opts,
+                                    class = "rankJack"
+                                  ),
+                                  rank_list(
+                                    text = "Z axis (optional)",
+                                    labels = c(),
+                                    input_id = "list_3",
+                                    options = max_1_item_opts,
+                                    class = "rankJack"
+                                    
+                                  )))))
+  })
+  
   varsDataframe <- reactive({
     words = c(input$list_1,input$list_2,input$list_3)
     words = words[length(words) != 0]
@@ -85,10 +138,6 @@ shinyServer(function(input, output, session) {
     
     fig3D}
     else if((length(input$list_1) + length(input$list_2))  == 2){
-      print(xVar)
-      print(typeof(xVar))
-      print(yVar)
-      print(typeof(yVar))
       fig <- plot_ly(type = "scatter",mode = "markers")
       fig <- fig %>% layout(title = paste(input$list_2,"Vs.",input$list_1,"on",unique(jonnyData$DATE[jonnyData$Season==input$season])),
                             xaxis = list(title = paste(input$list_1,con$Unit[con$displayedTitle == input$list_1])),
@@ -104,7 +153,7 @@ shinyServer(function(input, output, session) {
     }})
   
   observe({
-    if(input$bestFitSwitch){
+    if(!is.null(input$bestFitSwitch) && input$bestFitSwitch){
       output$text1 <- renderText({paste("R squared:", signif(summary(fit())[r.squared],2))})
       output$text2 <- renderText({if((length(input$list_3)+length(input$list_1) + length(input$list_2))  == 3){""}
         else if((length(input$list_1) + length(input$list_2))  == 2){paste("P value: ", signif(summary(fit())$coefficients[2,4], 2))}
@@ -120,6 +169,8 @@ shinyServer(function(input, output, session) {
       output$text3 <- renderText("")
     }
   })
+  
+
   
   ############
   #Downloader###################################################################
@@ -225,11 +276,11 @@ shinyServer(function(input, output, session) {
                   dashArray = "3",
                   fillOpacity = 0) %>% 
       addMinicharts(
-        durham_contaminants$Longitude,durham_contaminants$Latitude,
+        tracerData$Longitude,tracerData$Latitude,
         type = input$type, #"polar-area",
-        chartdata = durham_contaminants[, input$prods], 
-        time = durham_contaminants$Date.Time,
-        layerId = durham_contaminants$Station.Name, 
+        chartdata = tracerData[, param3variables], #input$prods
+        time = tracerData$DATE,
+        layerId = tracerData$SITE, 
         showLabels = input$labels,
         #colorPalette = colors,
         width = 45)%>% #, height = 25
@@ -243,16 +294,16 @@ shinyServer(function(input, output, session) {
     if (length(input$prods) == 0) {
       data <- 1
     } else {
-      data <- durham_contaminants[ ,input$prods] #durham_contaminants[ durham_contaminants$Parameter == input$prods,]
+      data <- tracerData[ ,param3variables] #durham_contaminants[ durham_contaminants$Parameter == input$prods,]
     }
     maxValue <- max(as.matrix(data))
     
     leafletProxy("param3map", session) %>%
       updateMinicharts(
-        durham_contaminants$Longitude,durham_contaminants$Latitude,
+        tracerData$Longitude,tracerData$Latitude,
         chartdata = data, #durham_contaminants[, input$prods], #durham_contaminants$Value.n
         maxValues = maxValue,
-        time = durham_contaminants$Date.Time,
+        time = tracerData$DATE,
         type = input$type, #"polar-area",
         showLabels = input$labels
       )
@@ -305,24 +356,22 @@ shinyServer(function(input, output, session) {
   ###########
   output$Boxplots <- renderPlotly({
     
-    wider_durham <- wider_durham %>% pivot_wider(id_cols = c("Date.Time", "Station.Name"), names_from = "Parameter", values_from = "Value", values_fn = list("Value" = mean))
+    #wider_durham <- wider_durham %>% pivot_wider(id_cols = c("Date.Time", "Station.Name"), names_from = "Parameter", values_from = "Value", values_fn = list("Value" = mean))
     
-    wider_select_2 <- wider_durham[, c(2,4, 7, 14, 20:21, 33, 37:39)]
-    
-    alt_bc_data3 <- bc_data3[, c(3,8, 9, 11:15,20:21 )]
+    # wider_select_2 <- wider_durham[, c(2,4, 7, 14, 20:21, 33, 37:39)]
+    # 
+     alt_bc_data3 <- bc_data3[, c(3,8, 9, 11:15,20:21 )]
     #convert units from ug/L to mg/L by dividing by 1000
     wider_select_2[, c(5,6,8,9 )] <- wider_select_2[, c(5,6,8,9)]*.001
     #change column names to be consistent with alt_bc_data3
-    #colnames(wider_select_2) <- c("Station.Name", "DO.mg.L", "pH", "NO3.N.mg.L", "Ca.mg.L","Mg.mg.L", "Cl.mg.L", "K.mg.L", "Na.mg.L","SO4.mg.L")
-
+    colnames(wider_select_2) <- c("Station.Name", "DO.mg.L", "pH", "NO3.N.mg.L", "Ca.mg.L","Mg.mg.L", "Cl.mg.L", "K.mg.L", "Na.mg.L","SO4.mg.L")
+    
     #creating the plot
     curParam <- con$Feature[con$displayedTitle==input$ParamBoxplots]
-    print(curParam)
-    print(typeof(curParam))
     
     names(wider_select_2)[names(wider_select_2) == input$ParamBoxplots] <- 'targetVar1'
     p1 <- plot_ly(wider_select_2, x = ~Station.Name, y = ~targetVar1, type = "box", name = "Durham Data Sites")
-    names(wider_select_2)[names(wider_select_2) == 'targetVa1r'] <- input$ParamBoxplots
+    names(wider_select_2)[names(wider_select_2) == 'targetVa1'] <- input$ParamBoxplots
     
     
     names(alt_bc_data3)[names(alt_bc_data3) == curParam] <- 'targetVar2'
@@ -330,14 +379,47 @@ shinyServer(function(input, output, session) {
     names(alt_bc_data3)[names(alt_bc_data3) == 'targetVar2'] <- curParam
     
     fig =subplot(p1, p2, nrows = 1, shareX = FALSE, shareY = TRUE)
-    print(fig)
     return(fig)
   })
   
   ###########
   #Cor table####################################################################
   ###########
-  output$corTable <- renderPlot({corr.plot},height=600)
+  jonnyData1 <- reactive({
+    jonnyData1 <- jonnyData %>% filter(Season == input$seasonCorr)
+    toKeep <- con$Feature[con$Type%in%c("Contaminants","Infrastructure","Demographics")]
+    jonnyData1<-jonnyData1[,(names(jonnyData1) %in% toKeep)]
+    
+    #Remove empty columns
+    empty_columns <- sapply(jonnyData1, function(x) all(is.na(x) | x == ""))
+    jonnyData1 = jonnyData1[, !empty_columns]
+    return(jonnyData1)})
+  
+  output$corTableDemo <- renderPlot({
+    jonnyData1X <- con$Feature[con$Type=="Contaminants"]
+    jonnyData1Y1 <- con$Feature[con$Type=="Infrastructure"]
+    a = which(colnames(jonnyData1()) %in% jonnyData1X)
+    b = which(colnames(jonnyData1()) %in% jonnyData1Y1)
+
+    matrixCor <- cor(jonnyData1(),use="pairwise.complete.obs")
+    
+    fig1 <- ggcorrplot(matrixCor[b,a], method = "square",colors = c("navy", "white", "#08d8b2"), p.mat = cor_pmat(jonnyData1())[b,a]) + 
+      scale_x_discrete(labels = con$displayedTitle[which(con$Feature %in% colnames(matrixCor))][b]) + 
+      scale_y_discrete(labels = con$displayedTitle[which(con$Feature %in% colnames(matrixCor))][a])
+    return(fig1)})
+  
+  output$corTableInfra <- renderPlot({
+    jonnyData1X <- con$Feature[con$Type=="Contaminants"]
+    jonnyData1Y2 <- con$Feature[con$Type=="Demographics"]
+    a = which(colnames(jonnyData1()) %in% jonnyData1X)
+    c = which(colnames(jonnyData1()) %in% jonnyData1Y2)
+    
+    matrixCor <- cor(jonnyData1(),use="pairwise.complete.obs")
+    
+    fig2 <- ggcorrplot(matrixCor[c,a], method = "square",colors = c("navy", "white", "#08d8b2"),p.mat = cor_pmat(jonnyData1())[c,a]) + 
+      scale_x_discrete(labels = con$displayedTitle[which(con$Feature %in% colnames(matrixCor))][c]) + 
+      scale_y_discrete(labels = con$displayedTitle[which(con$Feature %in% colnames(matrixCor))][a])
+    return(fig2)})
   
   ##########################
   #Generate redlining plot #####################################################
@@ -394,10 +476,8 @@ shinyServer(function(input, output, session) {
   output$PCA3 <- renderPlot({
     list_sites <- input$SitePCA
     wider_select <- wider_select[which(wider_select$Station.Name %in% input$SitePCA),]
-    print(list_sites)
     #wider_selectfixed <- data.frame(t(na.omit(t(wider_select))))
     pca2 <- prcomp(wider_select[, c(3:11)], center = TRUE, scale = TRUE)
-    print(wider_select)
     plotc <-autoplot(pca2, x=1, y=2, data = wider_select, colour = 'Station.Name', frame = TRUE, main = "PCA of Ellerbe Creek Sampling Sites Durham Data", 
                      #could take off arrows option
                      alpha=0.7, loadings.colour='black', loadings.label.colour ='black',
@@ -406,4 +486,12 @@ shinyServer(function(input, output, session) {
   })
   
   
+  ###############
+  #Logistic Curve#########
+  ###############
+  output$logisticPlot <- renderPlotly({
+    return(logisticFig)
+  })
+  
 }) #End of server
+

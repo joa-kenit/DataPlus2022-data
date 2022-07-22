@@ -23,6 +23,7 @@ library(RColorBrewer)
 library('sf')
 library(leaflegend)
 library(leafsync)
+library(psych)
 #library(shinydashboardPlus)
 
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
@@ -69,16 +70,15 @@ synopticSeasons = unique(jonnyData$Season)
 #Plotly
 emptyFig <- plot_ly()
 #Corr plot
-newCol = con$Feature[con$Type!="None"]
-jonnyData1<-jonnyData[,(names(jonnyData) %in% newCol)]
-corr <- cor(na.omit(jonnyData1))
-p.mat <- cor_pmat(jonnyData1)
-options(repr.plot.width = 14, repr.plot.height = 14)
-corr.plot <- ggcorrplot(corr, hc.order = TRUE, type = "upper", outline.col = "white",colors = c("navy", "white", "#08d8b2"), p.mat = p.mat)
+# newCol = con$Feature[con$Type!="None"]
+# jonnyData1<-jonnyData[,(names(jonnyData) %in% newCol)]
+# corr <- cor(na.omit(jonnyData1))
+# p.mat <- cor_pmat(jonnyData1)
+# options(repr.plot.width = 14, repr.plot.height = 14)
+# corr.plot <- ggcorrplot(corr, hc.order = TRUE, type = "upper", outline.col = "white",colors = c("navy", "white", "#08d8b2"), p.mat = p.mat)
 #UI
-Contaminant = con$displayedTitle[con$Type == "Contaminants"]
-Infrastructure = con$displayedTitle[con$Type == "Infrastructure"]
-Demographics = con$displayedTitle[con$Type == "Demographics"]
+checkIfEmpty = function(x){return(all(is.na(x)))}
+unusableVars =   aggregate(jonnyData,by=list(jonnyData$Season),FUN=checkIfEmpty)
 max_1_item_opts <- sortable_options(group = list(name = "my_shared_group", put = htmlwidgets::JS("function(to) {return to.el.children.length < 1;}"))) #Prevents drop boxes from having more than 1 element
 
 #WQI Leaflet graphic
@@ -127,6 +127,19 @@ durham_contaminants$Date.Time = as.Date (durham_contaminants$Date.Time, format =
 
 huc14 <- get_spatial_layer(url = "https://services1.arcgis.com/XBhYkoXKJCRHbe7M/arcgis/rest/services/Ellerbe_Creek_CatchmentsWMIP_view/FeatureServer/0") 
 huc15 <- mapview(huc14)
+
+unit <- read.csv('www/units.csv', header = TRUE, sep = ";")
+
+param3variables = c("NH4.N.mg.L","Cl.mg.L","SO4.mg.L")
+
+jonnyLoc<- read.csv('www/jonnySites.csv')
+  
+tracerData = jonnyData[c("DATE","SITE",param3variables)]
+tracerData = merge(tracerData, jonnyLoc, by="SITE")
+tracerData <- na.omit(tracerData)
+tracerData[param3variables] <- scale(tracerData[param3variables])
+tracerData[param3variables] <- logistic(tracerData[param3variables])
+tracerData[param3variables] <- round(tracerData[param3variables],2)
 
 #adding some color
 bins <- c(0, 10, 20, 50, 100, 200, 500, 1000, Inf)
@@ -182,7 +195,7 @@ wider_durham <- active_sitesReal[, c(2, 4:6)]
 
 #PCA Plot Extras#####################
 dates <- c("2021-09-25","2022-02-26", "2022-06-16") 
-bc_data3 <- bc_data3[!duplicated(bc_data$DOC..mg.L.), ]
+bc_data3 <- bc_data3[!duplicated(bc_data3$DOC..mg.L.), ]
 
 #change september 2022 to 2021
 
@@ -219,5 +232,15 @@ wider_select <- wider_select[, c(1:2, 6, 10, 12, 14:16, 18, 20, 21)]
 wider_select_2 <- wider_durham[, c(4, 7, 14, 20:21, 33, 37:39)]
 #eliminate all null values
 wider_select <- na.omit(wider_select)
+
+#Sigmoid curve
+xVal = seq(from = -5, to = 5, by =.1)
+yVal = logistic(xVal)
+logisticFig <- plot_ly(x=xVal,y=yVal) %>% layout(title = "Logistic Function",
+                                                 xaxis = list(title = "Z Score"),
+                                                 yaxis = list(title = "Value used in plot"),
+                                                 showlegend = F)
+
+
 
 
