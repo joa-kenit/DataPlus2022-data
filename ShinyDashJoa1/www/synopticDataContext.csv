@@ -1,0 +1,36 @@
+﻿Feature,displayedTitle,Type,Unit,Description,boxplotMatch
+SITE,Site,None,,Location of sampiling site,
+DATE,Date,None,,Date of sampling ,
+NH4.N.mg.L,Ammonia as N,Contaminants,mg/L,Concentration of nitrogen in mg/L from ammonium,
+PO4.P,Phosphate as P,Contaminants,mg/L,Concentration of phosphorus in mg/L from phosphate,
+DOC.mg.L,Dissolved Organic Carbon,Contaminants,mg/L,Concentration of ,
+TDN.mg.L,Total Dissolved Nitrogen,Contaminants,mg/L,,
+Cl.mg.L,Chloride,Contaminants,mg/L,,yes
+SO4.mg.L,Sulfate,Contaminants,mg/L,,yes
+Br.mg.L,Bromide,None,mg/L,,
+NO3.N.mg.L,Nitrate as N,Contaminants,mg/L,,
+Na.mg.L,Sodium,Contaminants,mg/L,,yes
+K.mg.L,Potassium,Contaminants,mg/L,,yes
+Mg.mg.L,Magnesium,Contaminants,mg/L,,yes
+Ca.mg.L,Calcium,Contaminants,mg/L,,yes
+Temp.C,Temperature,None,C,,
+SPC.uS.cm,Specific Conductance,None,uS/cm,,
+Pressure.mmHg,Air Pressure,None,mmHg,,
+DO.perc,Dissolved Oxygen%,None,% of saturation level,,
+DO.mg.L,Dissolved Oxygen,Contaminants,mg/L,,yes
+pH,pH,None,,,yes
+E.Coli.CFU.per.100mL,E Coli,Contaminants,CFU/100mL,,
+pH.mV,pH (mV),None,mV,,
+MedianHHIn,Median Household Income,Demographics,$,,
+Low_20thPHHIn,20th Percentile Household Income,Demographics,$,,
+roadLength_km,Road Length,None,km,,
+roadDensity_kmkm2,Road Density,Infrastructure,km/km^2,,
+pipeLength_km,Pipe Length,None,km,,
+pipeDensity_kmkm2,Pipe Density,Infrastructure,km/km^2,,
+perMinority,Minority,Demographics,% of population,,
+gs_area,Area of Greenspace,None,km^2,,
+per_gs,Greenspace,Infrastructure,% of subbasin,,
+Developed,Developed,Infrastructure,% of subbasin,,
+Undeveloped,Undeveloped,Infrastructure,% of subbasin,,
+Season,Season,None,,,
+SUBBA,SUBBA,,,,
