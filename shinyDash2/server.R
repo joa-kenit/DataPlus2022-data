@@ -482,11 +482,12 @@ shinyServer(function(input, output, session) {
   output$PCA <- renderPlot({
     bc_dataRepNA <- bc_dataRepNA[, -c(23, 25:26, 28, 30:32)]
     bc_dataRepNA <- na.omit(bc_dataRepNA)
-    pca1 <- prcomp(bc_dataRepNA[, c(4:15)], center = TRUE, scale=TRUE)
-    plota <- autoplot(pca1, x=1, y=2, data=bc_dataRepNA, colour = input$PCAparams,  
-                      main = "PCA of Ellerbe Creek September, February, June Surveys",
-                      alpha=0.7, loadings.colour='black', loadings.label.colour='black',
-                      loadings=TRUE, loadings.label=TRUE, size=3) + 
+    pca1 <- stats::prcomp(bc_dataRepNA[, c(4:15)], center = TRUE, scale=TRUE)
+    print(pca1)
+    plota <- ggplot2::autoplot(pca1, x=1, y=2, data=bc_dataRepNA, colour = input$PCAparams,  
+                               main = "PCA of Ellerbe Creek September, February, June Surveys",
+                               alpha=0.7, loadings.colour='black', loadings.label.colour='black',
+                               loadings=TRUE, loadings.label=TRUE, size=3) + 
       scale_color_gradient(low = '#ebfbfb', high = '#0d2e27')
     
     plota
@@ -495,12 +496,12 @@ shinyServer(function(input, output, session) {
   output$PCA2 <- renderPlot({
     list_dates <- input$Dates
     bc_dataRepNA <- bc_dataRepNA[which(bc_dataRepNA$DATE %in% list_dates),]
-    pca1 <- prcomp(bc_dataRepNA[, c(4:15)], center = TRUE, scale=TRUE)
-    plotb <- autoplot(pca1, x=1, y=2, data=bc_dataRepNA, colour = 'DATE',  
-                      frame = TRUE, 
-                      main = "PCA of Ellerbe Creek September, February, June Surveys",
-                      alpha=0.7, loadings.colour='black', loadings.label.colour='black',
-                      loadings=TRUE, loadings.label=TRUE, size=3) + theme_classic()
+    pca1 <- stats::prcomp(bc_dataRepNA[, c(4:15)], center = TRUE, scale=TRUE)
+    plotb <- ggplot2::autoplot(pca1, x=1, y=2, data=bc_dataRepNA, colour = 'DATE',  
+                               frame = TRUE, 
+                               main = "PCA of Ellerbe Creek September, February, June Surveys",
+                               alpha=0.7, loadings.colour='black', loadings.label.colour='black',
+                               loadings=TRUE, loadings.label=TRUE, size=3) + theme_classic()
     
     plotb
     
@@ -508,14 +509,18 @@ shinyServer(function(input, output, session) {
   output$PCA3 <- renderPlot({
     list_sites <- input$SitePCA
     wider_select <- wider_select[which(wider_select$Station.Name %in% input$SitePCA),]
+    print(list_sites)
     #wider_selectfixed <- data.frame(t(na.omit(t(wider_select))))
-    pca2 <- prcomp(wider_select[, c(3:11)], center = TRUE, scale = TRUE)
-    plotc <-autoplot(pca2, x=1, y=2, data = wider_select, colour = 'Station.Name', frame = TRUE, main = "PCA of Ellerbe Creek Sampling Sites Durham Data", 
-                     #could take off arrows option
-                     alpha=0.7, loadings.colour='black', loadings.label.colour ='black',
-                     loadings=TRUE, loadings.label=TRUE, size=3) + theme_classic()
+    pca2 <- stats::prcomp(wider_select[, c(3:11)], center = TRUE, scale = TRUE)
+    print(wider_select)
+    plotc <-ggplot2::autoplot(pca2, x=1, y=2, data = wider_select, colour = 'Station.Name', frame = TRUE, main = "PCA of Ellerbe Creek Sampling Sites Durham Data", 
+                              #could take off arrows option
+                              alpha=0.7, loadings.colour='black', loadings.label.colour ='black',
+                              loadings=TRUE, loadings.label=TRUE, size=3) + theme_classic()
     plotc
   })
+  
+  
   
   
   ###############

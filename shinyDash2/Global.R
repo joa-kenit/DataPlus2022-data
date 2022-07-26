@@ -28,6 +28,8 @@ library(htmltools)
 library(psych)
 #library(shinydashboardPlus)
 library(purrr)
+library(ggfortify)
+library(ggplot2)
 
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
 #Trends graph
@@ -214,7 +216,7 @@ wider_durham <- active_sitesReal[, c(2, 4:6)]
 
 #PCA Plot Extras#####################
 dates <- c("2021-09-25","2022-02-26", "2022-06-16") 
-bc_data3 <- bc_data3[!duplicated(bc_data3$DOC..mg.L.), ]
+#bc_data3 <- bc_data3[!duplicated(bc_data3$DOC..mg.L.), ]
 
 #change september 2022 to 2021
 
@@ -248,9 +250,18 @@ wider_select <- wider_durham
 
 wider_select <- wider_select[, c(1:2, 6, 10, 12, 14:16, 18, 20, 21)]
 
-wider_select_2 <- wider_durham[, c(4, 7, 14, 20:21, 33, 37:39)]
+#for box plot
+wider_select_2 <- wider_durham[, c(1, 2, 4, 7, 20:21, 33, 37:39)]
+wider_select_2[, c(5,6,8,9)] <- wider_select_2[, c(5,6,8,9)]*.001
+immutable_ws <- wider_select_2
+
+
+
+
+alt_bc_data3 <- bc_data3[, c(3,8, 9, 12:15,20:21)]
 #eliminate all null values
 wider_select <- na.omit(wider_select)
+
 
 #Sigmoid curve
 xVal = seq(from = -5, to = 5, by =.1)

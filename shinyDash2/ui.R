@@ -234,7 +234,7 @@ shinyUI(fluidPage(
                        #first PCA plot type
                        tabPanel("Infrastructure and Demographic Factors",
                                 selectInput("PCAparams", "Select Shade Parameter", pca_params),
-                                plotOutput("PCA"),
+                                plotOutput("PCA")
                        ),
                        #second PCA plot type
                        tabPanel("Sampling Dates", 
@@ -253,8 +253,8 @@ shinyUI(fluidPage(
                        of contaminants on the plot indicate their magnitude of influence
                        on the variance of the data points. The axes are the first two 
                        principle components, and they represent the first, and second largest
-                       directions of variance in the data.")),
-        
+                       directions of variance in the data.")
+                ),
         
         tabItem(tabName = "param3",     
                 #Subsection 2
