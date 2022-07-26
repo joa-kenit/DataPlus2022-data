@@ -358,27 +358,39 @@ shinyServer(function(input, output, session) {
     
     #wider_durham <- wider_durham %>% pivot_wider(id_cols = c("Date.Time", "Station.Name"), names_from = "Parameter", values_from = "Value", values_fn = list("Value" = mean))
     
-    # wider_select_2 <- wider_durham[, c(2,4, 7, 14, 20:21, 33, 37:39)]
-    # 
-     alt_bc_data3 <- bc_data3[, c(3,8, 9, 11:15,20:21 )]
+    #wider_select_2 <- wider_durham[, c(2,4, 7, 14, 20:21, 33, 37:39)]
+    
+    
     #convert units from ug/L to mg/L by dividing by 1000
-    wider_select_2[, c(5,6,8,9 )] <- wider_select_2[, c(5,6,8,9)]*.001
+    
+    print(wider_select_2$Chloride)
     #change column names to be consistent with alt_bc_data3
-    colnames(wider_select_2) <- c("Station.Name", "DO.mg.L", "pH", "NO3.N.mg.L", "Ca.mg.L","Mg.mg.L", "Cl.mg.L", "K.mg.L", "Na.mg.L","SO4.mg.L")
+    #colnames(wider_select_2) <- c("Station.Name", "DO.mg.L", "pH", "NO3.N.mg.L", "Ca.mg.L","Mg.mg.L", "Cl.mg.L", "K.mg.L", "Na.mg.L","SO4.mg.L")
     
     #creating the plot
     curParam <- con$Feature[con$displayedTitle==input$ParamBoxplots]
+    print(curParam)
+    print(typeof(curParam))
+    
+    wider_select_2$Date.Time <- substring(wider_select_2$Date.Time, 0, 4)
+    
+    wider_select_2 <- wider_select_2[which(wider_select_2$Date.Time %in% c("2016", "2017", "2018", "2019","2020", "2021", "2022")),]
     
     names(wider_select_2)[names(wider_select_2) == input$ParamBoxplots] <- 'targetVar1'
-    p1 <- plot_ly(wider_select_2, x = ~Station.Name, y = ~targetVar1, type = "box", name = "Durham Data Sites")
-    names(wider_select_2)[names(wider_select_2) == 'targetVa1'] <- input$ParamBoxplots
+    #rename column of currently selected Param as 'targetVar1'
+    p1 <- plot_ly(wider_select_2, x = ~Station.Name, y = ~targetVar1, type = "box", name = "Durham Data Sites") %>%
+      layout(yaxis = list(title = "Mg/L"))
     
+    names(wider_select_2)[names(wider_select_2) == 'targetVa1r'] <- input$ParamBoxplots
+    print(wider_select_2$Chloride)
     
     names(alt_bc_data3)[names(alt_bc_data3) == curParam] <- 'targetVar2'
-    p2 <- plot_ly(alt_bc_data3, x = ~DATE, y = ~targetVar2, type = "box", name = "Bass Connection Samples")
+    p2 <- plot_ly(alt_bc_data3, x = ~DATE, y = ~targetVar2, type = "box", name = "Bass Connection Samples") %>%
+      layout(yaxis = list(title = "Mg/L"))
     names(alt_bc_data3)[names(alt_bc_data3) == 'targetVar2'] <- curParam
     
-    fig =subplot(p1, p2, nrows = 1, shareX = FALSE, shareY = TRUE)
+    fig =subplot(p1, p2, nrows = 1, shareX = FALSE, shareY = TRUE) %>% layout(yaxis = list(title = "Mg/L"))
+    print(fig)
     return(fig)
   })
   
@@ -448,8 +460,6 @@ shinyServer(function(input, output, session) {
         
         x_title <- purr_data$Year %>% unique()  
         show_legend_once = ifelse(x_title == "2016",TRUE,FALSE)
-        
-        print(purr_data)
         
         plot_ly(data = purr_data, 
                 x = ~Station.Name, 

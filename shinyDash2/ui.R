@@ -96,12 +96,12 @@ shinyUI(fluidPage(
                 fluidRow(
                   column(3, align="left",
                          box(width = "100%", background = "navy",
-                         selectInput("ParamBoxplots", "Select Parameter", matchedparams))),
+                             selectInput("ParamBoxplots", "Select Parameter", matchedparams))),
                   #ploty graph
                   column(9, align = "center",
                          box(width = "100%", background = "navy", 
                              plotlyOutput("Boxplots")))),
-                tags$p("")
+                tags$p("*Note: Number of sites shown on the left side of the graph corresponds to the specific sites data was collected at for a specific parameter")
                 ),
         
         tabItem(tabName = "health",
