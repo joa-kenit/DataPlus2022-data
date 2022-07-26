@@ -23,8 +23,11 @@ library(RColorBrewer)
 library('sf')
 library(leaflegend)
 library(leafsync)
+library(htmlwidgets)
+library(htmltools)
 library(psych)
 #library(shinydashboardPlus)
+library(purrr)
 
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
 #Trends graph
@@ -164,29 +167,45 @@ choroData = merge(jonnyData,huc14,by = "SUBBA")
 emptyMap = leaflet()%>% addTiles()%>%addPolygons(data = huc14, weight = 1, opacity = 1, color = "black", fillOpacity = 0)
 
 ##############BARDATATABLE######
-bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE, sep= ";"))
+bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE, sep= ","))
 
 bardatatable$Regulation.compliance <- as.factor(bardatatable$Regulation.compliance)
 
 # CONVERT Character to a factor with ordered level
-bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c(">200% of the acceptable level","Exceed the acceptable level","80% or more of the acceptable level","Acceptable level"))
+#bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c("Acceptable level","80% or more of the acceptable level","Exceed the acceptable level",">200% of the acceptable level"))
+bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c(">200% of the acceptable level","100% - 200% the acceptable level","80% - 99% of the acceptable level","Acceptable level"))
 bardatatable$Year <- factor(bardatatable$Year, order=TRUE, levels = c("2016", "2017", "2018", "2019", "2020", "2021", "2022"))
 
 #barchart
-bardata <- na.omit(bardatatable %>% count(Year, Regulation.compliance, vars = bardatatable$Parameter))
+bardata <- na.omit(bardatatable %>% count(Year, Regulation.compliance, Station.Name, vars = bardatatable$Parameter))
+bardata
 # bardata_percent <- bardata %>%
-bardata_percent <- aggregate(bardata$n, by=list(bardata$vars,bardata$Year), FUN=sum) 
+bardata_percent <- aggregate(bardata$n, by=list(bardata$vars,bardata$Year,bardata$Station.Name), FUN=sum) 
 #cahngin the name of the columns for the next step
-colnames(bardata_percent) <- c('vars','Year','x')
+colnames(bardata_percent) <- c('vars','Year','Station.Name','x')
 
 # merge according to conditions (same col names)
 bla <- merge(bardata, bardata_percent,all=TRUE)
 
-bardata_percent1 <- bla %>% mutate (Percentage = bla$n*100 / bla$x)
-
+bardata_percent1 <- bla %>% mutate (Percentage = bla$n*100 / bla$x) 
+bardata_percent1
 #input vector
 parameters <- unique(bardatatable$Parameter) 
 parameters <- as.list(parameters)
+
+#legend in bar chart
+l <- list(
+  font = list(
+    family = "sans-serif",
+    size = 12,
+    color = "#000"),
+  bgcolor = "#E2E2E2",
+  bordercolor = "#FFFFFF",
+  borderwidth = 2,
+  orientation = 'h',
+  xanchor = "center",
+  x = 0.5,
+  y=-0.5)
 
 #Boxplot
 matchedparams <- as.list(con$displayedTitle[con$boxplotMatch=="yes"])

@@ -144,40 +144,28 @@ shinyUI(fluidPage(
                 br(),
                 tags$p("Again, a lot of information is lost when one attempts to summarize the quality of water with only a handful of metrics. For a more detailed breakdown of how individual water quality parameters vary over time, use the interactive graphic below."),
                 br(),
-                
-                tags$h3("Water Quality Measurements Over Time",style="text-align: center"),
-                #Insert trend tool from Durham city data 
-                fluidRow(column(3,box(width = "100%", background = "navy",
-                                      selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
-                                      selectInput("Param", "Select Parameter", Parameter))),
-                         column(9, align="center",
-                                #outPut for Plot
-                                box(width = "100%", background = "navy",
-                                plotlyOutput("Plot")))),
-
-
                 tags$p("Some spikes can be seen in some water quality metrics. This is expected because some samples will be taken during short term events like a rain storm or a nearby construction project. Short term spikes are not always indicative of unhealthy waterways."),
                 br(),
                 tags$p("In the following graph we show the number of water quality samples (n) that comply or not with the National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
                         # U.S. Environmental Protection Agency | US EPA, 2022."),
                 br(),
                 
-                tags$h3("Regulation compliance by Parameter - Aquatic Life Criteria",style="text-align: center"),
+                fluidRow(column(width=4),
+                         column(4,box(width = "100%", background = "navy",
+                                      selectInput("Site", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
+                                      selectInput("Param", "Select Parameter", Parameter))),
+                         column(width=4)),
                 
-                fluidRow(column(3,box(width = "100%", background = "navy",
-                                      
-                                      selectInput("Parameter", "Select Water Contaminant: ", parameters),
-                                      # hr(),
-                                      # helpText("Regulation: National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
-                                      # U.S. Environmental Protection Agency | US EPA, 2022.")
-                                      #         )
-                                      
-                )),
-                column(9, align="center",
-                       #outPut for Plot
-                       box(width = "100%", background = "navy",
-                           plotlyOutput("barPlot"))))
-  
+                fluidRow(column(6, align="center",
+                                #outPut for Plot
+                                tags$h3("Water Quality Measurements Over Time",style="text-align: center"),
+                                box(width = "100%", background = "navy",
+                                    plotlyOutput("Plot"))),
+                         column(6, align="center",
+                                #outPut for Plot
+                                tags$h3("Regulation compliance by Parameter - Aquatic Life Criteria",style="text-align: center"),
+                                box(width = "100%", background = "navy",
+                                    plotlyOutput("barPlot"))))
                 ),
         
         tabItem(tabName = "justice",
@@ -213,12 +201,13 @@ shinyUI(fluidPage(
                 tags$h3("Variable Comparison Tool",style="text-align: center"),
                 fluidRow(column(12,align="center",box(width = "100%", background = "navy",uiOutput("synced_maps", width="100%")))),
                 fluidRow(column(width=6,
-                                prettyRadioButtons("season", "Season of Sampling of Water Quality Measurments",
+                                box(width = "100%", background = 'navy',
+                                    prettyRadioButtons("season", "Season of Sampling of Water Quality Measurments",
                                                    choices = synopticSeasons,
                                                    shape = "curve",
                                                    animation = "smooth",
                                                    inline = FALSE,
-                                                   selected = synopticSeasons[1]),
+                                                   selected = synopticSeasons[1])),
                                 uiOutput("dragAndDropListChloro")
                                 ),
                          column(width = 6,box(width = "100%", background = "navy",plotlyOutput("value2")), 

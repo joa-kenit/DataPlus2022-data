@@ -438,10 +438,42 @@ shinyServer(function(input, output, session) {
   #Generate barchart #########################################################
   #######################
   output$barPlot <- renderPlotly({
-    barploty <- plot_ly()
-    barploty <- bardata_percent1 %>% filter(vars == input$Parameter) %>%
-      plot_ly(x = ~Year, y = ~Percentage,type = "bar", color = ~Regulation.compliance, colors=c("#c63637","#a6d96a"), name = ~Regulation.compliance, marker = list(line = list(color = '#001f3f', width = 1))) %>% 
-      layout(barmode = "stack", showlegend=T, yaxis = list(title = 'Percentage (%)'))
+    subplot(
+      map(bardata_percent1$Year %>% unique() , function(.x){
+        
+        purr_data <- bardata_percent1 %>% filter(vars == input$Param) %>% filter(Year == .x) %>%
+          filter(Station.Name %in% input$Site) %>%
+          group_by(Regulation.compliance) %>% 
+          arrange(Regulation.compliance) 
+        
+        x_title <- purr_data$Year %>% unique()  
+        show_legend_once = ifelse(x_title == "2016",TRUE,FALSE)
+        
+        print(purr_data)
+        
+        plot_ly(data = purr_data, 
+                x = ~Station.Name, 
+                y = ~Percentage, 
+                color= ~Regulation.compliance,
+                colors = c("#c63637","#a6d96a"),
+                marker = list(line = list(color = '#001f3f', width = 1)),
+                type = 'bar', 
+                legendgroup=~Regulation.compliance,
+                showlegend=show_legend_once
+        ) %>% 
+          layout(xaxis = list(title = x_title))
+        
+        # for(s in input$Site) {
+        #   #reset asz to original just zinc a.s (a.s is the constant)
+        #   #active_sitesReal sorted first for date
+        #   purr_data <-  purr_data %>%
+        #     filter(Station.Name == s)
+        #     #filter for station name and then sort by date
+        #    }
+        
+        
+      })
+      ,titleX = TRUE,shareY = T) %>% layout(barmode = 'stack', showlegend = TRUE, legend = l)
   })
   
   ##############
