@@ -236,20 +236,27 @@ shinyUI(fluidPage(
                        principle components, and they represent the first, and second largest
                        directions of variance in the data."),
  
-                tags$h3("[Title]",style="text-align: center"),
+                tags$h3("Synoptic Data PCA",style="text-align: center"),
                 fluidRow(column(3,box(width = "100%", background = "navy", selectInput("PCAparams", "Select Shade Parameter", pca_params))),
                          column(9,box(width = "100%", background = "navy", plotOutput("PCA")))),
-                tags$p('[text]'),
+                tags$p('This specific PCA is designed to highlight potential influence that the factors road density, 
+                pipe density, percent impervious surfaces, percent developed, and median house hold income have on the synoptic data set. 
+                Along with the visual of which contaminants have a large impact on the variability of data points, the color shade allows the user to see if these specific factors are 
+                influenced by the same contaminants.
+'),
 
-                tags$h3("[Title]",style="text-align: center"),
+                tags$h3("Synoptic Data PCA (By Sample Date)",style="text-align: center"),
                 fluidRow(column(3,box(width = "100%", background = "navy", selectInput("Dates", "Select Sampling Dates", dates, multiple = TRUE, selected = dates[1]))),
                          column(9,box(width = "100%", background = "navy", plotOutput("PCA2")))),
-                tags$p('[text]'),
+                tags$p('The goal with the sampling dates PCA is to explore the variability in the synoptic data set between the three specific sampling dates. 
+                       Clustering among the sampling dates could indicate how different seasons affect the sampling results of the data.'),
 
-                tags$h3("[Title]",style="text-align: center"),
+                tags$h3("Ambient Data PCA",style="text-align: center"),
                 fluidRow(column(3,box(width = "100%", background = "navy", selectInput("SitePCA", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]))),
                          column(9,box(width = "100%", background = "navy", plotOutput("PCA3")))),
-                tags$p('[text]')
+                tags$p('The sampling site PCA is designed to explore clustering among the eight sampling sites that are monitored in the ambient data set. 
+                Variability in the data over space is an important aspect to consider in analysis as the sampling sites within the water shed can vary in features and water sourcing. 
+')
                 ),
         
         tabItem(tabName = "param3",     
