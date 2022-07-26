@@ -5,9 +5,9 @@
 ############################################
 source("./Global.R")
 shinyServer(function(input, output, session) {
-  #######################
-  #Explore relations tab########################################################
-  #######################
+  ########################
+  #Explore relations tab #######################################################
+  ########################
   output$dragAndDropListChloro = renderUI({
     Contaminant = con$displayedTitle[(con$Type == "Contaminants") & (unusableVars[unusableVars$Group.1==input$season,con$Feature]==FALSE)]
     Infrastructure = con$displayedTitle[(con$Type == "Infrastructure") & (unusableVars[unusableVars$Group.1==input$season,con$Feature]==FALSE)]
@@ -172,9 +172,9 @@ shinyServer(function(input, output, session) {
   
 
   
-  ############
-  #Downloader###################################################################
-  ############
+  #############
+  #Downloader ##################################################################
+  #############
   data <- read.csv(file = 'www/merged_data.csv')
   output$downloadData0 <- downloadHandler(
     filename = function() {
@@ -194,9 +194,9 @@ shinyServer(function(input, output, session) {
       write.csv(data, file)
     }
   )
-  ################
-  #Data Over Time###############################################################
-  ################
+  #################
+  #Data Over Time ##############################################################
+  #################
   output$Plot <- renderPlotly({
     units_label <- units_set %>% filter(Parameter == input$Param)
     units_label <- units_label$Unit
@@ -230,9 +230,9 @@ shinyServer(function(input, output, session) {
         y = active_sites_param$Value, name = s, type = 'scatter', mode = 'lines+markers', line=list(dash='dot'))
     }
     fig3})
-  #######################
-  #WQI leaflet over time########################################################
-  #######################
+  ########################
+  #WQI leaflet over time ########################################################
+  ########################
   output$WQImap <- renderLeaflet({
     
     leaflet()%>% addTiles()%>%addCircleMarkers(lng= stationData1$Longitude, lat = stationData1$Latitude,layerId = stationData1$Name,color = "black", fillOpacity = 0.9,
@@ -261,9 +261,9 @@ shinyServer(function(input, output, session) {
     plotlyProxy("wqiLinePlot", session) %>% plotlyProxyInvoke("relayout",c(shapes = vline(wqiData$Date[dateRow])))
   })
   
-  #############################
-  #leafletminicharts param3map##################################################
-  #############################
+  ##############################
+  #leafletminicharts param3map #################################################
+  ##############################
   # Initialize map #input$prods=choices in ui.R
   output$param3map <- renderLeaflet({
     Xtitle <- tags$div(HTML(paste(input$prods," (",unit$Unit[unit$Parameter == input$prods],")",sep="")))
@@ -308,9 +308,9 @@ shinyServer(function(input, output, session) {
         showLabels = input$labels
       )
   })
-  #######################
-  # Read tables         ########################################################
-  #######################
+  ###############
+  # Read tables ################################################################
+  ###############
   output$tableSources <- renderTable({read.csv('www/tableOfCollectionSources.csv',check.names = TRUE)},width = "50%")
   
   #######################
@@ -351,38 +351,24 @@ shinyServer(function(input, output, session) {
       sync(m1, m2, m3, ncol = 3)}
     else{sync(m1,m2)}})
   
-  ###########
-  #Box Plots####################################################################
-  ###########
+  ############
+  #Box Plots ###################################################################
+  ############
   output$Boxplots <- renderPlotly({
-    
-    #wider_durham <- wider_durham %>% pivot_wider(id_cols = c("Date.Time", "Station.Name"), names_from = "Parameter", values_from = "Value", values_fn = list("Value" = mean))
-    
-    #wider_select_2 <- wider_durham[, c(2,4, 7, 14, 20:21, 33, 37:39)]
-    
-    
-    #convert units from ug/L to mg/L by dividing by 1000
-    
-    print(wider_select_2$Chloride)
-    #change column names to be consistent with alt_bc_data3
-    #colnames(wider_select_2) <- c("Station.Name", "DO.mg.L", "pH", "NO3.N.mg.L", "Ca.mg.L","Mg.mg.L", "Cl.mg.L", "K.mg.L", "Na.mg.L","SO4.mg.L")
-    
     #creating the plot
     curParam <- con$Feature[con$displayedTitle==input$ParamBoxplots]
-    print(curParam)
-    print(typeof(curParam))
     
     wider_select_2$Date.Time <- substring(wider_select_2$Date.Time, 0, 4)
     
     wider_select_2 <- wider_select_2[which(wider_select_2$Date.Time %in% c("2016", "2017", "2018", "2019","2020", "2021", "2022")),]
     
     names(wider_select_2)[names(wider_select_2) == input$ParamBoxplots] <- 'targetVar1'
+    
     #rename column of currently selected Param as 'targetVar1'
     p1 <- plot_ly(wider_select_2, x = ~Station.Name, y = ~targetVar1, type = "box", name = "Durham Data Sites") %>%
       layout(yaxis = list(title = "Mg/L"))
     
     names(wider_select_2)[names(wider_select_2) == 'targetVa1r'] <- input$ParamBoxplots
-    print(wider_select_2$Chloride)
     
     names(alt_bc_data3)[names(alt_bc_data3) == curParam] <- 'targetVar2'
     p2 <- plot_ly(alt_bc_data3, x = ~DATE, y = ~targetVar2, type = "box", name = "Bass Connection Samples") %>%
@@ -390,13 +376,12 @@ shinyServer(function(input, output, session) {
     names(alt_bc_data3)[names(alt_bc_data3) == 'targetVar2'] <- curParam
     
     fig =subplot(p1, p2, nrows = 1, shareX = FALSE, shareY = TRUE) %>% layout(yaxis = list(title = "Mg/L"))
-    print(fig)
     return(fig)
   })
   
-  ###########
-  #Cor table####################################################################
-  ###########
+  ############
+  #Cor table ###################################################################
+  ############
   jonnyData1 <- reactive({
     jonnyData1 <- jonnyData %>% filter(Season == input$seasonCorr)
     toKeep <- con$Feature[con$Type%in%c("Contaminants","Infrastructure","Demographics")]
@@ -446,9 +431,9 @@ shinyServer(function(input, output, session) {
       addLegend(colors = redliningCol, labels = holcVals, opacity = 1,title = "Housing Grade")
   })
   
-  #######################
-  #Generate barchart #########################################################
-  #######################
+  ####################
+  #Generate barchart ###########################################################
+  ###################
   output$barPlot <- renderPlotly({
     subplot(
       map(bardata_percent1$Year %>% unique() , function(.x){
@@ -458,7 +443,8 @@ shinyServer(function(input, output, session) {
           group_by(Regulation.compliance) %>% 
           arrange(Regulation.compliance) 
         
-        x_title <- purr_data$Year %>% unique()  
+        x_title <- unique(purr_data$Year)# %>% unique() 
+
         show_legend_once = ifelse(x_title == "2016",TRUE,FALSE)
         
         plot_ly(data = purr_data, 
@@ -472,28 +458,18 @@ shinyServer(function(input, output, session) {
                 showlegend=show_legend_once
         ) %>% 
           layout(xaxis = list(title = x_title))
-        
-        # for(s in input$Site) {
-        #   #reset asz to original just zinc a.s (a.s is the constant)
-        #   #active_sitesReal sorted first for date
-        #   purr_data <-  purr_data %>%
-        #     filter(Station.Name == s)
-        #     #filter for station name and then sort by date
-        #    }
-        
-        
       })
       ,titleX = TRUE,shareY = T) %>% layout(barmode = 'stack', showlegend = TRUE, legend = l)
   })
   
-  ##############
-  ##PCA Plot##########
-  
+  ###########
+  #PCA Plot #####################################################################
+  ###########
   output$PCA <- renderPlot({
     bc_dataRepNA <- bc_dataRepNA[, -c(23, 25:26, 28, 30:32)]
     bc_dataRepNA <- na.omit(bc_dataRepNA)
     pca1 <- stats::prcomp(bc_dataRepNA[, c(4:15)], center = TRUE, scale=TRUE)
-    print(pca1)
+
     plota <- ggplot2::autoplot(pca1, x=1, y=2, data=bc_dataRepNA, colour = input$PCAparams,  
                                main = "PCA of Ellerbe Creek September, February, June Surveys",
                                alpha=0.7, loadings.colour='black', loadings.label.colour='black',
@@ -519,10 +495,10 @@ shinyServer(function(input, output, session) {
   output$PCA3 <- renderPlot({
     list_sites <- input$SitePCA
     wider_select <- wider_select[which(wider_select$Station.Name %in% input$SitePCA),]
-    print(list_sites)
+
     #wider_selectfixed <- data.frame(t(na.omit(t(wider_select))))
     pca2 <- stats::prcomp(wider_select[, c(3:11)], center = TRUE, scale = TRUE)
-    print(wider_select)
+
     plotc <-ggplot2::autoplot(pca2, x=1, y=2, data = wider_select, colour = 'Station.Name', frame = TRUE, main = "PCA of Ellerbe Creek Sampling Sites Durham Data", 
                               #could take off arrows option
                               alpha=0.7, loadings.colour='black', loadings.label.colour ='black',
@@ -533,9 +509,9 @@ shinyServer(function(input, output, session) {
   
   
   
-  ###############
-  #Logistic Curve#########
-  ###############
+  #################
+  #Logistic Curve ##############################################################
+  #################
   output$logisticPlot <- renderPlotly({
     return(logisticFig)
   })

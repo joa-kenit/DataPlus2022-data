@@ -29,14 +29,9 @@ shinyUI(fluidPage(
     dashboardHeader(title="Ellerbe Creek Watershed", titleWidth = 300),
     
     dashboardSidebar(
-      #tags$head(tags$style(HTML(".main-sidebar {background-color: #051040 !important;}"))), #Color sidebar
-      tags$head(tags$style(HTML('.logo {
-                              background-color: #022a25 !important;
-                              }
-                              .navbar {
-                              background-color: #022a25 !important;
-                              }
-                              '))),
+      #background color
+      tags$head(tags$style(HTML('.logo {background-color: #022a25 !important;}
+                                 .navbar {background-color: #022a25 !important;}'))),
       width = 342,
                      #Change background color #004058
                      tags$head(tags$style(HTML('/* body */
@@ -46,6 +41,8 @@ shinyUI(fluidPage(
                      sidebarMenu(
                        #ECWA Logo
                        HTML(paste0("<br>","<a href='https://www.ellerbecreek.org/' target='_blank'><img style = 'display: block; margin-left: auto; margin-right: auto;' src='logoECWA.png' width = '186'></a>","<br>")),
+                       
+                       #Tab formatting
                        menuItem("Home", tabName = "home", icon = icon("home")),
                        menuItem("Data", icon = icon("list"),
                                 menuSubItem("Locations + Data Source", tabName = "dc", icon = icon("map")),
@@ -93,14 +90,12 @@ shinyUI(fluidPage(
                 tags$h3("How do the Data Sets Compare?"),
                 tags$p("As is shown in Table 1 above, each dataset was collected with different goals. As a result, each dataset is capable of telling a different story. The city of Durham has collected data for many years allowing us to understand changes over the past two decades. Duke researchers have collected data in each subbasin of the Ellerbe Creek watershed, allowing for a greater understanding of where pollution issues may be occurring relative to the community. Some water quality measurements can change drastically throughout the day. For example, dissolved oxygen will change throughout the day due to the temperature of the stream and biological activity in the stream. The StreamPulse dataset is designed to capture the variation that happens throughout the day. A comparison of the spatial and temporal variation that is captured by these datasets is shown in the interactive graphic below."),
                 tags$h3("Variability of Sampling Sites",style="text-align: center"),
-                fluidRow(
-                  column(3, align="left",
-                         box(width = "100%", background = "navy",
-                             selectInput("ParamBoxplots", "Select Parameter", matchedparams))),
-                  #ploty graph
-                  column(9, align = "center",
-                         box(width = "100%", background = "navy", 
-                             plotlyOutput("Boxplots")))),
+                fluidRow(column(3, align="left",
+                         #Boxplot selection
+                         box(width = "100%", background = "navy",selectInput("ParamBoxplots", "Select Parameter", matchedparams))),
+                         #Boxplot
+                         column(9, align = "center",
+                         box(width = "100%", background = "navy", plotlyOutput("Boxplots")))),
                 tags$p("*Note: Number of sites shown on the left side of the graph corresponds to the specific sites data was collected at for a specific parameter")
                 ),
         
@@ -109,7 +104,7 @@ shinyUI(fluidPage(
                 tags$h1("Health Status of Ellerbe Creek"),
                 tealLine,
             
-                #Subsection 2
+                #Subsection 1
                 tags$h3("How does the Ellerbe Creek Watershed compare to local water?"),
                 tags$p("The environmental protection agency (EPA) has created a tool titled “How’s My Waterway?” to understand where waterways that have been declared impaired are relative to the community. The EPA graphic is shown below. The graphic shows that many waterways in populated areas are impaired. However, there are also many streams that are doing well."),
                 tags$h3("EPA: How's My Waterway?",style="text-align: center"),
@@ -117,30 +112,30 @@ shinyUI(fluidPage(
                 fluidRow(column(width = 3),column(width=6,img(src='hamww.PNG',class="testImage"))),
                 tags$div(HTML('<center><iframe src="https://www.epa.gov/sites/production/files/widgets/mywaterway/index.html" id="mywaterway" width="220" height="170" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe><center>')),
                 
-                #Subsection 3
+                #Subsection 2
                 tags$h3("What is a water quality index?"),
                 tags$p("A water quality index is a number ranging from 0 (perfectly uninhabitable) to 100 (perfectly habitable) that looks at various proxy measurements (hardness, nitrogen content, phosphorus content, dissolved oxygen, etc) to get an idea of how suitable the water is for the ecosystem. The problem is that the requirements of every ecosystem can differ. A lot of information can be lost trying to summarize everything that goes into making a good waterway down to one number. However, we do get a good starting point as to how the water is doing. The locations with the associated water quality is shown in the figure below. More information on how the waterquailt index is used in Durham is discussed in the next section"),
                 
-                #Subsection 4
+                #Subsection 3
                 tags$h3("How has the Ellerbe Creek Watershed changed over time?"),
                 tags$p("While the water quality index is limited in what it can do, we do get a good starting point as to how the water is doing. The sampling locations within the Ellerbe Creek Watershed with the associated water quality are shown in the figure below."),
                 fluidRow(
-                column(width=2),
-                column(8, align="center",
-                       tags$h3("Water Quality Index over time",style="text-align: center"),
-                       box(width = "100%", background = "navy",
-                           leafletOutput("WQImap")),
-                       #tags$style(type="text/css", ".slider1 .irs-grid-text{font-size: 14px;}.slider1 .irs-bar {border-color: black; background-color: #08d8b2;}.slider1 .irs-bar-edge { border-color: red; background-color: red;}"),
-                       box(width = "100%", background = "navy",
-                           tags$div(id = "slider1", class="slider1",
-                                    sliderInput("wqiDate", "Magnitudes", min(wqiData$Date), max(wqiData$Date),
-                                                value = max(wqiData$Date),
-                                                step = 30,
-                                                timeFormat = "%b %Y",
-                                                width = "90%",
-                                                animate = animationOptions(interval = 100, loop = FALSE))))
-                       #plotlyOutput("wqiLinePlot")
-                ),column(width=2)),
+                  column(width=2),
+                  column(8, align="center",
+                         tags$h3("Water Quality Index over time",style="text-align: center"),
+                         #WQI Map
+                         box(width = "100%", background = "navy",leafletOutput("WQImap")),
+                         #WQI slider
+                         box(width = "100%", background = "navy",
+                             tags$div(id = "slider1", class="slider1",
+                                      sliderInput("wqiDate", "Magnitudes", min(wqiData$Date), max(wqiData$Date),
+                                                  value = max(wqiData$Date),
+                                                  step = 30,
+                                                  timeFormat = "%b %Y",
+                                                  width = "90%",
+                                                  animate = animationOptions(interval = 100, loop = FALSE))))),
+                  column(width=2)),
+                
                 br(),
                 tags$p("Again, a lot of information is lost when one attempts to summarize the quality of water with only a handful of metrics. For a more detailed breakdown of how individual water quality parameters vary over time, use the interactive graphic below."),
                 br(),
@@ -228,36 +223,37 @@ shinyUI(fluidPage(
                 fluidRow(column(width=1),column(width = 10,includeMarkdown("www/probando.md")),column(width = 1))),
         
         tabItem(tabName = "PCA",
+                
                 #Subsection 1
-                tags$h2("Principal Component Analysis",style="text-align: center"),
-                tabBox(width = 12,
-                       #first PCA plot type
-                       tabPanel("Infrastructure and Demographic Factors",
-                                selectInput("PCAparams", "Select Shade Parameter", pca_params),
-                                plotOutput("PCA")
-                       ),
-                       #second PCA plot type
-                       tabPanel("Sampling Dates", 
-                                selectInput("Dates", "Select Sampling Dates", dates, multiple = TRUE, selected = dates[1]),
-                                plotOutput("PCA2")
-                       ),
-                       tabPanel("Sites",
-                                selectInput("SitePCA", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]),
-                                plotOutput("PCA3")
-                       )
-                ),
-                tags$h3("Understanding a Principle Component Analysis"),
+                tags$h2("Principal Component Analysis"),
+                
+                tags$h3("Understanding a Principle Component Analysis",style="text-align: center"),
                 tags$p("The purpose of this Principle Component Analysis (PCA) 
                        is to understand the clustering of our data with respect to 
                        more than two parameters on a two dimensional plot. The vectors 
                        of contaminants on the plot indicate their magnitude of influence
                        on the variance of the data points. The axes are the first two 
                        principle components, and they represent the first, and second largest
-                       directions of variance in the data.")
+                       directions of variance in the data."),
+ 
+                tags$h3("[Title]",style="text-align: center"),
+                fluidRow(column(3,box(width = "100%", background = "navy", selectInput("PCAparams", "Select Shade Parameter", pca_params))),
+                         column(9,box(width = "100%", background = "navy", plotOutput("PCA")))),
+                tags$p('[text]'),
+
+                tags$h3("[Title]",style="text-align: center"),
+                fluidRow(column(3,box(width = "100%", background = "navy", selectInput("Dates", "Select Sampling Dates", dates, multiple = TRUE, selected = dates[1]))),
+                         column(9,box(width = "100%", background = "navy", plotOutput("PCA2")))),
+                tags$p('[text]'),
+
+                tags$h3("[Title]",style="text-align: center"),
+                fluidRow(column(3,box(width = "100%", background = "navy", selectInput("SitePCA", "Select Water Sampling Station", sites, multiple = TRUE, selected = sites[1]))),
+                         column(9,box(width = "100%", background = "navy", plotOutput("PCA3")))),
+                tags$p('[text]')
                 ),
         
         tabItem(tabName = "param3",     
-                #Subsection 2
+                #Subsection 1
                 tags$h2("What are the primary types of pollution?",style="text-align: center"),
                 p("Environmental scientists use various pollution metrics to get an idea of the pollution landscape. The sources of pollution can be inferred by looking at particular contaminants known to come from unique sources. Sucralose is found in wastewater. Dipropylene glycol is a tire additive, and is therefore expected to be associated with car pollution. Glyphosate is used in the herbicides homeowners would put on their lawn. In conjunction, we can get an idea of where certain types of pollution should be expected. This is shown in the interactive figure below."),
                 fluidRow(column(width=3),

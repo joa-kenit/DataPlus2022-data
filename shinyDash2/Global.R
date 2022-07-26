@@ -26,13 +26,14 @@ library(leafsync)
 library(htmlwidgets)
 library(htmltools)
 library(psych)
-#library(shinydashboardPlus)
 library(purrr)
 library(ggfortify)
 library(ggplot2)
 
+#Styling########################################################################
 tealLine = tags$hr(style="width:20%;text-align:left;margin-left:0;height:3px;border-width:0;background-color:#08d8b2")
-#Trends graph
+
+#Trends graph###################################################################
 active_sitesReal <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/main/asites.csv")
 active_sites_param <- active_sitesReal  
 sites <- unique(active_sitesReal$Station.Name)
@@ -40,10 +41,9 @@ Parameter <- unique(active_sitesReal$Parameter)
 Parameter1 <- as.data.frame(Parameter)
 shortlist <- active_sites_param[, c("Parameter", "Unit")] 
 units_set <- left_join(Parameter1, shortlist)
-#list of 38 params with corresponding unit
 units_set <- units_set[!duplicated(units_set$Parameter), ]
 
-#Compare vars graph
+#Compare vars graph#############################################################
 #S+U
 con <- read.csv('www/synopticDataContext.csv')
 #Server
@@ -74,22 +74,15 @@ synopticSeasons = unique(jonnyData$Season)
 
 #Plotly
 emptyFig <- plot_ly()
-#Corr plot
-# newCol = con$Feature[con$Type!="None"]
-# jonnyData1<-jonnyData[,(names(jonnyData) %in% newCol)]
-# corr <- cor(na.omit(jonnyData1))
-# p.mat <- cor_pmat(jonnyData1)
-# options(repr.plot.width = 14, repr.plot.height = 14)
-# corr.plot <- ggcorrplot(corr, hc.order = TRUE, type = "upper", outline.col = "white",colors = c("navy", "white", "#08d8b2"), p.mat = p.mat)
+
 #UI
 checkIfEmpty = function(x){return(all(is.na(x)))}
 unusableVars =   aggregate(jonnyData,by=list(jonnyData$Season),FUN=checkIfEmpty)
 max_1_item_opts <- sortable_options(group = list(name = "my_shared_group", put = htmlwidgets::JS("function(to) {return to.el.children.length < 1;}"))) #Prevents drop boxes from having more than 1 element
 
-#WQI Leaflet graphic
+#WQI Leaflet graphic############################################################
 wqiData <- read.csv('www/wqiReport.csv')
 wqiData$Date = as.Date(wqiData$Date, format = "%m/%d/%Y")
-#wqiData <- na.approx(wqiData,na.rm = FALSE)
 wqiData = na.locf(wqiData, na.rm = FALSE)
 wqiData1 = distinct(wqiData, Date, .keep_all = TRUE)
 toKeep = !(names(wqiData) %in% c("Date"))
@@ -125,8 +118,7 @@ vline <- function(x = 0) {
     x1 = x,
     line = list(color = "black", dash="dot")))}
 
-#1. leafletminicharts param3map
-#durham_stations <- read.csv(file= "durham_station_filtered.csv", header = TRUE, sep = ";")
+#leafletminicharts param3map####################################################
 durham_contaminants <- na.omit(read.csv(file= "www/durham_contaminants.csv", header = TRUE, sep = ";"))
 durham_contaminants$Date.Time = as.Date (durham_contaminants$Date.Time, format = "%d/%m/%Y")
 
@@ -163,12 +155,11 @@ icons <- makeAwesomeIcon(
   library = 'ion',
 )
 
-#Choro data
-#colnames(jonnyData)[1] = "SUBBA" 
+#Choro data#####################################################################
 choroData = merge(jonnyData,huc14,by = "SUBBA")
 emptyMap = leaflet()%>% addTiles()%>%addPolygons(data = huc14, weight = 1, opacity = 1, color = "black", fillOpacity = 0)
 
-##############BARDATATABLE######
+#Bar Chart Data#################################################################
 bardatatable <- na.omit (read.csv(file = 'www/durham_data_bar.csv', header= TRUE, sep= ","))
 
 bardatatable$Regulation.compliance <- as.factor(bardatatable$Regulation.compliance)
@@ -209,25 +200,22 @@ l <- list(
   x = 0.5,
   y=-0.5)
 
-#Boxplot
+#Boxplot########################################################################
 matchedparams <- as.list(con$displayedTitle[con$boxplotMatch=="yes"])
 
 wider_durham <- active_sitesReal[, c(2, 4:6)]
 
-#PCA Plot Extras#####################
+#PCA Plot Extras################################################################
 dates <- c("2021-09-25","2022-02-26", "2022-06-16") 
-#bc_data3 <- bc_data3[!duplicated(bc_data3$DOC..mg.L.), ]
 
 #change september 2022 to 2021
 
 bc_data3[35:64, "DATE"] <- "2021-09-25"
 
 #Fill in NA values with half of the detection limit
-#df %>% mutate_at(vars(c("AAA", "BAA":"BBA", "BBB")), ~replace_na(.,0))
 contams1 <- c("Cl.mg.L", "SO4.mg.L", "Br.mg.L", "NO3.N.mg.L", "Na.mg.L", 
               "K.mg.L", "Mg.mg.L", "Ca.mg.L", "NH4.N.mg.L", "PO4.P", "DOC.mg.L", "TDN.mg.L")
 bc_dataRepNA <- bc_data3 %>% mutate_at(vars(contams1), ~replace_na(., .005))
-#bc_data <- bc_data %>% mutate_at(vars("E.Coli..CFU.per.100mL."), ~replace_na(5))
 
 #remove column at bottom with NAs
 bc_dataRepNA <- bc_dataRepNA[-(99),]
@@ -263,7 +251,7 @@ alt_bc_data3 <- bc_data3[, c(3,8, 9, 12:15,20:21)]
 wider_select <- na.omit(wider_select)
 
 
-#Sigmoid curve
+#Sigmoid curve##################################################################
 xVal = seq(from = -5, to = 5, by =.1)
 yVal = logistic(xVal)
 logisticFig <- plot_ly(x=xVal,y=yVal) %>% layout(title = "Logistic Function",
