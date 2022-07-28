@@ -12,7 +12,7 @@ The server file enables the back-end functionality of the website, including the
 The Global file allows us to reduce redundant code and increase efficiency for our app by reading in data sets and loading packages in the Global scope of the R environment. The objects we store within this file can be accessed from the server and UI files in designing the website.  
 
 ### www folder
-the www folder within the shinyDash2 folder contains some of the different files used in our shiny app. These files are read in from the Global.R file.
+The www folder within the shinyDash2 folder contains some of the different files used in our shiny app. These files are read in from the Global.R file.
 
 ## .github/workflows folder
 This folder contains the main.yml file, which contains code that scrapes the website that our ambient data is pushed too. When the ambient data set is updated by Durham, that same data set is updated within the updatedData folder (see below section for more). When the Shiny App is run, it then requests data from GitHub which contains the updated data. 
