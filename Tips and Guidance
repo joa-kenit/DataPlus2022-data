@@ -1,4 +1,4 @@
-#First time you publish the website
+#Code as an alternative to using the publish Button option in RStudio
 
 install.packages("rsconnect")
 
