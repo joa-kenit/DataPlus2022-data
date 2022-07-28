@@ -44,7 +44,7 @@ library(rsconnect)
 ### To Keep in Mind when Running on Local Machine
 
   - The server has access to all of the R Environment, including objects not in the Shiny App; Make sure the site is able to run with a clear enviornment in RStudio (command: rm(list = ls()))
-  - 
+  - TO run the Global file again, closing the app and re-running it is necessary. Reloading the app does not suffice.
   
 ### Vizual of the Website
 For those looking for a glimpse of the site without running it, below are some screenshots of what it looks like:
