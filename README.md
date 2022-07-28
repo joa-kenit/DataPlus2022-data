@@ -23,3 +23,30 @@ This folder contains the data sets that the Shiny App pulls from while it is bei
 ## asites.csv
 Default data in the case that Durham alters or abandons their system of updating data to their water quality website.
 
+## Tips and Guidance
+### Publishing the Website with new Changes
+Code as an alternative to using the publish Button option in RStudio:
+
+install.packages("rsconnect")
+
+rsconnect::setAccountInfo(name='dukerivercenter',
+                          token='9CA757C8DF1F78F7C8C0DC1D4FFE1DEB',
+                          secret='<SECRET>')
+  
+#change "path/to/your/app"
+  
+rsconnect::deployApp('path/to/your/app')
+  
+#if you want to access to the library:
+  
+library(rsconnect)
+  
+### To Keep in Mind when Running on Local Machine
+
+  - The server has access to all of the R Environment, including objects not in the Shiny App; Make sure the site is able to run with a clear enviornment in RStudio (command: rm(list = ls()))
+  - 
+  
+### Vizual of the Website
+For those looking for a glimpse of the site without running it, below are some screenshots of what it looks like:
+  
+<img width="1417" alt="Screen Shot 2022-07-28 at 11 10 00 AM" src="https://user-images.githubusercontent.com/87829872/181573171-69e09831-79a2-4a59-b8d3-9b24cf08a9e0.png">
