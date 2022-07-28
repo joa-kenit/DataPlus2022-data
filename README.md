@@ -53,8 +53,6 @@ For those looking for a glimpse of the site without running it, below are some s
   
 <img width="1025" alt="Screen Shot 2022-07-28 at 11 14 03 AM" src="https://user-images.githubusercontent.com/87829872/181574057-c6abb692-ba46-4465-b850-17e7eb67f2c4.png">
 
-<img width="1025" alt="Screen Shot 2022-07-28 at 11 14 03 AM" src="https://user-images.githubusercontent.com/87829872/181574057-c6abb692-ba46-4465-b850-17e7eb67f2c4.png">
-
 <img width="1093" alt="Screen Shot 2022-07-28 at 11 16 18 AM" src="https://user-images.githubusercontent.com/87829872/181574668-c2825abc-49e9-45d8-9f16-7a06da1b7b36.png">
 
 <img width="1092" alt="Screen Shot 2022-07-28 at 11 16 56 AM" src="https://user-images.githubusercontent.com/87829872/181574736-15a1f3bf-d79a-4aa8-b8c5-96590f0a2812.png">
