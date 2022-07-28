@@ -50,3 +50,6 @@ library(rsconnect)
 For those looking for a glimpse of the site without running it, below are some screenshots of what it looks like:
   
 <img width="1417" alt="Screen Shot 2022-07-28 at 11 10 00 AM" src="https://user-images.githubusercontent.com/87829872/181573171-69e09831-79a2-4a59-b8d3-9b24cf08a9e0.png">
+  
+<img width="1025" alt="Screen Shot 2022-07-28 at 11 14 03 AM" src="https://user-images.githubusercontent.com/87829872/181574057-c6abb692-ba46-4465-b850-17e7eb67f2c4.png">
+
