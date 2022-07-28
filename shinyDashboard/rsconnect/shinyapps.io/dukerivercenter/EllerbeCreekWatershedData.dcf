@@ -1,0 +1,14 @@
+name: EllerbeCreekWatershedData
+title: EllerbeCreekWatershedData
+username:
+account: dukerivercenter
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6698013
+bundleId: 6141251
+url: https://dukerivercenter.shinyapps.io/EllerbeCreekWatershedData/
+when: 1658995984.91252
+lastSyncTime: 1658995984.91258
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: ECWAsnip.PNG
