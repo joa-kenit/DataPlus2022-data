@@ -177,25 +177,45 @@ shinyServer(function(input, output, session) {
   #############
   #Downloader ##################################################################
   #############
-  data <- read.csv(file = 'www/merged_data.csv')
-  output$downloadData0 <- downloadHandler(
+  output$downloadambientData <- downloadHandler(
     filename = function() {
-      paste0("Site summary data", ".csv")
+      paste0("ambientData", ".csv")
     },
     content = function(file) {
-      write.csv(data, file)
-    }
-  )
+      write.csv(ambientData, file)
+    })
   
-  data <- read.csv(file = 'www/merged_data.csv')
-  output$downloadData1 <- downloadHandler(
+  output$downloadwaterQualityIndex <- downloadHandler(
     filename = function() {
-      paste0("Variable data", ".csv")
+      paste0("WQI_Data", ".csv")
     },
     content = function(file) {
-      write.csv(data, file)
-    }
-  )
+      write.csv(wqiData, file)
+    })
+  
+  output$downloadambientDataLocation <- downloadHandler(
+    filename = function() {
+      paste0("ambientDataLocation", ".csv")
+    },
+    content = function(file) {
+      write.csv(stationData1, file)
+    })
+  
+  output$downloadsynopticData <- downloadHandler(
+    filename = function() {
+      paste0("synopticData", ".csv")
+    },
+    content = function(file) {
+      write.csv(synopticDataForDownload, file)
+    })
+  
+  output$downloadsynopticDataLocation<- downloadHandler(
+    filename = function() {
+      paste0("synopticDataLocation", ".csv")
+    },
+    content = function(file) {
+      write.csv(jonnyLoc, file)
+    })
   #################
   #Data Over Time ##############################################################
   #################
@@ -221,13 +241,10 @@ shinyServer(function(input, output, session) {
              showlegend = TRUE)
     
     for(s in input$Site) {
-      #reset asz to original just zinc a.s (a.s is the constant)
-      #active_sitesReal sorted first for date
-      active_sites_param <- ambientData %>% filter(Parameter == input$Param) %>% 
-        filter(Station.Name == s)
-      # active_sites_zinc <- active_sites_zinc %>% filter(Station.Name == s) %>%
-      #   order((Date.Time))
-      #filter for station name and then sort by date
+      #filter for station name and parameter then sort by date
+      active_sites_param <- ambientData %>% filter(Parameter == input$Param) %>% filter(Station.Name == s)
+      active_sites_param <- active_sites_param[order(active_sites_param$Date.Time),]
+      
       fig3 <- fig3 %>% add_trace(
         x = as.Date(active_sites_param$Date.Time), 
         y = active_sites_param$Value, name = s, type = 'scatter', mode = 'lines+markers', line=list(dash='dot'))
@@ -269,7 +286,6 @@ shinyServer(function(input, output, session) {
   ##############################
   # Initialize map #input$prods=choices in ui.R
   output$param3map <- renderLeaflet({
-    Xtitle <- tags$div(HTML(paste(input$prods," (",unit$Unit[unit$Parameter == input$prods],")",sep="")))
     leaflet()%>% addTiles %>% 
       addPolygons(data = huc14, 
                   #fillColor = ~pal(durham_contaminants$Value),
@@ -286,8 +302,7 @@ shinyServer(function(input, output, session) {
         layerId = tracerData$SITE, 
         showLabels = input$labels,
         #colorPalette = colors,
-        width = 45)%>% #, height = 25
-      addControl(Xtitle, position = "bottomleft") 
+        width = 45) 
   })
   #Update charts each time input value changes
   
@@ -446,37 +461,31 @@ shinyServer(function(input, output, session) {
       bla <- merge(bardata, bardata_percent,all=TRUE)                  # merge according to conditions (same col names)
       bardata_percent1_agg <- bla %>% mutate (Percentage = bla$n*100 / bla$x) 
       
+      xform <- list(categoryorder = "array",categoryarray = sort(as.numeric(unique(testbarDataTable$Year))))
+      
       barplotly <- plot_ly()
       barDataParam <-bardata_percent1_agg %>% filter(vars == input$Param)
       barplotly <- plot_ly(data = barDataParam,x = ~Year, y = ~Percentage,type = "bar", color = ~Regulation.compliance, colors=c("#c63637","#a6d96a"), name = ~Regulation.compliance, marker = list(line = list(color = '#001f3f', width = 1))) %>% 
-        layout(barmode = "stack", showlegend=T, yaxis = list(title = 'Percentage (%)'))
+        layout(barmode = "stack", showlegend=T, yaxis = list(title = 'Percentage (%)'),xaxis = xform)
       return(barplotly)}
     else{
-      subplot(
-        map(bardata_percent1$Year %>% unique() , function(.x){
-          
-          purr_data <- bardata_percent1 %>% filter(vars == input$Param) %>% filter(Year == .x) %>%
-            filter(Station.Name %in% input$Site) %>%
-            group_by(Regulation.compliance) %>% 
-            arrange(Regulation.compliance) 
-          
-          x_title <- unique(purr_data$Year)# %>% unique() 
-  
-          show_legend_once = ifelse(x_title == "2016",TRUE,FALSE)
-          
-          plot_ly(data = purr_data, 
-                  x = ~Station.Name, 
-                  y = ~Percentage, 
-                  color= ~Regulation.compliance,
-                  colors = c("#c63637","#a6d96a"),
-                  marker = list(line = list(color = '#001f3f', width = 1)),
-                  type = 'bar', 
-                  legendgroup=~Regulation.compliance,
-                  showlegend=show_legend_once)%>%
-                  layout(xaxis = list(title = x_title))
-        })
-        ,titleX = TRUE,shareY = T) %>% layout(barmode = 'stack', showlegend = TRUE, legend = l)
-        }
+      purr_data <- bardatatable %>% filter(Parameter == input$Param) %>%
+        filter(Station.Name %in% input$Site)
+      purr_data$Year <- as.numeric(purr_data$Year)
+        
+      ggBarplot<- ggplot(na.omit(purr_data), aes(x = Station.Name, fill = Regulation.compliance))+
+        geom_bar(position="fill")+
+        facet_wrap(~Year,nrow=1)+
+        theme(strip.placement = "outside")+ 
+        theme(text = element_text(angle = 90, vjust = 0.5, hjust=1))+
+        theme(legend.text = element_text(angle = 0, vjust = 0, hjust=0))+
+        theme(title = element_text(angle = 0, vjust = 0.5, hjust=0))+
+        labs(x = "Sampling Location",y="Percent Compliant")+
+        scale_fill_manual(values = c(">200% of the acceptable level" = "#c63637",
+                                     "100% - 200% the acceptable level" = "#B68851",
+                                     "Acceptable level" = "#a6d96a"))
+
+      return(ggBarplot)}
   })
   
   ###########

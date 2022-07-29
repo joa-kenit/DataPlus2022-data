@@ -77,12 +77,12 @@ shinyUI(fluidPage(
                 
                 #Subsection 1
                 tags$h3("What Data was Collected?"),
-                tags$p("Various government agencies and research groups are interested in monitoring and understanding the ability of waterways to sustain the community. This platform combines data collected by the city of Durham and several researchers at Duke University. A summary of the data contained in the datasets is shown in the table below."),
+                tags$p("Various government agencies and research groups are interested in monitoring and understanding the ability of waterways to sustain human and wildlife communities. This platform combines data collected by the city of Durham and several researchers at Duke University. A summary of the data contained in the datasets is shown in the table below."),
                 fluidRow(column(12, align="center", tags$h4("Table 1. Summary of Water Quality Datasets"),tableOutput('tableSources'))),
                 
                 #Subsection 2
                 tags$h3("Where was the Data Collected?"),
-                tags$p("Water quality data is collected accross the whole Ellerbe Creek Watershed to study the changes in water quality and find possible patterns. The data stations are divided in two type of sites: Durham Sites and Survey Sites (Synoptic data). 
+                tags$p("Water quality data is collected throughout the Ellerbe Creek Watershed to study the changes in water quality and find possible patterns. The data stations are divided into: Durham Sites and Duke Survey Sites (Synoptic data). 
                 Both of which share certain parameters and have different sampling frequency."),
                 tags$div(HTML('<center><iframe src="https://dukeuniv.maps.arcgis.com/apps/instant/minimalist/index.html?appid=0ccb2a3586e640dbbeabab10fa218c62" width="80%" height="600" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe><center>')),
                 
@@ -96,7 +96,14 @@ shinyUI(fluidPage(
                          #Boxplot
                          column(9, align = "center",
                          box(width = "100%", background = "navy", plotlyOutput("Boxplots")))),
-                tags$p("*Note: Number of sites shown on the left side of the graph corresponds to the specific sites data was collected at for a specific parameter")
+                tags$p("*Note: Number of sites shown on the left side of the graph corresponds to the specific sites data was collected at for a specific parameter",style="text-align: right"),
+                
+                #subsection 3
+                tags$h3("What Other Data Exists?"),
+                tags$p("While only these two datasets are used to visualize water quality on this site, other datasets do exist. Below are a few examples."),
+                tags$div(HTML('<ul style ="font-family: sans-serif;font-size: 18px;font-weight: 500;line-height: 1.75;margin: 0; auto 30px;"><li><a href="https://www.epa.gov/waterdata/storage-and-retrievalwater-quality-exchange-related-links"><b>EPA STORET sites</b></a> Monitoring is variable across sites, with some sites only sampled once. Inclusive of one-off studies and ongoing regulatory monitoring.</li><li><a href="https://www.usgs.gov/publications/design-and-methods-southeast-stream-quality-assessment-sesqa-2014"><b>USGS SESQA 2014</b></a> One time sampling blitz. Identified 100s of pesticides and wastewater contaminant over 10 weeks of sampling.</li></ul>')),
+                br(),
+                br()
                 ),
         
         tabItem(tabName = "health",
@@ -137,26 +144,28 @@ shinyUI(fluidPage(
                   column(width=2)),
                 
                 br(),
-                tags$p("Again, a lot of information is lost when one attempts to summarize the quality of water with only a handful of metrics. For a more detailed breakdown of how individual water quality parameters vary over time, use the interactive graphic below."),
+                tags$p("Again, a lot of information is lost when one attempts to summarize the quality of water with only a handful of metrics. For a more detailed breakdown of how individual water quality parameters vary over time, use the interactive Water Quality Measurements Over Time graphic below."),
                 br(),
                 tags$p("Some spikes can be seen in some water quality metrics. This is expected because some samples will be taken during short term events like a rain storm or a nearby construction project. Short term spikes are not always indicative of unhealthy waterways."),
                 br(),
-                tags$p("In the following graph we show the number of water quality samples (n) that comply or not with the National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
+                tags$p("In the Regulation Compliance by Parameter graph, we show the percent of water quality samples that comply with the National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
                         # U.S. Environmental Protection Agency | US EPA, 2022."),
                 br(),
                 
-                fluidRow(column(width=3,box(width = "100%", background = "navy",
-                                      selectInput("Site", "Select Water Sampling Station", ambientSites, multiple = TRUE, selected = ambientSites[1]),
-                                      selectInput("Param", "Select Parameter", ambientParameter),
+                fluidRow(column(width=3, br(), br(), br(),br(),br(),br(), br(), br(),
+                                box(width = "100%", background = "navy",
+                                      selectInput("Site", "Select Water Sampling Station", ambientSites, multiple = TRUE, selected = ambientSites[1:2]),
+                                      selectInput("Param", "Select Parameter", ambientParameter,selected="Fecal Coliform"),
                                       materialSwitch(inputId = "aggregateSwitch", label = "Aggregate data across sites (barchart only)"))),
                                       
                          column(9, align="center",
                                 #Trendline
                                 tags$h3("Water Quality Measurements Over Time",style="text-align: center"),
                                 box(width = "100%", background = "navy",
-                                    plotlyOutput("Plot")),
+                                    plotlyOutput("Plot")))),
+                fluidRow(column(width=12,
                                 #Regulation Barchart
-                                tags$h3("Regulation compliance by Parameter - Aquatic Life Criteria",style="text-align: center"),
+                                tags$h3("Regulation Compliance by Parameter - Aquatic Life Criteria",style="text-align: center"),
                                 box(width = "100%", background = "navy",
                                     plotlyOutput("barPlot"))))
                 ),
@@ -189,10 +198,10 @@ shinyUI(fluidPage(
                          column(width=5,box(width = "100%",background = "navy", plotOutput("corTableInfra")))),
 
                 tags$p("You can use the tool below to understand how different water quality measurements relate to the infrastructure and demographics of the region. To inform your comparison, you can use the correlation plot above. Alternatively, you can investigate common research questions:"),
-                tags$p("Is there more excess nutrients (nitrogen, phosphorus) from fertilizer where there is more cultivated farm land?"),
-                tags$p("Is there a stronger correlation between where salt is and where roads are in the winteror the summer?"),
+                tags$p("Are there more excess nutrients (nitrogen, phosphorus) from fertilizer on developed land?"),
+                tags$p("Is there a stronger correlation between where salt is and where roads are in the winter or the summer?"),
                 tags$h3("Variable Comparison Tool",style="text-align: center"),
-                fluidRow(column(12,align="center",box(width = "100%", background = "navy",uiOutput("synced_maps", width="100%")))),
+                fluidRow(column(12,align="center",box(width = "100%", background = "navy",uiOutput("synced_maps", width="100%"),style="padding-left: 35px"))),
                 fluidRow(column(width=6,
                                 box(width = "100%", background = 'navy',
                                     prettyRadioButtons("season", "Season of Sampling of Water Quality Measurments",
@@ -261,16 +270,18 @@ shinyUI(fluidPage(
                 #Subsection 1
                 tags$h2("What are the primary types of pollution?",style="text-align: center"),
                 p("Environmental scientists use various pollution metrics to get an idea of the pollution landscape. The sources of pollution can be inferred by looking at particular contaminants known to come from unique sources. Sucralose is found in wastewater. Dipropylene glycol is a tire additive, and is therefore expected to be associated with car pollution. Glyphosate is used in the herbicides homeowners would put on their lawn. In conjunction, we can get an idea of where certain types of pollution should be expected. This is shown in the interactive figure below."),
+                tags$p("*At the time this website was made, data was not available on the tracer pollutants. In an atempt to have a meaningful but less precise measure of pollution sources, chloride was used in place of dipropylene glycol, sulfate was used in place of sucralose, and ammonium was used in place of glyphosate"),
                 tags$h2("Normalization method",style="text-align: center"),
                 tags$p("In order to allow users to simultaneously compare all three tracers at the same time on the same axis, the values have been normalized by subtracting the historical mean and dividing by the historical standard deviation. To ensure that all values are positive for polar radius graphs and that outliers don't make the remaining data uninterpretable, the z score was mapped to a value between 0 and 1 using the logistic function shown below."),
                 fluidRow(column(width=3),
                          column(width=6,box(width = "100%", background = "navy", plotlyOutput("logisticPlot"))),
                          column(width=3)),
-                tags$h3("Key Pollution Indicators (Demo)",style="text-align: center"),
+                tags$p("The result of the normalization method on the proxy measruments can be seen in the graph below. 0.5 represents the average value of a particular pollutant over the entire time period."),
+                tags$h3("Key Pollution Indicators",style="text-align: center"),
                 fluidRow(column(width = 3, 
                                 box(width = "100%", background = "navy",
                                     selectInput("prods", "Select parameter", choices = c("Ammonium","Chloride", "Sulfate"),selected = "Ammonium", multiple = TRUE),
-                                    selectInput("type", "Chart type", choices = c("polar-area","polar-area","bar"),selected = "bar"),
+                                    selectInput("type", "Chart type", choices = c("polar-area","polar-radius","bar"),selected = "bar"),
                                     checkboxInput("labels", "Show values"))),
                          column(width = 9, box(width = "100%", background = "navy",leafletOutput("param3map")))),
                 
@@ -278,41 +289,49 @@ shinyUI(fluidPage(
         tabItem(tabName = "download",
                 tags$h1("Download Data"),
                 tealLine,
+                h2("Excel files for download",style="text-align: center"),
                 p("Click on the download button of any dataset you would like to explore further:",style="text-align: center"),
+                h3("Ambient Data from the City of Durham",style="text-align: center"),
+                downloadButton('downloadambientData','Ambient Data', class = "btn-block"),
+                downloadButton('downloadwaterQualityIndex', 'Water Quality Index Data', class = "btn-block"),
+                downloadButton('downloadambientDataLocation', 'Ambient Data Location', class = "btn-block"),
+                h3("Synoptic Data from Duke Researchers",style="text-align: center"),
+                downloadButton('output$downloadsynopticData','Synoptic Data', class = "btn-block"),
+                downloadButton('downloadsynopticDataLocation', 'Synoptic Data Location', class = "btn-block"),
                 br(),
-                downloadButton('downloadData0','SiteLocations&Descriptions', class = "btn-block"),
-                downloadButton('downloadData1', 'DataBySubbasin', class = "btn-block"),
-                a("GitHub Codebase", href="https://github.com/joa-kenit/DataPlus2022-data", class = "btn-block"),
-                #style="display: block; margin: 0 auto; width: 230px;color: black;"  width: 20%;
-                tags$head(tags$style(".btn-block{background-color:#202A44;color: white;width: 30%;margin-left: 35%;margin-right: 30%;height:50px;font-size: 20px;text-align: center;}"))  
+                h2("Links",style="text-align: center"),
+                p("Links to the code and public data sources ",style="text-align: center"),
+                a("Link to Source of Ambient Data", href="http://durhamwaterquality.org/", class = "btn-block"),
+                a("Link to GitHub Codebase", href="https://github.com/joa-kenit/DataPlus2022-data", class = "btn-block"),
+                
+                tags$head(tags$style(".btn-block{background-color:#202A44;color: white;width: 30%;margin-left: 35%;margin-right: 30%;height:40px;font-size: 20px;text-align: center;}"))  
                 
         ), 
-        
         
         tabItem(tabName = "team", 
                 tags$h1("Team"),
                 tealLine,
                 tags$h2("Coding Team",style="text-align: center"),
                 fluidRow(
-                  tags$head(tags$style(".headShot{border: solid 2px #202A44;  width: 100% !important;height: auto !important;}")),
+                  tags$head(tags$style(".headShot{border: solid 2px #202A44;background-color: #202A44;width: 100% !important;height: auto !important;}")),
                   column(width=1),
                   column(width=3, align="center",
                          br(),br(),br(),
-                         img(src='JackPhoto.PNG',class = "headShot"),
+                         img(src='JackPhoto.png',class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Jack Tsenane"),
                              tags$hr(style = "width: 30%;height: 2px;"),
                              p("Jack studied chemical engineering at Vanderbilt University. He first began river monitoring for the Wisconsin DNR in middle school. Jack enjoys employing data science tools to better understand and improve the world.",style="text-align:left;padding:5px;border-radius:10px"))),
                   column(width=3, align="center",
                          br(),br(),br(),
-                         img(src='JoannaPhoto.PNG',height = "400",class = "headShot"),
+                         img(src='JoannaPhoto.png',height = "400",class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Joanna Huertas"),
                              tags$hr(style = "width: 30%;height: 2px;"),
-                             p("Joanna is an environmental engineer with more than four years of experience in environmental consulting. She is currently pursuing a Master’s degree in Environmental Engineering at Duke University. Her experience in private, academic, and government sectors in regards to water quality compliance aids the technical underpinning of the display of water quality monitoring results." ,style="text-align:left;padding:5px;border-radius:10px"))),
+                             p("Joanna is an environmental engineer with more than four years of experience in environmental consulting. She is pursuing a Master of Engineering in Environmental Engineering at Duke University, class of 2023. Her experience in private, academic, and government sectors in regards to water quality compliance aids the technical underpinning of the display of water quality monitoring results." ,style="text-align:left;padding:5px;border-radius:10px"))),
                   column(width=3, align="center",
                          br(),br(),br(),
-                         img(src='RyanPhoto.PNG',height = "400",class = "headShot"),
+                         img(src='RyanPhoto.png',height = "400",class = "headShot"),
                          box(width = "100%", background = "navy",
                              h1("Ryan Yu"),
                              tags$hr(style = "width: 30%;height: 2px;"),
@@ -320,7 +339,7 @@ shinyUI(fluidPage(
                   column(width=1),
                   ),
                 tags$h2("Acknowledgments",style="text-align: center"),
-                tags$p("This project was made possible by the extensive support of the Duke River Center. Namely, Jonathan Behrens, Steven Anderson, and Emily Bernhardt. These people had the roles of project manager, project mentor, and project lead. We would also like to thank the Ellerbe Creek Watershed Association for their collaboration.")
+                tags$p("This project was made possible by the extensive support of the Duke River Center, namely, Jonathan Behrens, Steven Anderson, and Emily Bernhardt. These people had the roles of project manager, project mentor, and project lead. We would also like to thank the Ellerbe Creek Watershed Association for their collaboration.")
       
         )#end of team subtab
         

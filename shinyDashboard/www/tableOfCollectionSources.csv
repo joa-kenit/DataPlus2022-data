@@ -1,6 +1,6 @@
 ﻿SamplingCharacteristic,AmbientSampling,SynopticSampling
 First Year of Sampiling,2004,2021
-Approximate Frequency of Collection,Biweekly,Seasonally
+Frequency of Collection,Irregular,Seasonally
 Number of Parameters,82,40
 Types of Parameters,Water quality measurements,"Water quality measurements, demographics, and infrastructure"
 Number of Relevant Collection Locations,7,33

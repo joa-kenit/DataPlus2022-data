@@ -47,9 +47,9 @@ con <- read.csv('www/synopticDataContext.csv')
 #Server
 synopticData <- read.csv('https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/main/updatedData/synopticData.csv')
 bc_data3 <- synopticData
+synopticDataForDownload <- synopticData #No demographic data merged yet
 synopticDates <- unique(synopticData$DATE)
 synopticData$DATE = as.Date(synopticData$DATE, format = "%m/%d/%Y")
-pcaSynopticData <-synopticData
 synopticData = synopticData[order(synopticData$DATE, decreasing = TRUE), ]
 synopticData$SUBBA <- as.integer(trunc(synopticData$SITE))
 extraVars <- read.csv('www/extraVars.csv')
@@ -160,7 +160,8 @@ emptyMap = leaflet()%>% addTiles()%>%addPolygons(data = huc14, weight = 1, opaci
 EPAstandards <- read.csv("www/standard.csv")
 testbarDataTable <- ambientData[,c("Station.Name","Parameter","Date.Time","Value","Unit")]
 testbarDataTable$Year <-with(testbarDataTable, substr(Date.Time, 1, 4))
-testbarDataTable$Year <- as.factor(testbarDataTable$Year)
+#bardatatable$Year <- factor(bardatatable$Year, ordered=TRUE, levels = c("2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016", "2017", "2018", "2019", "2020", "2021","2022"))
+#testbarDataTable$Year <- factor(as.numeric(testbarDataTable$Year),ordered=TRUE, levels = list(sort(as.numeric(unique(testbarDataTable$Year)))))
 #testbarDataTable$Standard <- EPAstandards$Standard[testbarDataTable$Parameter==EPAstandards$Parameter]
 testbarDataTable = merge(testbarDataTable , EPAstandards, by="Parameter")
 
@@ -187,7 +188,7 @@ bardatatable$Regulation.compliance <- as.factor(bardatatable$Regulation.complian
 
 # Conver character to a factor with ordered level
 bardatatable$Regulation.compliance <- factor(bardatatable$Regulation.compliance, order=TRUE, levels = c(">200% of the acceptable level","100% - 200% the acceptable level","80% - 99% of the acceptable level","Acceptable level"))
-bardatatable$Year <- factor(bardatatable$Year, order=TRUE, levels = unique(bardatatable$Year))
+#bardatatable$Year <- factor(bardatatable$Year, order=TRUE, levels = unique(bardatatable$Year))
 
 #Generate station-year bar chart data
 bardata <- na.omit(bardatatable %>% count(Year, Regulation.compliance, Station.Name, vars = bardatatable$Parameter))
