@@ -20,8 +20,8 @@ This folder contains the main.yml file, which contains code that scrapes the web
 ## updatedData
 This folder contains the data sets that the Shiny App pulls from while it runs. Because the water quality data being used is pulled from git, this allows further updates with the website whether it's through the Bass Connections team adding their new results or the automatic updating of ambient data. 
 
-## asites.csv
-Default data in the case that Durham alters or abandons their system of updating data to their water quality website.
+## oldData
+Default data in the case that Durham alters or abandons their system of updating data to their water quality website. The data is from June 2022.
 
 ## Tips and Guidance
 ### Publishing the Website with new Changes
