@@ -82,13 +82,13 @@ shinyUI(fluidPage(
                 
                 #Subsection 2
                 tags$h3("Where was the Data Collected?"),
-                tags$p("Water quality data is collected throughout the Ellerbe Creek Watershed to study the changes in water quality and find possible patterns. The data stations are divided into: Durham Sites and Duke Survey Sites (Synoptic data). 
+                tags$p("Water quality data is collected throughout the Ellerbe Creek Watershed to study the changes in water quality and find possible patterns. The data stations are divided into: Ambient Sampling (Durham Sites) and Synoptic Sampling Sites (Duke Survey Sites). 
                 Both of which share certain parameters and have different sampling frequency."),
                 tags$div(HTML('<center><iframe src="https://dukeuniv.maps.arcgis.com/apps/instant/minimalist/index.html?appid=0ccb2a3586e640dbbeabab10fa218c62" width="80%" height="600" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe><center>')),
                 
                 #subsection 3
                 tags$h3("How do the Data Sets Compare?"),
-                tags$p("As is shown in Table 1 above, each dataset was collected with different goals. As a result, each dataset is capable of telling a different story. The city of Durham has collected data for many years allowing us to understand changes over the past two decades. Duke researchers have collected data in each subbasin of the Ellerbe Creek watershed, allowing for a greater understanding of where pollution issues may be occurring relative to the community. Some water quality measurements can change drastically throughout the day. For example, dissolved oxygen will change throughout the day due to the temperature of the stream and biological activity in the stream. The StreamPulse dataset is designed to capture the variation that happens throughout the day. A comparison of the spatial and temporal variation that is captured by these datasets is shown in the interactive graphic below."),
+                tags$p("As is shown in Table 1 above, each dataset was collected with different goals. As a result, each dataset is capable of telling a different story. In the Ambient Sampling dataset, the City of Durham collected data for many years at a few sites, allowing us to understand changes over the past two decades. The Synoptic Sampling dataset was collected by Duke researchers at many sites (each subbasin of the Ellerbe Creek watershed), but only a few points in time, allowing for a more detailed understanding of how water quality changes spatially throughout the watershed. Furthermore, some water quality measurements can change drastically throughout the day. For example, dissolved oxygen will change throughout the day due to the temperature of the stream and biological activity in the stream. Thus, a comparison of the spatial and temporal variation that is captured by these datasets is shown in the interactive graphic below."),
                 tags$h3("Variability of Sampling Sites",style="text-align: center"),
                 fluidRow(column(3, align="left",
                          #Boxplot selection
@@ -96,12 +96,12 @@ shinyUI(fluidPage(
                          #Boxplot
                          column(9, align = "center",
                          box(width = "100%", background = "navy", plotlyOutput("Boxplots")))),
-                tags$p("*Note: Number of sites shown on the left side of the graph corresponds to the specific sites data was collected at for a specific parameter",style="text-align: right"),
+                tags$p("*Note: The number of sites shown on the left side of the graph will change depending on data availability for a specific parameter",style="text-align: right"),
                 
                 #subsection 3
                 tags$h3("What Other Data Exists?"),
-                tags$p("While only these two datasets are used to visualize water quality on this site, other datasets do exist. Below are a few examples."),
-                tags$div(HTML('<ul style ="font-family: sans-serif;font-size: 18px;font-weight: 500;line-height: 1.75;margin: 0; auto 30px;"><li><a href="https://www.epa.gov/waterdata/storage-and-retrievalwater-quality-exchange-related-links"><b>EPA STORET sites</b></a> Monitoring is variable across sites, with some sites only sampled once. Inclusive of one-off studies and ongoing regulatory monitoring.</li><li><a href="https://www.usgs.gov/publications/design-and-methods-southeast-stream-quality-assessment-sesqa-2014"><b>USGS SESQA 2014</b></a> One time sampling blitz. Identified 100s of pesticides and wastewater contaminant over 10 weeks of sampling.</li></ul>')),
+                tags$p("While only these two datasets are used to visualize water quality on this website, other datasets do exist. Below are a few examples."),
+                tags$div(HTML('<ul style ="font-family: sans-serif;font-size: 18px;font-weight: 500;line-height: 1.75;margin: 0; auto 30px;"><li><a href="https://www.epa.gov/waterdata/storage-and-retrievalwater-quality-exchange-related-links"><b>EPA STORET sites</b></a> Inclusive of one-off studies and ongoing regulatory monitoring in the watershed. Monitoring is variable across sites, with some sites only sampled once. </li><li><a href="https://www.usgs.gov/publications/design-and-methods-southeast-stream-quality-assessment-sesqa-2014"><b>USGS SESQA 2014</b></a> A one time sampling blitz conducted by the US Geological Survey. It identified 100s of pesticides and wastewater contaminants over 10 weeks of sampling.</li></ul>')),
                 br(),
                 br()
                 ),
@@ -113,7 +113,10 @@ shinyUI(fluidPage(
             
                 #Subsection 1
                 tags$h3("How does the Ellerbe Creek Watershed compare to local water?"),
-                tags$p("The environmental protection agency (EPA) has created a tool titled “How’s My Waterway?” to understand where waterways that have been declared impaired are relative to the community. The EPA graphic is shown below. The graphic shows that many waterways in populated areas are impaired. However, there are also many streams that are doing well."),
+                tags$p("The Environmental Protection Agency (EPA) has created a tool titled “How’s My Waterway?” to understand how degraded waterways are in communities. The EPA graphic is shown below for the Durham and Orange Counties. "),
+				br(),
+                tags$p("Notice how Ellerbe Creek, which is highlighted, is marked as degraded (red). While other streams in the region, mostly in highly developed areas, are degraded, others are doing well. Ellerbe Creek is the most degraded tributary to the Fall Lake drinking water reservoir."),
+                br(),
                 tags$h3("EPA: How's My Waterway?",style="text-align: center"),
                 tags$head(tags$style(".testImage{border: solid 10px #202A44;  width: 100% !important;height: auto !important;}")),
                 fluidRow(column(width = 3),column(width=6,img(src='hamww.PNG',class="testImage"))),
@@ -121,7 +124,7 @@ shinyUI(fluidPage(
                 
                 #Subsection 2
                 tags$h3("What is a water quality index?"),
-                tags$p("A water quality index is a number ranging from 0 (perfectly uninhabitable) to 100 (perfectly habitable) that looks at various proxy measurements (hardness, nitrogen content, phosphorus content, dissolved oxygen, etc) to get an idea of how suitable the water is for the ecosystem. The problem is that the requirements of every ecosystem can differ. A lot of information can be lost trying to summarize everything that goes into making a good waterway down to one number. However, we do get a good starting point as to how the water is doing. The locations with the associated water quality is shown in the figure below. More information on how the waterquailt index is used in Durham is discussed in the next section"),
+                tags$p("A water quality index seeks to provide a combined assessment of how suitable the water is for life. It ranges from 0 (perfectly uninhabitable) to 100 (perfectly habitable), calculated from various proxy measurements (hardness, nitrogen content, phosphorus content, dissolved oxygen, etc). However, the requirements of every ecosystem can differ. A lot of information can be lost trying to summarize everything that goes into making a good waterway down to one number. However, it is a starting point. The water quality index for each Ambient Site is shown below. More information on how the water quailty index is used in Durham is discussed in the next section"),
                 
                 #Subsection 3
                 tags$h3("How has the Ellerbe Creek Watershed changed over time?"),
@@ -144,12 +147,9 @@ shinyUI(fluidPage(
                   column(width=2)),
                 
                 br(),
-                tags$p("Again, a lot of information is lost when one attempts to summarize the quality of water with only a handful of metrics. For a more detailed breakdown of how individual water quality parameters vary over time, use the interactive Water Quality Measurements Over Time graphic below."),
+                tags$p("Let's dig deeper into this dataset and visualize how different indicators of water quality change over time and across sites. Use the interactive Water Quality Measurements Over Time graphic below to see what might be driving changes to water quality."),
                 br(),
-                tags$p("Some spikes can be seen in some water quality metrics. This is expected because some samples will be taken during short term events like a rain storm or a nearby construction project. Short term spikes are not always indicative of unhealthy waterways."),
-                br(),
-                tags$p("In the Regulation Compliance by Parameter graph, we show the percent of water quality samples that comply with the National Recommended Water Quality Criteria - Aquatic Life Criteria Table.
-                        # U.S. Environmental Protection Agency | US EPA, 2022."),
+                tags$p("Notice any spikes in a given parameter? That could be a pulse from a rain storm, illicit discharge, or other activity like construction. Check out the Regulation Compliance by Parameter graph to explore how often collected water samples analyized comply with the National Recommended Water Quality Criteria - Aquatic Life Criteria Table. U.S. Environmental Protection Agency | US EPA, 2022."),
                 br(),
                 
                 fluidRow(column(width=3, br(), br(), br(),br(),br(),br(), br(), br(),
@@ -169,6 +169,7 @@ shinyUI(fluidPage(
                                 box(width = "100%", background = "navy",
                                     plotlyOutput("barPlot"))))
                 ),
+
         
         tabItem(tabName = "justice",
                 tags$h1("Water Quality though Space"),
@@ -220,7 +221,12 @@ shinyUI(fluidPage(
                            textOutput(outputId="text3"),
                            tags$head(tags$style("#text1#text2{font-size: 12px;}")))))
                 
+
+		
+
+		
         ),
+		
         tabItem(tabName = "background",
                 #Header
                 tags$h1("Pollutant Information"),
