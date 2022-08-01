@@ -1,1 +1,0 @@
-This folder holds live data being used by the Rshiny application
