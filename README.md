@@ -1,5 +1,5 @@
 # DataPlus2022-data
-Welcome to our Data Plus project for summer 2022! The goal of this project was to create a dashboard to display and explore water quality data that would otherwise be difficult to access. Our focus is on the Ellerbe Creek Watershed, with our data coming from our corresponding Bass Connections team at Duke and the City of Durham. Below is a description of all of the files we used and how they contribute to our final product.
+Welcome to our Data Plus project for summer 2022! The goal of this project was to create a dashboard to display and explore water quality data that would otherwise be difficult to access. Our focus is on the Ellerbe Creek Watershed, with our data coming from our corresponding Bass Connections team at Duke and the City of Durham. Below is a description of all of the files we used and how they contribute to our final product. 
 
 ## shinyDashboard
 ### ui.R file
