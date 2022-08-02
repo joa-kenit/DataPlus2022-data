@@ -77,7 +77,7 @@ shinyUI(fluidPage(
                 
                 #Subsection 1
                 tags$h3("What Data was Collected?"),
-                tags$p("Various government agencies and research groups are interested in monitoring and understanding the ability of waterways to sustain human and wildlife communities. This platform combines data collected by the city of Durham and several researchers at Duke University. A summary of the data contained in the datasets is shown in the table below."),
+                tags$p("Various government agencies and research groups are interested in monitoring and understanding the ability of waterways to sustain human and wildlife communities. This platform combines data collected by the city of Durham and several researchers at Duke University. A summary of the data contained in the datasets is shown in the table below. Please appropriately cite any data or figures taken from this site."),
                 fluidRow(column(12, align="center", tags$h4("Table 1. Summary of Water Quality Datasets"),tableOutput('tableSources'))),
                 
                 #Subsection 2
@@ -113,7 +113,7 @@ shinyUI(fluidPage(
             
                 #Subsection 1
                 tags$h3("How does the Ellerbe Creek Watershed compare to local water?"),
-                tags$p("The Environmental Protection Agency (EPA) has created a tool titled “How’s My Waterway?” to understand how degraded waterways are in communities. The EPA graphic is shown below for the Durham and Orange Counties. "),
+                tags$p("The Environmental Protection Agency's (EPA) “How’s My Waterway?” tool allows one to explore the status of waterways locally. The EPA graphic is shown below for the Durham and Orange Counties. "),
 				br(),
                 tags$p("Notice how Ellerbe Creek, which is highlighted, is marked as degraded (red). While other streams in the region, mostly in highly developed areas, are degraded, others are doing well. Ellerbe Creek is the most degraded tributary to the Fall Lake drinking water reservoir."),
                 br(),
@@ -175,19 +175,12 @@ shinyUI(fluidPage(
                 tags$h1("Water Quality though Space"),
                 tealLine,
                 
+                
                 #Subsection 1
-                tags$h3("What is environmental justice?"),
-                tags$p("According to the EPA, environmental justice is “the fair treatment and meaningful involvement of all people regardless of race, color, national origin, or income with respect to the development, implementation and enforcement of environmental laws, regulations and policies.” It is a goal of many governmental organizations to ensure that everyone within a community benefits equitably from what the environment has to offer and to ensure that is the case for future generations as well."),
+                tags$h3("How do water quality indicators change throughout the watershed?"),
+                tags$p("Duke researchers mapped out nutrients, salts, and other contaminants within the Ellerbe creek watershed in their synoptic sampling dataset. Let's dive into their preliminary data below!"),
+                tags$p("To start, let's do a quick investigation into whether there are simple linear relationships between water quality indicator compounds and measures of land-use (left panel) and demographics (right panel). Note: Any box with an X indicates there is no statistically significant linear relationship between the two parameters."),
                 
-                #Subsection 2
-                tags$h3("How has redlining affected Durham?"),
-                tags$p("Redlining is when financial institutions carve out neighborhoods where certain people would not be allowed to purchase homes. This practice has been historically used to discriminate against racial minorities and low income individuals. The effects of redlining are still apparent in cities today. The figure below shows where historical redlining performed in Durham overlaps with the Ellerbe Creek watershed. The redlined communities suffered from historical underinvestment, which can lead to effects that propagate into current day pollution. An example of this is some pipes in Durham have not been replaced in over 100 years in low income areas. The result is low income areas will have higher rates of wastewater pollution from sewage pipes leaking."),
-                tags$h3("Redlining Overlapped on top of the Ellerbe Creek Watershed",style="text-align: center"),
-                fluidRow(column(width=2),column(width =8, box(width = "100%",background = "navy", leafletOutput("redliningLeaflet"))),column(width=2)),
-                
-                #Subsection 3
-                tags$h3("What other relationships exist?"),
-                tags$p("Duke researchers have mapped out pollution within the Ellerbe creek  watershed. The graph below shows the linear correlation between each of the variables with “x’s” through all of the correlations that are not statistically significant."),
                 tags$h3("Correlation table of variables within the Ellerbe Creek WaterShed",style="text-align: center"),
                 fluidRow(column(width=5,box(width = "100%",background = "navy", plotOutput("corTableDemo"))),
                          column(width = 2,box(width = "100%",background = "navy",prettyRadioButtons("seasonCorr", "Season of Sampling of Water Quality Measurments",
@@ -198,9 +191,8 @@ shinyUI(fluidPage(
                                                                                                     selected = synopticSeasons[1]))),
                          column(width=5,box(width = "100%",background = "navy", plotOutput("corTableInfra")))),
 
-                tags$p("You can use the tool below to understand how different water quality measurements relate to the infrastructure and demographics of the region. To inform your comparison, you can use the correlation plot above. Alternatively, you can investigate common research questions:"),
-                tags$p("Are there more excess nutrients (nitrogen, phosphorus) from fertilizer on developed land?"),
-                tags$p("Is there a stronger correlation between where salt is and where roads are in the winter or the summer?"),
+                tags$h3("Dig Deeper!"),
+                tags$p("Use the tool below to explore how different water quality parameters relate to the infrastructure and demographics of the region. To inform your comparison, you can use the correlation plot above. Alternatively, you can investigate common research questions: Are there excess nutrients (nitrogen, phosphorus) from fertilizer on developed land? Is there a stronger correlation between where salt is and where roads are in the winter or the summer?"),
                 tags$h3("Variable Comparison Tool",style="text-align: center"),
                 fluidRow(column(12,align="center",box(width = "100%", background = "navy",uiOutput("synced_maps", width="100%"),style="padding-left: 35px"))),
                 fluidRow(column(width=6,
@@ -219,9 +211,15 @@ shinyUI(fluidPage(
                            textOutput(outputId="text1"), 
                            textOutput(outputId="text2"),
                            textOutput(outputId="text3"),
-                           tags$head(tags$style("#text1#text2{font-size: 12px;}")))))
+                           tags$head(tags$style("#text1#text2{font-size: 12px;}"))))),
                 
-
+                #Subsection 2
+                tags$h3("How does environmental justice impact water quality?"),
+                tags$p("Historic and current investment into stormwater, sewer, and “green“ infrastructure (e.g., rain gardens) can greatly impact water quality, by slowing and filtering out contaminants. However, the history of discriminatory policies throughout the U.S. has led to disproportionate investment in this infrastructure. Understanding modern distributions of water quality challenges can help governmental organizations to ensure that everyone within a community benefits equitably from what stream ecosystems and ensure that is the case for future generations as well."),
+                tags$p("Redlining is one example. The historic policies led to financial institutions carving out neighborhoods where certain people would not be allowed to use federal loans to purchase homes. This practice has been historically used to discriminate against racial minorities and low income individuals. The effects of redlining are still apparent in cities today. The figure below shows where historical redlining performed in Durham overlaps with the Ellerbe Creek watershed. The redlined communities suffered from historical underinvestment, which can lead to effects that propagate into current day water quality challenges. An example of this is some pipes in Durham have not been replaced in over 100 years in low income areas, placing the community at higher risk of exposure to leaky sewer infrastructure."),
+                tags$h3("Redlining Overlapped on top of the Ellerbe Creek Watershed",style="text-align: center"),
+                fluidRow(column(width=2),column(width =8, box(width = "100%",background = "navy", leafletOutput("redliningLeaflet"))),column(width=2)),
+                
 		
 
 		
@@ -317,6 +315,8 @@ shinyUI(fluidPage(
         tabItem(tabName = "team", 
                 tags$h1("Team"),
                 tealLine,
+                tags$h2("Contact Information",style="text-align: center"),
+                tags$p("Please direct any questions to Jonny Behrens: jonathan.behrens@duke.edu."),
                 tags$h2("Coding Team",style="text-align: center"),
                 fluidRow(
                   tags$head(tags$style(".headShot{border: solid 2px #202A44;background-color: #202A44;width: 100% !important;height: auto !important;}")),
