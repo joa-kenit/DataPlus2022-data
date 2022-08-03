@@ -82,8 +82,7 @@ shinyUI(fluidPage(
                 
                 #Subsection 2
                 tags$h3("Where was the Data Collected?"),
-                tags$p("Water quality data is collected throughout the Ellerbe Creek Watershed to study the changes in water quality and find possible patterns. The data stations are divided into: Ambient Sampling (Durham Sites) and Synoptic Sampling Sites (Duke Survey Sites). 
-                Both of which share certain parameters and have different sampling frequency."),
+                tags$p("Water quality data is collected throughout the Ellerbe Creek Watershed to study the changes in water quality and find possible patterns. The data stations are divided into:", strong("Ambient Sampling (Durham Sites)"), "and", strong("Synoptic Sampling Sites (Duke Survey Sites)."), "Both of which share certain parameters and have different sampling frequency."),
                 tags$div(HTML('<center><iframe src="https://dukeuniv.maps.arcgis.com/apps/instant/minimalist/index.html?appid=0ccb2a3586e640dbbeabab10fa218c62" width="80%" height="600" frameborder="0" style="border:0" allowfullscreen>iFrames are not supported on this page.</iframe><center>')),
                 
                 #subsection 3
@@ -113,9 +112,7 @@ shinyUI(fluidPage(
             
                 #Subsection 1
                 tags$h3("How does the Ellerbe Creek Watershed compare to local water?"),
-                tags$p("The Environmental Protection Agency's (EPA) “How’s My Waterway?” tool allows one to explore the status of waterways locally. The EPA graphic is shown below for the Durham and Orange Counties. "),
-				br(),
-                tags$p("Notice how Ellerbe Creek, which is highlighted, is marked as degraded (red). While other streams in the region, mostly in highly developed areas, are degraded, others are doing well. Ellerbe Creek is the most degraded tributary to the Fall Lake drinking water reservoir."),
+                tags$p("The Environmental Protection Agency's (EPA) How's my Waterway? tool allows one to explore the status of waterways locally. The EPA graphic is shown below for the Durham and Orange Counties. Notice how Ellerbe Creek, which is highlighted, is marked as degraded (red). While other streams in the region, mostly in highly developed areas, are degraded, others are doing well. Ellerbe Creek is the most degraded tributary to the Fall Lake drinking water reservoir."),
                 br(),
                 tags$h3("EPA: How's My Waterway?",style="text-align: center"),
                 tags$head(tags$style(".testImage{border: solid 10px #202A44;  width: 100% !important;height: auto !important;}")),
@@ -179,7 +176,7 @@ shinyUI(fluidPage(
                 #Subsection 1
                 tags$h3("How do water quality indicators change throughout the watershed?"),
                 tags$p("Duke researchers mapped out nutrients, salts, and other contaminants within the Ellerbe creek watershed in their synoptic sampling dataset. Let's dive into their preliminary data below!"),
-                tags$p("To start, let's do a quick investigation into whether there are simple linear relationships between water quality indicator compounds and measures of land-use (left panel) and demographics (right panel). Note: Any box with an X indicates there is no statistically significant linear relationship between the two parameters."),
+                tags$p("To start, let's do a quick investigation into whether there are simple linear relationships between water quality indicator compounds and measures of land-use (left panel) and demographics (right panel).", em("Note: Any box with an X indicates there is no statistically significant linear relationship between the two parameters.")),
                 
                 tags$h3("Correlation table of variables within the Ellerbe Creek WaterShed",style="text-align: center"),
                 fluidRow(column(width=5,box(width = "100%",background = "navy", plotOutput("corTableDemo"))),
@@ -192,7 +189,7 @@ shinyUI(fluidPage(
                          column(width=5,box(width = "100%",background = "navy", plotOutput("corTableInfra")))),
 
                 tags$h3("Dig Deeper!"),
-                tags$p("Use the tool below to explore how different water quality parameters relate to the infrastructure and demographics of the region. To inform your comparison, you can use the correlation plot above. Alternatively, you can investigate common research questions: Are there excess nutrients (nitrogen, phosphorus) from fertilizer on developed land? Is there a stronger correlation between where salt is and where roads are in the winter or the summer?"),
+                tags$p("Use the tool below to explore how different water quality parameters relate to the infrastructure and demographics of the region. To inform your comparison, you can use the correlation plot above. Alternatively, you can investigate common research questions:", em("Are there excess nutrients (nitrogen, phosphorus) from fertilizer on developed land? Is there a stronger correlation between where salt is and where roads are in the winter or the summer?")),
                 tags$h3("Variable Comparison Tool",style="text-align: center"),
                 fluidRow(column(12,align="center",box(width = "100%", background = "navy",uiOutput("synced_maps", width="100%"),style="padding-left: 35px"))),
                 fluidRow(column(width=6,
@@ -215,7 +212,7 @@ shinyUI(fluidPage(
                 
                 #Subsection 2
                 tags$h3("How does environmental justice impact water quality?"),
-                tags$p("Historic and current investment into stormwater, sewer, and “green“ infrastructure (e.g., rain gardens) can greatly impact water quality, by slowing and filtering out contaminants. However, the history of discriminatory policies throughout the U.S. has led to disproportionate investment in this infrastructure. Understanding modern distributions of water quality challenges can help governmental organizations to ensure that everyone within a community benefits equitably from what stream ecosystems and ensure that is the case for future generations as well."),
+                tags$p("Historic and current investment into stormwater, sewer, and green infrastructure (e.g., rain gardens) can greatly impact water quality, by slowing and filtering out contaminants. However, the history of discriminatory policies throughout the U.S. has led to disproportionate investment in this infrastructure. Understanding modern distributions of water quality challenges can help governmental organizations to ensure that everyone within a community benefits equitably from what stream ecosystems and ensure that is the case for future generations as well."),
                 tags$p("Redlining is one example. The historic policies led to financial institutions carving out neighborhoods where certain people would not be allowed to use federal loans to purchase homes. This practice has been historically used to discriminate against racial minorities and low income individuals. The effects of redlining are still apparent in cities today. The figure below shows where historical redlining performed in Durham overlaps with the Ellerbe Creek watershed. The redlined communities suffered from historical underinvestment, which can lead to effects that propagate into current day water quality challenges. An example of this is some pipes in Durham have not been replaced in over 100 years in low income areas, placing the community at higher risk of exposure to leaky sewer infrastructure."),
                 tags$h3("Redlining Overlapped on top of the Ellerbe Creek Watershed",style="text-align: center"),
                 fluidRow(column(width=2),column(width =8, box(width = "100%",background = "navy", leafletOutput("redliningLeaflet"))),column(width=2)),
@@ -236,41 +233,33 @@ shinyUI(fluidPage(
         tabItem(tabName = "PCA",
                 tags$h1("Principal Component Analysis"),
                 tealLine,
+                tags$h3(strong("THE FOLLOWING PAGE IS UNDER DEVELOPMENT. PLEASE RETURN AT A LATER POINT."),style="text-align: center"),
                 
                 tags$h3("Understanding a Principle Component Analysis",style="text-align: center"),
-                tags$p("The purpose of this Principle Component Analysis (PCA) 
-                       is to understand the clustering of our data with respect to 
-                       more than two parameters on a two dimensional plot. The vectors 
-                       of contaminants on the plot indicate their magnitude of influence
-                       on the variance of the data points. The axes are the first two 
-                       principle components, and they represent the first, and second largest
-                       directions of variance in the data."),
+                tags$p("Let's do some multivariate statistics to further exploration the variation in water quality over time and space. On this page we will use a Principle Component Analysis (PCA) to more easily summarize and visualize the many parameters measured. The vectors of contaminant parameters on the plot indicate their magnitude of influence on the variance of the data points. The axes are the first two principle components, and they represent the first, and second largest directions of variance in the data."),
+                tags$p('In the interactive figure below, the PCA is designed to highlight how measures of infrastructure and demographics (road density, pipe density, percent impervious surfaces, percent developed, and median house hold income) may align with the loadings or axes of the PCA, which is created from the chemical and physical data in the synoptic data set. Along with the visual of which contaminants have a large impact on the variability of data points, the color shade allows the user to see if these specific factors are influenced by the same contaminants.'),
                 
                 tags$h3("Synoptic Data PCA",style="text-align: center"),
                 fluidRow(column(3,box(width = "100%", background = "navy", selectInput("PCAparams", "Select Shade Parameter", pca_params, selected = pca_params[4]))),
                          column(9,box(width = "100%", background = "navy", plotOutput("PCA")))),
-                tags$p('This specific PCA is designed to highlight potential influence that the factors road density, 
-                pipe density, percent impervious surfaces, percent developed, and median house hold income have on the synoptic data set. 
-                Along with the visual of which contaminants have a large impact on the variability of data points, the color shade allows the user to see if these specific factors are 
-                influenced by the same contaminants.'),
-                
+
+                tags$p('The goal with the sampling dates PCA is to explore the variability in the synoptic data set between the three specific sampling dates. Clustering among the sampling dates could indicate how different seasons affect the sampling results of the data.'),
                 tags$h3("Synoptic Data PCA (By Sample Date)",style="text-align: center"),
                 fluidRow(column(3,box(width = "100%", background = "navy", selectInput("PCAdates", "Select Sampling Dates", synopticDates, multiple = TRUE, selected = synopticDates[1]))),
                         column(9,box(width = "100%", background = "navy", plotOutput("PCA2")))),
-                tags$p('The goal with the sampling dates PCA is to explore the variability in the synoptic data set between the three specific sampling dates. 
-                       Clustering among the sampling dates could indicate how different seasons affect the sampling results of the data.'),
+                
+                tags$p('The sampling site PCA is designed to explore clustering among the eight sampling sites that are monitored in the ambient data set. Variability in the data over space is an important aspect to consider in analysis as the sampling sites within the water shed can vary in features and water sourcing.'),
                 
                 tags$h3("Ambient Data PCA",style="text-align: center"),
                 fluidRow(column(3,box(width = "100%", background = "navy", selectInput("PCAsites", "Select Water Sampling Station", ambientSites, multiple = TRUE, selected = ambientSites[1]))),
                          column(9,box(width = "100%", background = "navy", plotOutput("PCA3")))),
-                tags$p('The sampling site PCA is designed to explore clustering among the eight sampling sites that are monitored in the ambient data set. 
-                Variability in the data over space is an important aspect to consider in analysis as the sampling sites within the water shed can vary in features and water sourcing.')
+                
         ),
         
         tabItem(tabName = "param3",
                 tags$h1("Tracer Pollution"),
                 tealLine,
-                
+                tags$h3(strong("THE FOLLOWING PAGE IS UNDER DEVELOPMENT. PLEASE RETURN AT A LATER POINT."),style="text-align: center"),
                 #Subsection 1
                 tags$h2("What are the primary types of pollution?",style="text-align: center"),
                 p("Environmental scientists use various pollution metrics to get an idea of the pollution landscape. The sources of pollution can be inferred by looking at particular contaminants known to come from unique sources. Sucralose is found in wastewater. Dipropylene glycol is a tire additive, and is therefore expected to be associated with car pollution. Glyphosate is used in the herbicides homeowners would put on their lawn. In conjunction, we can get an idea of where certain types of pollution should be expected. This is shown in the interactive figure below."),
