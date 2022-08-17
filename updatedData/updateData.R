@@ -12,7 +12,7 @@ updatedData <- function(){
       }
       
       #Generate parameter portion of URL
-      oldData <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/main/asites.csv")
+      oldData <- read.csv("https://raw.githubusercontent.com/joa-kenit/DataPlus2022-data/main/oldData/parameterDurhamData.csv")
       parameters = unique(oldData$Parameter)
       parametersSTR = ""
       for(parameter in parameters){
